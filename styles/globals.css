@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+#onboarding .swiper-pagination-bullet.swiper-pagination-bullet-active {
+  @apply bg-coffee-secondary;
+}

@@ -1,13 +1,15 @@
+import { memo } from 'react'
 import { Page } from 'konsta/react'
-import { block } from 'million/react'
 import Head from 'next/head'
-const Home = block(() => {
+import Onboarding from "@/components/Client/Onboarding"
+const Home = () => {
   return (
     <Page>
       <Head>
         <title>Bean Cafe</title>
       </Head>
+      <Onboarding />
     </Page>
   )
-})
-export default Home
+}
+export default memo(Home)
