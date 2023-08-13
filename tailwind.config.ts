@@ -11,12 +11,13 @@ module.exports = konstaConfig({
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: "class",
+  darkMode: "media",
   theme: {
     extend: {
       colors: {
         "coffee-primary": "#cc9c68",
         "coffee-secondary": "#372e1c",
+        "coffee-white": "#eee7e1",
       },
     },
   },

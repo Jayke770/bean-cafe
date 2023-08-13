@@ -26,7 +26,7 @@ const Home = () => {
       animate={"animate"}
       exit={"exit"}
       transition={{ type: "spring", duration: 0.5, delay: 0.2 }}
-      className='h-full w-full left-0 top-0 overflow-auto absolute bg-coffee-secondary dark:bg-black'>
+      className='h-full w-full left-0 top-0 overflow-auto absolute bg-coffee-white dark:bg-black'>
       <Head>
         <title>Bean Cafe</title>
       </Head>
