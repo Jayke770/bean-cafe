@@ -4,7 +4,10 @@ import Head from 'next/head'
 import Onboarding from "@/components/Client/Onboarding"
 const Home = () => {
   return (
-    <Page>
+    <Page
+      colors={{
+        bgMaterial: "bg-coffee-primary dark:bg-black"
+      }}>
       <Head>
         <title>Bean Cafe</title>
       </Head>
