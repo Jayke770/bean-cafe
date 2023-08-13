@@ -10,9 +10,9 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-coffee-primary cursor-pointer;
+  @apply bg-brand-primary cursor-pointer;
 }
 
 #onboarding .swiper-pagination-bullet.swiper-pagination-bullet-active {
-  @apply bg-coffee-secondary;
+  @apply bg-brand-secondary;
 }

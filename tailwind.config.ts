@@ -15,9 +15,9 @@ module.exports = konstaConfig({
   theme: {
     extend: {
       colors: {
-        "coffee-primary": "#cc9c68",
-        "coffee-secondary": "#372e1c",
-        "coffee-white": "#eee7e1",
+        "brand-primary": "#cc9c68",
+        "brand-secondary": "#372e1c",
+        "brank-white": "#eee7e1",
       },
     },
   },

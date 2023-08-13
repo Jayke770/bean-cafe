@@ -26,7 +26,7 @@ const variants: Variants = {
 }
 const Onboarding = () => {
     return (
-        <main className='h-full w-full left-0 top-0 overflow-auto absolute bg-coffee-primary dark:bg-black'>
+        <main className='h-full w-full left-0 top-0 overflow-auto absolute bg-brand-primary dark:bg-black'>
             <Head>
                 <title>Welcome to Bean Cafe</title>
             </Head>
@@ -37,7 +37,7 @@ const Onboarding = () => {
                 exit={"exit"}
                 transition={{ type: "spring", duration: 0.5, delay: 0.2 }}
                 id='onboarding'
-                className='fixed h-full w-full p-2 bg-coffee-primary z-50 '>
+                className='fixed h-full w-full p-2 bg-brand-primary z-50 '>
                 <Swiper
                     pagination={{
                         dynamicBullets: true,
@@ -57,8 +57,8 @@ const Onboarding = () => {
                                 priority
                                 className=' w-80 h-auto' />
                             <div className='mt-5 flex flex-col gap-8'>
-                                <h1 className='text-coffee-secondary font-bold text-3xl px-8 text-center'>Coffee so good, your taste buds will love it</h1>
-                                <p className='font-medium px-8 text-center text-lg text-coffee-secondary '>The best grain, the finest roast, the most powerful flavor.</p>
+                                <h1 className='text-brand-secondary font-bold text-3xl px-8 text-center'>Coffee so good, your taste buds will love it</h1>
+                                <p className='font-medium px-8 text-center text-lg text-brand-secondary '>The best grain, the finest roast, the most powerful flavor.</p>
                             </div>
                             <div className='flex w-full md:w-[20%] mt-10 px-8'>
                                 <Button
@@ -77,8 +77,8 @@ const Onboarding = () => {
                                 priority
                                 className=' w-80 h-auto' />
                             <div className='mt-5 flex flex-col gap-8'>
-                                <h1 className='text-coffee-secondary font-bold text-3xl px-8 text-center'>Discover our signature espresso</h1>
-                                <p className='font-medium px-8 text-center text-lg text-coffee-secondary '>{"We've compiled a wide selection of blends and beans to fill your cup"}</p>
+                                <h1 className='text-brand-secondary font-bold text-3xl px-8 text-center'>Discover our signature espresso</h1>
+                                <p className='font-medium px-8 text-center text-lg text-brand-secondary '>{"We've compiled a wide selection of blends and beans to fill your cup"}</p>
                             </div>
                             <div className='flex w-full md:w-[20%] mt-10 px-8'>
                                 <Link href={"/home"} className='w-full'>
