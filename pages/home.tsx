@@ -27,14 +27,13 @@ const Home = () => {
       animate={"animate"}
       exit={"exit"}
       transition={{ type: "spring", duration: 0.5, delay: 0.2 }}
-      className='h-full w-full left-0 top-0 overflow-auto absolute bg-custom-white dark:bg-black pb-5-safe'>
+      className='h-full w-full left-0 top-0 overflow-auto absolute bg-brand-white dark:bg-black pb-5-safe'>
       <Head>
         <title>Bean Cafe</title>
       </Head>
       <Navbar
         medium
         className=' k-color-brand-primary'
-        translucent={true}
         transparent={true}
         title="Bean's Cafe"
         right={
@@ -49,7 +48,7 @@ const Home = () => {
         <h1 className='dark:text-zinc-400 font-bold '>Best coffee for you</h1>
       </div>
       <div className='p-4'>
-        <section className='w-full whitespace-nowrap snap-proximity gap-2 overflow-auto pb-3'>
+        <section className='w-full bg-brand-white translucent dark:bg-black whitespace-nowrap snap-proximity gap-2 overflow-auto py-3 sticky top-16 '>
           {categories.map(category => (
             <Button
               key={category}
