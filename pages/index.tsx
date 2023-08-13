@@ -26,7 +26,7 @@ const variants: Variants = {
 }
 const Onboarding = () => {
     return (
-        <main className='h-full w-full left-0 top-0 overflow-auto absolute  bg-coffee-white dark:bg-black'>
+        <main className='h-full w-full left-0 top-0 overflow-auto absolute bg-coffee-primary dark:bg-black'>
             <Head>
                 <title>Welcome to Bean Cafe</title>
             </Head>
