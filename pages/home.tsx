@@ -45,6 +45,7 @@ const Home = () => {
         <div className='flex whitespace-nowrap gap-2'>
           {categories.map(category => (
             <Button
+              key={category}
               tonal={category !== tab}
               onClick={() => onChangeTab(category as any)}
               className='!w-auto k-color-brand-green'
@@ -56,6 +57,7 @@ const Home = () => {
         <div className='grid gap-2 grid-cols-2 mt-3'>
           {Array.from({ length: 10 }).map((_, i) => (
             <Card
+              key={i}
               margin='m-0'
               className=' k-color-brand-secondary h-56 '>
               test
