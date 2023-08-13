@@ -69,13 +69,15 @@ const Home = () => {
               <Card
                 margin='m-0'
                 className=' k-color-brand-secondary'>
-                <Image
-                  src={`/images/catalog/${i + 1}.jpg`}
-                  alt="test"
-                  width={300}
-                  height={300}
-                  loading='lazy'
-                  className=' shadow-xl rounded-xl aspect-square ' />
+                <div className='shadow-lg rounded-2xl overflow-hidden'>
+                  <Image
+                    src={`/images/catalog/${i + 1}.jpg`}
+                    alt="test"
+                    width={300}
+                    height={300}
+                    loading='lazy'
+                    className='aspect-square ' />
+                </div>
                 <div className='flex flex-col mt-3'>
                   <span className='text-xl font-bold'>Item {i + 1}</span>
                   <span className=' text-brand-primary font-bold text-base'>₱{i + 1}</span>
