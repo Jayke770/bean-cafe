@@ -10,30 +10,18 @@ import { Button } from 'konsta/react'
 import { motion, Variants } from 'framer-motion'
 import { useLocalstorageState } from 'rooks'
 const variants: Variants = {
-    new_initial: {
+    initial: {
         opacity: 0,
         scale: 1.1
     },
-    new_animate: {
+    animate: {
         opacity: 1,
         scale: 1
     },
-    new_exit: {
+    exit: {
         opacity: 0,
         scale: 1.1
-    },
-    old_initial: {
-        opacity: 1,
-        scale: 1
-    },
-    old_animate: {
-        opacity: 0,
-        scale: 1.1
-    },
-    old_exit: {
-        opacity: 1,
-        scale: 1
-    },
+    }
 }
 const Onboarding = () => {
     const [isNew, setisNew] = useLocalstorageState<boolean>("isNew", true)
@@ -41,9 +29,9 @@ const Onboarding = () => {
     return (
         <motion.div
             variants={variants}
-            initial={isNew ? "new_initial" : "old_initial"}
-            animate={isNew ? "new_animate" : "old_animate"}
-            exit={isNew ? "new_exit" : "old_exit"}
+            initial={"initial"}
+            animate={"animate"}
+            exit={"exit"}
             transition={{ type: "spring", duration: 0.5, delay: 0.2 }}
             id='onboarding'
             className='fixed h-full w-full p-2 bg-coffee-primary '>
@@ -99,7 +87,7 @@ const Onboarding = () => {
                     </div>
                 </SwiperSlide>
             </Swiper>
-        </motion.div >
+        </motion.div>
     )
 }
 export default memo(Onboarding)
