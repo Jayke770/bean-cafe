@@ -15,7 +15,7 @@ const variants: Variants = {
     opacity: 0
   }
 }
-const categories = ['all', 'coffee', 'cakes', 'others']
+const categories = ['All', 'Coffee', 'Non Coffee', 'Cakes', 'Flappe/Blended', 'Teas', 'Snacks', 'Others']
 const Home = () => {
   const [tab, setTab] = useLocalstorageState<Tab>("home-tab", "all")
   const onChangeTab = useCallback((data: Tab) => setTab(data), [setTab])
@@ -42,19 +42,19 @@ const Home = () => {
         <h1 className='dark:text-zinc-400 font-bold '>Best coffee for you</h1>
       </div>
       <div className='p-4'>
-        <div className='flex whitespace-nowrap gap-2'>
+        <div className='w-full whitespace-nowrap snap-proximity gap-2 overflow-auto pb-3'>
           {categories.map(category => (
             <Button
               key={category}
               tonal={category !== tab}
               onClick={() => onChangeTab(category as any)}
-              className='!w-auto k-color-brand-green'
+              className='!w-auto k-color-brand-green inline-flex ml-2 first:ml-0'
               rounded>
-              <span className='first-letter:uppercase'>{category}</span>
+              {category}
             </Button>
           ))}
         </div>
-        <div className='grid gap-2 grid-cols-2 mt-3'>
+        <div className='grid gap-2 grid-cols-2 mt-5'>
           {Array.from({ length: 10 }).map((_, i) => (
             <Card
               key={i}
