@@ -1,6 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+::-webkit-scrollbar {
+  @apply w-1 h-[1px];
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-coffee-primary cursor-pointer;
+}
 
 #onboarding .swiper-pagination-bullet.swiper-pagination-bullet-active {
   @apply bg-coffee-secondary;
