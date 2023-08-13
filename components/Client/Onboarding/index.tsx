@@ -34,11 +34,11 @@ const Onboarding = () => {
                             src={IntroImage}
                             alt='intro'
                             className=' w-80 h-auto' />
-                        <div className='mt-5 flex flex-col gap-2'>
+                        <div className='mt-5 flex flex-col gap-8'>
                             <h1 className='text-coffee-secondary font-bold text-3xl px-8 text-center'>Coffee so good, your taste buds will love it</h1>
                             <p className='font-medium px-8 text-center text-lg'>The best grain, the finest roast, the most powerful flavor.</p>
                         </div>
-                        <div className='flex w-full md:w-[20%] mt-3 px-8'>
+                        <div className='flex w-full md:w-[20%] mt-8 px-8'>
                             <Button
                                 id='next'
                                 large
