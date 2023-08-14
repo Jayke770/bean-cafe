@@ -1,9 +1,10 @@
 import { memo, useCallback } from 'react'
-import { Navbar, Button, Card, Link, Icon } from 'konsta/react'
+import { Navbar, Button, Card, Link, Icon, Fab } from 'konsta/react'
 import Head from 'next/head'
 import { motion, Variants } from 'framer-motion'
 import { useLocalstorageState } from 'rooks'
 import { IoPersonCircleSharp } from 'react-icons/io5'
+import { IoMdCart } from 'react-icons/io'
 import Image from 'next/image'
 const mainvariants: Variants = {
   initial: {
@@ -32,6 +33,7 @@ const Home = () => {
         <title>Bean Cafe</title>
       </Head>
       <Navbar
+        component='nav'
         medium
         className=' k-color-brand-primary'
         transparent={true}
@@ -44,6 +46,21 @@ const Home = () => {
           </Link>
         }
       />
+      <div className='fixed bottom-5 w-full flex justify-center items-center'>
+        <Button
+          large
+          className=' k-color-brand-green !w-auto'>
+          <div className='flex justify-between items-center gap-2'>
+            <div className='flex items-center gap-2 mr-2'>
+              <IoMdCart className=' w-6 h-6' />
+              <span className=' text-sm font-semibold'>My Order</span>
+            </div>
+            <div className='flex before:content-[""] before:w-[1px] before:opacity-50 before:bg-white before:mr-3'>
+              <span>₱100</span>
+            </div>
+          </div>
+        </Button>
+      </div>
       <div className='px-4 pb-4'>
         <h1 className='dark:text-zinc-400 font-bold '>Best coffee for you</h1>
       </div>

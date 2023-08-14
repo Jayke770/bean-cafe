@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect } from 'react'
+import { memo } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -12,7 +12,7 @@ import Link from 'next/link'
 import Head from 'next/head'
 const variants: Variants = {
     initial: {
-        opacity: 0,
+        opacity: 1,
         scale: 1.1
     },
     animate: {
