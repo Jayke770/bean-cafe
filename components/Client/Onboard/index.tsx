@@ -43,7 +43,7 @@ const Onboarding = () => {
                         initial={"initial"}
                         animate={"animate"}
                         exit={"exit"}
-                        transition={{ type: "spring", duration: 1, delay: 0.2 }}
+                        transition={{ type: "spring", duration: 0.3, delay: 0.1 }}
                         className='flex flex-col gap-4 w-full h-full justify-center items-center'>
                         <Image
                             src={IntroImage}
