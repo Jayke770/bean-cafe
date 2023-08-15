@@ -2,6 +2,7 @@
 import "@/styles/globals.css"
 import { Inter } from 'next/font/google'
 import { App } from "konsta/react"
+import { AppProgressBar as ProgressBar } from 'next-nprogress-bar'
 const inter = Inter({ subsets: ['latin'] })
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -11,6 +12,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <link rel="apple-touch-icon" href="/logo.png" />
       <meta name="theme-color" content="#cc9c68" />
       <body className={inter.className}>
+        <ProgressBar
+          height="3px"
+          color="#cc9c68"
+          options={{ showSpinner: true }}
+          shallowRouting
+        />
         <App theme='material' safeAreas dark>
           {children}
         </App>

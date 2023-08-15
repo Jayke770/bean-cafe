@@ -1,13 +1,11 @@
 "use client"
-import { memo, useCallback } from 'react'
-import { Navbar, Button, Card, Link, Icon, Fab } from 'konsta/react'
-import Head from 'next/head'
+import { memo, useCallback, useState } from 'react'
+import { Navbar, Button, Card, Link, Icon, Actions, List, ListItem } from 'konsta/react'
 import { motion, Variants } from 'framer-motion'
 import { useLocalstorageState } from 'rooks'
 import { IoPersonCircleSharp } from 'react-icons/io5'
 import { IoMdCart } from 'react-icons/io'
 import Image from 'next/image'
-import { Metadata } from 'next'
 const mainvariants: Variants = {
     initial: {
         opacity: 0
@@ -23,6 +21,8 @@ const categories = ['All', 'Coffee', 'Non Coffee', 'Cakes', 'Flappe/Blended', 'T
 const Home = () => {
     const [tab, setTab] = useLocalstorageState<string>("home-tab", "All")
     const onChangeTab = useCallback((data: string) => setTab(data), [setTab])
+    const [viewCart, setViewCart] = useState<boolean>(false)
+    const onToggleCart = useCallback(() => setViewCart(e => !e), [setViewCart])
     return (
         <>
             <head>
@@ -51,6 +51,7 @@ const Home = () => {
                 />
                 <div className='fixed z-10 bottom-5 w-full flex justify-center items-center'>
                     <Button
+                        onClick={onToggleCart}
                         large
                         className=' k-color-brand-green !w-auto'>
                         <div className='flex justify-between items-center gap-2'>
@@ -108,6 +109,38 @@ const Home = () => {
                     </section>
                 </div>
             </motion.main>
+            <Actions
+                opened={viewCart}
+                onBackdropClick={onToggleCart}
+                className=' k-color-brand-primary'>
+                <Card
+                    margin='m-0'
+                    className=' rounded-b-none'>
+                    <h1 className='font-bold text-lg text-brand-primary px-3.5'>Your Cart</h1>
+                    <List margin='m-0' className='mt-3'>
+                        {Array.from({ length: 5 }).map((_, i) => (
+                            <ListItem
+                                key={i}
+                                title={`Item ${i + 1}`}
+                                link
+                                subtitle={`Quantity: 1`}
+                                after={`₱${i + 1}`}
+                                media={
+                                    <Image
+                                        src={`/images/catalog/${i + 1}.jpg`}
+                                        alt="test"
+                                        width={300}
+                                        height={300}
+                                        loading='lazy'
+                                        className='aspect-square h-10 w-10 rounded-xl ' />
+                                } />
+                        ))}
+                    </List>
+                    <div className='px-3 mt-5'>
+                        <Button>Check Out</Button>
+                    </div>
+                </Card>
+            </Actions>
         </>
     )
 }
