@@ -12,7 +12,7 @@ import Link from 'next/link'
 const variants: Variants = {
     initial: {
         opacity: 0,
-        scale: .8
+        scale: 1.1
     },
     animate: {
         opacity: 1,
@@ -20,12 +20,18 @@ const variants: Variants = {
     },
     exit: {
         opacity: 0,
-        scale: .8
+        scale: 1.1
     }
 }
 const Onboarding = () => {
     return (
-        <div id='onboarding' className='fixed h-full w-full p-2 bg-brand-primary z-50 '>
+        <motion.div
+            variants={variants}
+            initial={"initial"}
+            animate={"animate"}
+            exit={"exit"}
+            transition={{ ease: "easeInOut", duration: 0.3 }}
+            id='onboarding' className='fixed h-full w-full p-2 bg-brand-primary z-50 '>
             <Swiper
                 pagination={{
                     dynamicBullets: true,
@@ -38,18 +44,12 @@ const Onboarding = () => {
                 modules={[Pagination, Navigation]}
                 className='h-full w-full'>
                 <SwiperSlide>
-                    <motion.div
-                        variants={variants}
-                        initial={"initial"}
-                        animate={"animate"}
-                        exit={"exit"}
-                        transition={{ type: "spring", duration: 0.3, delay: 0.1 }}
-                        className='flex flex-col gap-4 w-full h-full justify-center items-center'>
+                    <div className='flex flex-col gap-4 w-full h-full justify-center items-center'>
                         <Image
                             src={IntroImage}
                             alt='intro'
                             priority
-                            className=' w-80 h-auto' />
+                            className=' w-80 h-56 object-contain ' />
                         <div className='mt-5 flex flex-col gap-8'>
                             <h1 className='text-brand-secondary font-bold text-3xl px-8 text-center'>Coffee so good, your taste buds will love it</h1>
                             <p className='font-medium px-8 text-center text-lg text-brand-secondary '>The best grain, the finest roast, the most powerful flavor.</p>
@@ -61,7 +61,7 @@ const Onboarding = () => {
                                 rounded
                                 className='w-full k-color-brand-green'>Next</Button>
                         </div>
-                    </motion.div>
+                    </div>
                 </SwiperSlide>
                 <SwiperSlide>
                     <div className='flex flex-col gap-4 w-full h-full justify-center items-center'>
@@ -69,7 +69,7 @@ const Onboarding = () => {
                             src={CupsImage}
                             alt='cups'
                             priority
-                            className=' w-80 h-auto' />
+                            className=' w-80 h-56 object-contain' />
                         <div className='mt-5 flex flex-col gap-8'>
                             <h1 className='text-brand-secondary font-bold text-3xl px-8 text-center'>Discover our signature espresso</h1>
                             <p className='font-medium px-8 text-center text-lg text-brand-secondary '>{"We've compiled a wide selection of blends and beans to fill your cup"}</p>
@@ -86,7 +86,7 @@ const Onboarding = () => {
                     </div>
                 </SwiperSlide>
             </Swiper>
-        </div>
+        </motion.div>
     )
 }
 export default Onboarding
