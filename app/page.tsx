@@ -1,8 +1,9 @@
-import { Metadata } from 'next'
 import Onboard from '@/components/Client/Onboard'
+import { Metadata } from 'next'
 export const metadata: Metadata = {
   title: "Welcome to Bean Cafe",
-  description: 'Bean Cafe Onboarding'
+  manifest: "/manifest.json",
+  themeColor: "#cc9c68"
 }
 const Onboarding = () => {
   return (

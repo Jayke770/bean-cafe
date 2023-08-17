@@ -1,5 +1,5 @@
 "use client"
-import { memo, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Navbar, Button, Card, Link, Icon, Actions, List, ListItem } from 'konsta/react'
 import { motion, Variants } from 'framer-motion'
 import { useLocalstorageState } from 'rooks'
@@ -18,16 +18,13 @@ const mainvariants: Variants = {
     }
 }
 const categories = ['All', 'Coffee', 'Non Coffee', 'Cakes', 'Flappe/Blended', 'Teas', 'Snacks', 'Others']
-const Home = () => {
+export default function Test() {
     const [tab, setTab] = useLocalstorageState<string>("home-tab", "All")
     const onChangeTab = useCallback((data: string) => setTab(data), [setTab])
     const [viewCart, setViewCart] = useState<boolean>(false)
     const onToggleCart = useCallback(() => setViewCart(e => !e), [setViewCart])
     return (
         <>
-            <head>
-                <title>Bean Cafe</title>
-            </head>
             <motion.main
                 variants={mainvariants}
                 initial={"initial"}
@@ -144,4 +141,3 @@ const Home = () => {
         </>
     )
 }
-export default memo(Home)
