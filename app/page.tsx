@@ -23,10 +23,6 @@ const variants: Variants = {
     scale: 1.1
   }
 }
-import { Metadata } from 'next'
-export const metadata: Metadata = {
-  title: "Welcome to Bean Cafe"
-}
 export default function Onboarding() {
   return (
     <main className='h-full w-full left-0 top-0 overflow-auto absolute bg-brand-primary dark:bg-black'>
