@@ -1,4 +1,5 @@
 "use client"
+import { memo } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -23,7 +24,7 @@ const variants: Variants = {
     scale: 1.1
   }
 }
-export default function Onboarding() {
+const Onboarding = () => {
   return (
     <main className='h-full w-full left-0 top-0 overflow-auto absolute bg-brand-primary dark:bg-black'>
       <motion.div
@@ -91,3 +92,4 @@ export default function Onboarding() {
     </main>
   )
 }
+export default memo(Onboarding)
