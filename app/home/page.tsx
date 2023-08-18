@@ -134,7 +134,6 @@ export default function Test() {
                                 <ListItem
                                     key={i}
                                     title={`Item ${i + 1}`}
-                                    link
                                     chevron={false}
                                     subtitle={`Quantity: 1`}
                                     after={`₱${i + 1}`}
