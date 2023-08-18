@@ -1,6 +1,19 @@
 "use client"
 import { useCallback, useState } from 'react'
-import { Navbar, Button, Card, Link, Icon, Actions, List, ListItem, ListGroup, Checkbox, Radio } from 'konsta/react'
+import {
+    Navbar,
+    Button,
+    Card,
+    Icon,
+    Actions,
+    Link,
+    List,
+    ListItem,
+    ListGroup,
+    Checkbox,
+    Radio,
+    Preloader
+} from 'konsta/react'
 import { motion, Variants } from 'framer-motion'
 import { useLocalstorageState } from 'rooks'
 import { IoPersonCircleSharp } from 'react-icons/io5'
@@ -10,7 +23,7 @@ import { BsPaypal } from 'react-icons/bs'
 import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai'
 import GcashLogo from '@/public/images/gcash.png'
 import { BiMoney } from 'react-icons/bi'
-import UserLogo from '@/public/user.png'
+import NextLink from 'next/link'
 import { useSession } from 'next-auth/react'
 const mainvariants: Variants = {
     initial: {
@@ -205,61 +218,80 @@ export default function Home() {
                 <Card
                     margin='m-0'
                     className=' rounded-b-none'>
-                    <div className='flex items-center flex-col w-full justify-center py-4'>
-                        <Image
-                            width={300}
-                            height={300}
-                            src={session?.user?.image ?? "/logo.png"}
-                            alt='test'
-                            className='rounded-full h-36 w-36' />
-                        <div className='flex flex-col mt-3'>
-                            <span className='text-xl font-bold text-brand-primary'>Jhon Doe</span>
+                    {status === "loading" && (
+                        <div className='flex w-full justify-center items-center'>
+                            <Preloader />
                         </div>
-                    </div>
-                    <motion.div
-                        className=' w-full grid grid-cols-3 p-1 gap-2 bg-brand-secondary shadow rounded-xl'>
-                        <button
-                            onClick={() => onToggleUserOrdersTab("completed")}
-                            type='button'
-                            className=' cursor-pointer relative h-10 outline-none'>
-                            <div className=' absolute left-0 top-0 z-10 text-white flex items-center justify-center w-full h-full'>Completed</div>
-                            {UserOrdersTab === "completed" && <motion.div layoutId="orders" className=" z-0 rounded-lg bg-brand-primary/60 absolute top-0 w-full left-0 h-full" />}
-                        </button>
-                        <button
-                            onClick={() => onToggleUserOrdersTab("pending")}
-                            type='button'
-                            className=' cursor-pointer relative h-10 outline-none'>
-                            <div className=' absolute left-0 top-0 z-10 text-white flex items-center justify-center w-full h-full'>Pending</div>
-                            {UserOrdersTab === "pending" && <motion.div layoutId="orders" className=" z-0 rounded-lg bg-brand-primary/60 absolute top-0 w-full left-0 h-full" />}
-                        </button>
-                        <button
-                            onClick={() => onToggleUserOrdersTab("cancelled")}
-                            type='button'
-                            className=' cursor-pointer relative h-10 outline-none'>
-                            <div className=' absolute left-0 top-0 z-10 text-white flex items-center justify-center w-full h-full'>Cancelled</div>
-                            {UserOrdersTab === "cancelled" && <motion.div layoutId="orders" className=" z-0 rounded-lg bg-brand-primary/60 absolute top-0 w-full left-0 h-full" />}
-                        </button>
-                    </motion.div>
-                    <List margin='my-0' className='mt-2'>
-                        {Array.from({ length: 5 }).map((_, i) => (
-                            <ListItem
-                                key={i}
-                                title={`Item ${i + 1}`}
-                                link
-                                chevron={false}
-                                subtitle={`Quantity: 1`}
-                                after={`₱${i + 1}`}
-                                media={
-                                    <Image
-                                        src={`/images/catalog/${i + 1}.jpg`}
-                                        alt="test"
-                                        width={300}
-                                        height={300}
-                                        loading='lazy'
-                                        className='aspect-square h-10 w-10 rounded-xl ' />
-                                } />
-                        ))}
-                    </List>
+                    )}
+                    {status === "unauthenticated" && (
+                        <div className='flex flex-col w-full gap-3'>
+                            <span className='font-bold text-lg text-brand-primary'>Get Started</span>
+                            <NextLink href={"/api/auth/signin"} className=' w-full'>
+                                <Button>
+                                    Sign in
+                                </Button>
+                            </NextLink>
+                        </div>
+                    )}
+                    {status === "authenticated" && (
+                        <>
+                            <div className='flex items-center flex-col w-full justify-center py-4'>
+                                <Image
+                                    width={300}
+                                    height={300}
+                                    src={session?.user?.image ?? "/logo.png"}
+                                    alt='test'
+                                    className='rounded-full h-36 w-36' />
+                                <div className='flex flex-col mt-3'>
+                                    <span className='text-xl font-bold text-brand-primary'>Jhon Doe</span>
+                                </div>
+                            </div>
+                            <motion.div
+                                className=' w-full grid grid-cols-3 p-1 gap-2 bg-brand-secondary shadow rounded-xl'>
+                                <button
+                                    onClick={() => onToggleUserOrdersTab("completed")}
+                                    type='button'
+                                    className=' cursor-pointer relative h-10 outline-none'>
+                                    <div className=' absolute left-0 top-0 z-10 text-white flex items-center justify-center w-full h-full'>Completed</div>
+                                    {UserOrdersTab === "completed" && <motion.div layoutId="orders" className=" z-0 rounded-lg bg-brand-primary/60 absolute top-0 w-full left-0 h-full" />}
+                                </button>
+                                <button
+                                    onClick={() => onToggleUserOrdersTab("pending")}
+                                    type='button'
+                                    className=' cursor-pointer relative h-10 outline-none'>
+                                    <div className=' absolute left-0 top-0 z-10 text-white flex items-center justify-center w-full h-full'>Pending</div>
+                                    {UserOrdersTab === "pending" && <motion.div layoutId="orders" className=" z-0 rounded-lg bg-brand-primary/60 absolute top-0 w-full left-0 h-full" />}
+                                </button>
+                                <button
+                                    onClick={() => onToggleUserOrdersTab("cancelled")}
+                                    type='button'
+                                    className=' cursor-pointer relative h-10 outline-none'>
+                                    <div className=' absolute left-0 top-0 z-10 text-white flex items-center justify-center w-full h-full'>Cancelled</div>
+                                    {UserOrdersTab === "cancelled" && <motion.div layoutId="orders" className=" z-0 rounded-lg bg-brand-primary/60 absolute top-0 w-full left-0 h-full" />}
+                                </button>
+                            </motion.div>
+                            <List margin='my-0' className='mt-2'>
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                    <ListItem
+                                        key={i}
+                                        title={`Item ${i + 1}`}
+                                        link
+                                        chevron={false}
+                                        subtitle={`Quantity: 1`}
+                                        after={`₱${i + 1}`}
+                                        media={
+                                            <Image
+                                                src={`/images/catalog/${i + 1}.jpg`}
+                                                alt="test"
+                                                width={300}
+                                                height={300}
+                                                loading='lazy'
+                                                className='aspect-square h-10 w-10 rounded-xl ' />
+                                        } />
+                                ))}
+                            </List>
+                        </>
+                    )}
                 </Card>
             </Actions>
             {/* View Item */}
