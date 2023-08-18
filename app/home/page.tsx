@@ -11,6 +11,7 @@ import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai'
 import GcashLogo from '@/public/images/gcash.png'
 import { BiMoney } from 'react-icons/bi'
 import UserLogo from '@/public/user.png'
+import { useSession } from 'next-auth/react'
 const mainvariants: Variants = {
     initial: {
         opacity: 0
@@ -25,7 +26,8 @@ const mainvariants: Variants = {
 const categories = ['All', 'Coffee', 'Non Coffee', 'Cakes', 'Flappe/Blended', 'Teas', 'Snacks', 'Others']
 const sizes = ["Short", "Tall", "Grande", "Venti"]
 type User_Orders_Tab = "completed" | "pending" | "cancelled"
-export default function Test() {
+export default function Home() {
+    const { data: session, status } = useSession()
     const [tab, setTab] = useLocalstorageState<string>("home-tab", "All")
     const [UserOrdersTab, setUserUsersTab] = useLocalstorageState<User_Orders_Tab>("user-orders-tab", "completed")
     const onChangeTab = useCallback((data: string) => setTab(data), [setTab])
@@ -205,7 +207,9 @@ export default function Test() {
                     className=' rounded-b-none'>
                     <div className='flex items-center flex-col w-full justify-center py-4'>
                         <Image
-                            src={UserLogo}
+                            width={300}
+                            height={300}
+                            src={session?.user?.image ?? "/logo.png"}
                             alt='test'
                             className='rounded-full h-36 w-36' />
                         <div className='flex flex-col mt-3'>
