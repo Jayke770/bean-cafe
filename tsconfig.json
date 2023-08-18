@@ -22,7 +22,8 @@
     "paths": {
       "@/*": ["./*"],
       "@client_components/*": ["./components/Client/*"],
-      "@admin_components/*": ["./components/Admin/*"]
+      "@admin_components/*": ["./components/Admin/*"],
+      "@services/*": ["./services/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
