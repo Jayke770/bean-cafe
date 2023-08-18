@@ -1,5 +1,4 @@
 "use client"
-import { memo } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -10,6 +9,7 @@ import CupsImage from '@/public/images/onboarding/cups.png'
 import { Button } from 'konsta/react'
 import { motion, Variants } from 'framer-motion'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 const variants: Variants = {
   initial: {
     opacity: 0,
@@ -24,7 +24,8 @@ const variants: Variants = {
     scale: 1.1
   }
 }
-const Onboarding = () => {
+export default function Index() {
+  const { data, status} = useSession()
   return (
     <main className='h-full w-full left-0 top-0 overflow-auto absolute bg-brand-primary dark:bg-black'>
       <motion.div
@@ -92,4 +93,3 @@ const Onboarding = () => {
     </main>
   )
 }
-export default memo(Onboarding)

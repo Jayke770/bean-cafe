@@ -1,21 +1,31 @@
-"use client"
 import "@/styles/globals.css"
-import { Inter } from 'next/font/google'
 import LayoutMain from "@/components/Layout"
-const inter = Inter({ subsets: ['latin'] })
+import NextAuthSessionProvider from "./NextAuthProvider"
+import { Metadata } from "next"
+export const metadata: Metadata = {
+  title: "Bean Cafe",
+  manifest: "/manifest.json",
+  themeColor: "#cc9c68",
+  icons: [
+    {
+      rel: 'apple-touch-icon',
+      url: '/logo.png',
+    },
+    {
+      rel: 'icon',
+      url: '/logo.png',
+    },
+  ]
+};
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className=" scroll-smooth">
-      <head key={"index"}>
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/logo.png" />
-        <link rel="apple-touch-icon" href="/logo.png" />
-        <meta name="theme-color" content="#cc9c68" />
-      </head>
       <body>
-        <LayoutMain>
-          {children}
-        </LayoutMain>
+        <NextAuthSessionProvider>
+          <LayoutMain>
+            {children}
+          </LayoutMain>
+        </NextAuthSessionProvider>
       </body>
     </html>
   )
