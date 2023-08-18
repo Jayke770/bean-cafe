@@ -243,7 +243,7 @@ export default function Home() {
                                     alt='test'
                                     className='rounded-full h-36 w-36' />
                                 <div className='flex flex-col mt-3'>
-                                    <span className='text-xl font-bold text-brand-primary'>Jhon Doe</span>
+                                    <span className='text-xl font-bold text-brand-primary'>{session?.user?.name}</span>
                                 </div>
                             </div>
                             <motion.div
