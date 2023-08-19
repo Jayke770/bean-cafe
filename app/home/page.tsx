@@ -57,7 +57,7 @@ export default function Home() {
                 animate={"animate"}
                 exit={"exit"}
                 transition={{ type: "spring", duration: 0.5, delay: 0.2 }}
-                className='h-full w-full left-0 top-0 overflow-auto absolute bg-brand-white dark:bg-brand-secondary/20 pb-5-safe'>
+                className='h-full w-full left-0 top-0 overflow-auto absolute bg-brand-white dark:bg-black pb-5-safe'>
                 <Navbar
                     component='nav'
                     medium
@@ -90,8 +90,8 @@ export default function Home() {
                 <div className='px-4 pb-4'>
                     <h1 className='dark:text-zinc-400 font-bold '>Best coffee for you</h1>
                 </div>
-                <div className='p-4'>
-                    <section className='w-full z-10 bg-brand-white translucent dark:bg-black whitespace-nowrap snap-proximity gap-2 overflow-auto py-3 sticky top-16 '>
+                <div className='w-full'>
+                    <section className='w-full z-10 px-4 translucent dark:bg-black whitespace-nowrap snap-proximity gap-2 overflow-auto py-3 sticky top-16 '>
                         {categories.map(category => (
                             <Button
                                 key={category}
@@ -103,7 +103,7 @@ export default function Home() {
                             </Button>
                         ))}
                     </section>
-                    <section className='grid gap-2.5 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 mt-5'>
+                    <section className='grid px-4 gap-2.5 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 mt-5'>
                         {Array.from({ length: 10 }).map((_, i) => (
                             <motion.div
                                 onClick={onToggleItem}
