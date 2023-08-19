@@ -57,7 +57,7 @@ export default function Home() {
                 animate={"animate"}
                 exit={"exit"}
                 transition={{ ease: "easeInOut", duration: 0.5, delay: 0.2 }}
-                className='h-full z-10  w-full left-0 top-0 overflow-auto absolute bg-brand-white dark:bg-black pb-5-safe'>
+                className='h-full z-10  w-full left-0 top-0 overflow-auto absolute bg-brand-white dark:bg-brand-secondary/20 pb-5-safe'>
                 <Navbar
                     component='nav'
                     medium
@@ -91,7 +91,7 @@ export default function Home() {
                     <h1 className='dark:text-zinc-400 font-bold '>Best coffee for you</h1>
                 </div>
                 <div className='w-full'>
-                    <section className='w-full z-10 px-3 translucent bg-brand-white dark:bg-black whitespace-nowrap snap-proximity gap-2 overflow-auto py-3 sticky top-16 '>
+                    <section className='w-full z-10 px-3 bg-brand-white dark:bg-transparent whitespace-nowrap snap-proximity gap-2 overflow-auto py-3'>
                         {categories.map(category => (
                             <Button
                                 key={category}
