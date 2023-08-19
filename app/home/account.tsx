@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import { useLocalstorageState } from 'rooks'
 import { useCallback } from 'react'
 import { FcGoogle } from 'react-icons/fc'
-import { signIn } from 'next-auth/react'
+import { signIn, signOut } from 'next-auth/react'
 interface Props {
     viewAccount: boolean,
     onToggleAccount: () => void,
@@ -135,26 +135,34 @@ export default function Account({
                                 {UserOrdersTab === "cancelled" && <motion.div layoutId="orders" className=" z-0 rounded-lg bg-brand-primary/60 absolute top-0 w-full left-0 h-full" />}
                             </button>
                         </motion.div>
-                        <List margin='my-0' className='mt-2'>
-                            {Array.from({ length: 5 }).map((_, i) => (
-                                <ListItem
-                                    key={i}
-                                    title={`Item ${i + 1}`}
-                                    link
-                                    chevron={false}
-                                    subtitle={`Quantity: 1`}
-                                    after={`₱${i + 1}`}
-                                    media={
-                                        <Image
-                                            src={`/images/catalog/${i + 1}.jpg`}
-                                            alt="test"
-                                            width={300}
-                                            height={300}
-                                            loading='lazy'
-                                            className='aspect-square h-10 w-10 rounded-xl ' />
-                                    } />
-                            ))}
-                        </List>
+                        <div className='max-h-96 overflow-auto'>
+                            <List margin='my-0' className='mt-2'>
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                    <ListItem
+                                        key={i}
+                                        title={`Item ${i + 1}`}
+                                        link
+                                        chevron={false}
+                                        subtitle={`Quantity: 1`}
+                                        after={`₱${i + 1}`}
+                                        media={
+                                            <Image
+                                                src={`/images/catalog/${i + 1}.jpg`}
+                                                alt="test"
+                                                width={300}
+                                                height={300}
+                                                loading='lazy'
+                                                className='aspect-square h-10 w-10 rounded-xl ' />
+                                        } />
+                                ))}
+                            </List>
+                        </div>
+                        <div className='mt-2 px-3.5'>
+                            <Button
+                                onClick={() => signOut()}
+                                small
+                                className=' k-color-brand-green'>Sign out</Button>
+                        </div>
                     </>
                 )}
             </Card>

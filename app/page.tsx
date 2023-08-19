@@ -26,7 +26,7 @@ const variants: Variants = {
 }
 export default function Index() {
   return (
-    <main className='h-full w-full left-0 top-0 overflow-auto absolute bg-brand-primary dark:bg-black'>
+    <main className='h-full w-full left-0 top-0 overflow-auto absolute bg-brand-primary dark:bg-brand-secondary/20'>
       <motion.div
         variants={variants}
         initial={"initial"}

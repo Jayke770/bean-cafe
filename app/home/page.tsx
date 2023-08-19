@@ -57,7 +57,7 @@ export default function Home() {
                 animate={"animate"}
                 exit={"exit"}
                 transition={{ type: "spring", duration: 0.5, delay: 0.2 }}
-                className='h-full w-full left-0 top-0 overflow-auto absolute bg-brand-white dark:bg-black pb-5-safe'>
+                className='h-full w-full left-0 top-0 overflow-auto absolute bg-brand-white dark:bg-brand-secondary/20 pb-5-safe'>
                 <Navbar
                     component='nav'
                     medium
@@ -136,7 +136,7 @@ export default function Home() {
                 onToggleAccount={onToggleAccount}
                 session={session}
                 status={status}
-                viewAccount={viewAccount}  />
+                viewAccount={viewAccount} />
             {/* Cart */}
             <Actions
                 opened={viewCart}

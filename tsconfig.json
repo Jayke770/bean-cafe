@@ -23,7 +23,9 @@
       "@/*": ["./*"],
       "@client_components/*": ["./components/Client/*"],
       "@admin_components/*": ["./components/Admin/*"],
-      "@services/*": ["./services/*"]
+      "@services/*": ["./services/*"],
+      "@models/*": ["./models/*"],
+      "@types/*": ["./types/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
