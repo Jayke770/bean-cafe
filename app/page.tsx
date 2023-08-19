@@ -25,7 +25,6 @@ const variants: Variants = {
   }
 }
 export default function Index() {
-  const { data, status} = useSession()
   return (
     <main className='h-full w-full left-0 top-0 overflow-auto absolute bg-brand-primary dark:bg-black'>
       <motion.div

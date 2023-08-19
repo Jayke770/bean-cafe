@@ -25,6 +25,7 @@ import GcashLogo from '@/public/images/gcash.png'
 import { BiMoney } from 'react-icons/bi'
 import NextLink from 'next/link'
 import { useSession } from 'next-auth/react'
+import Account from './account'
 const mainvariants: Variants = {
     initial: {
         opacity: 0
@@ -38,11 +39,9 @@ const mainvariants: Variants = {
 }
 const categories = ['All', 'Coffee', 'Non Coffee', 'Cakes', 'Flappe/Blended', 'Teas', 'Snacks', 'Others']
 const sizes = ["Short", "Tall", "Grande", "Venti"]
-type User_Orders_Tab = "completed" | "pending" | "cancelled"
 export default function Home() {
     const { data: session, status } = useSession()
     const [tab, setTab] = useLocalstorageState<string>("home-tab", "All")
-    const [UserOrdersTab, setUserUsersTab] = useLocalstorageState<User_Orders_Tab>("user-orders-tab", "completed")
     const onChangeTab = useCallback((data: string) => setTab(data), [setTab])
     const [viewCart, setViewCart] = useState<boolean>(false)
     const [viewAccount, setViewAccount] = useState<boolean>(false)
@@ -50,7 +49,6 @@ export default function Home() {
     const onToggleCart = useCallback(() => setViewCart(e => !e), [setViewCart])
     const onToggleAccount = useCallback(() => setViewAccount(e => !e), [setViewAccount])
     const onToggleItem = useCallback(() => setViewItem(e => !e), [setViewItem])
-    const onToggleUserOrdersTab = useCallback((data: User_Orders_Tab) => setUserUsersTab(data), [setUserUsersTab])
     return (
         <>
             <motion.main
@@ -82,7 +80,7 @@ export default function Home() {
                                 navbar
                                 iconOnly
                                 className=' k-color-brand-primary'>
-                                <Icon>
+                                <Icon badge={status === "unauthenticated" ? "" : null}>
                                     <IoPersonCircleSharp className='h-7 w-7' />
                                 </Icon>
                             </Link>
@@ -134,6 +132,11 @@ export default function Home() {
                     </section>
                 </div>
             </motion.main>
+            <Account
+                onToggleAccount={onToggleAccount}
+                session={session}
+                status={status}
+                viewAccount={viewAccount}  />
             {/* Cart */}
             <Actions
                 opened={viewCart}
@@ -210,90 +213,6 @@ export default function Home() {
                     </div>
                 </Card>
             </Actions>
-            {/* Account */}
-            <Actions
-                opened={viewAccount}
-                onBackdropClick={onToggleAccount}
-                className=' k-color-brand-primary'>
-                <Card
-                    margin='m-0'
-                    className=' rounded-b-none'>
-                    {status === "loading" && (
-                        <div className='flex w-full justify-center items-center'>
-                            <Preloader />
-                        </div>
-                    )}
-                    {status === "unauthenticated" && (
-                        <div className='flex flex-col w-full gap-3'>
-                            <span className='font-bold text-lg text-brand-primary'>Get Started</span>
-                            <NextLink href={"/api/auth/signin"} className=' w-full'>
-                                <Button>
-                                    Sign in
-                                </Button>
-                            </NextLink>
-                        </div>
-                    )}
-                    {status === "authenticated" && (
-                        <>
-                            <div className='flex items-center flex-col w-full justify-center py-4'>
-                                <Image
-                                    width={300}
-                                    height={300}
-                                    src={session?.user?.image ?? "/logo.png"}
-                                    alt='test'
-                                    className='rounded-full h-36 w-36' />
-                                <div className='flex flex-col mt-3'>
-                                    <span className='text-xl font-bold text-brand-primary'>{session?.user?.name}</span>
-                                </div>
-                            </div>
-                            <motion.div
-                                className=' w-full grid grid-cols-3 p-1 gap-2 bg-brand-secondary shadow rounded-xl'>
-                                <button
-                                    onClick={() => onToggleUserOrdersTab("completed")}
-                                    type='button'
-                                    className=' cursor-pointer relative h-10 outline-none'>
-                                    <div className=' absolute left-0 top-0 z-10 text-white flex items-center justify-center w-full h-full'>Completed</div>
-                                    {UserOrdersTab === "completed" && <motion.div layoutId="orders" className=" z-0 rounded-lg bg-brand-primary/60 absolute top-0 w-full left-0 h-full" />}
-                                </button>
-                                <button
-                                    onClick={() => onToggleUserOrdersTab("pending")}
-                                    type='button'
-                                    className=' cursor-pointer relative h-10 outline-none'>
-                                    <div className=' absolute left-0 top-0 z-10 text-white flex items-center justify-center w-full h-full'>Pending</div>
-                                    {UserOrdersTab === "pending" && <motion.div layoutId="orders" className=" z-0 rounded-lg bg-brand-primary/60 absolute top-0 w-full left-0 h-full" />}
-                                </button>
-                                <button
-                                    onClick={() => onToggleUserOrdersTab("cancelled")}
-                                    type='button'
-                                    className=' cursor-pointer relative h-10 outline-none'>
-                                    <div className=' absolute left-0 top-0 z-10 text-white flex items-center justify-center w-full h-full'>Cancelled</div>
-                                    {UserOrdersTab === "cancelled" && <motion.div layoutId="orders" className=" z-0 rounded-lg bg-brand-primary/60 absolute top-0 w-full left-0 h-full" />}
-                                </button>
-                            </motion.div>
-                            <List margin='my-0' className='mt-2'>
-                                {Array.from({ length: 5 }).map((_, i) => (
-                                    <ListItem
-                                        key={i}
-                                        title={`Item ${i + 1}`}
-                                        link
-                                        chevron={false}
-                                        subtitle={`Quantity: 1`}
-                                        after={`₱${i + 1}`}
-                                        media={
-                                            <Image
-                                                src={`/images/catalog/${i + 1}.jpg`}
-                                                alt="test"
-                                                width={300}
-                                                height={300}
-                                                loading='lazy'
-                                                className='aspect-square h-10 w-10 rounded-xl ' />
-                                        } />
-                                ))}
-                            </List>
-                        </>
-                    )}
-                </Card>
-            </Actions>
             {/* View Item */}
             <Actions
                 opened={viewItem}
@@ -306,7 +225,7 @@ export default function Home() {
                         <div className='flex justify-between items-center'>
                             <div className='flex flex-col'>
                                 <span className='font-bold text-xl'>Item 1</span>
-                                <span className='text-sm text-zinc-300'>Item Description</span>
+                                <span className='text-sm'>Item Description</span>
                             </div>
                             <div className='flex justify-end items-center'>
                                 <span className=' text-brand-primary font-bold text-lg'>₱100</span>
@@ -314,7 +233,7 @@ export default function Home() {
                         </div>
                         <List margin='my-0' className='mt-5'>
                             <ListGroup>
-                                <span className=' px-3 text-zinc-300'>Select Size</span>
+                                <span className=' px-3'>Select Size</span>
                                 <div className='grid grid-cols-2 gap-2'>
                                     {sizes.map((size, i) => (
                                         <ListItem

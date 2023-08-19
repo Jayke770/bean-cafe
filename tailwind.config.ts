@@ -2,6 +2,7 @@ const konstaConfig = require("konsta/config");
 module.exports = konstaConfig({
   konsta: {
     colors: {
+      "brand-white": "#fff",
       "brand-green": "#027c43",
       "brand-primary": "#cc9c68",
       "brand-secondary": "#372e1c",
@@ -12,7 +13,7 @@ module.exports = konstaConfig({
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: "media",
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
