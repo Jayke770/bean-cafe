@@ -91,7 +91,7 @@ export default function Home() {
                     <h1 className='dark:text-zinc-400 font-bold '>Best coffee for you</h1>
                 </div>
                 <div className='w-full'>
-                    <section className='w-full z-10 px-3 translucent dark:bg-black whitespace-nowrap snap-proximity gap-2 overflow-auto py-3 sticky top-16 '>
+                    <section className='w-full z-10 px-3 translucent bg-brand-white dark:bg-black whitespace-nowrap snap-proximity gap-2 overflow-auto py-3 sticky top-16 '>
                         {categories.map(category => (
                             <Button
                                 key={category}

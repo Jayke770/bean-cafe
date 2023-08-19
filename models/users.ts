@@ -1,4 +1,4 @@
-import type { UserModel } from "@/types";
+import { UserModel } from "@/types";
 import { Schema, models, deleteModel, model } from "mongoose";
 const Users = new Schema<UserModel>({
   address: { type: String, default: undefined },
@@ -9,6 +9,7 @@ const Users = new Schema<UserModel>({
   name: { type: String },
   paypal_email: { type: String },
   phone_number: { type: String },
+  role: { type: String, default: "user" },
   orders: [],
 });
 if (models["users"] != null) {
