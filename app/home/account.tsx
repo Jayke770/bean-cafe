@@ -1,12 +1,12 @@
 "use client"
 import type { Session } from 'next-auth'
-import { Actions, Preloader, Button, Card, List, ListItem, ListInput } from 'konsta/react'
-import NextLink from 'next/link'
+import { Actions, Preloader, Button, Card, List, ListItem } from 'konsta/react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { useLocalstorageState } from 'rooks'
 import { useCallback } from 'react'
 import { FcGoogle } from 'react-icons/fc'
+import { signIn } from 'next-auth/react'
 interface Props {
     viewAccount: boolean,
     onToggleAccount: () => void,
@@ -24,7 +24,7 @@ export default function Account({
     const onToggleUserOrdersTab = useCallback((data: User_Orders_Tab) => setUserUsersTab(data), [setUserUsersTab])
     return (
         <Actions
-            opened
+            opened={viewAccount}
             onBackdropClick={onToggleAccount}
             className=' k-color-brand-primary'>
             <Card
@@ -39,6 +39,7 @@ export default function Account({
                     <div className='flex flex-col w-full gap-2 px-2'>
                         <span className='font-bold text-xl text-brand-primary pb-3'>Get started</span>
                         <Button
+                            onClick={() => signIn("google", { callbackUrl: "/home" })}
                             clear
                             outline
                             className=' k-color-brand-white'>
@@ -111,26 +112,26 @@ export default function Account({
                             </div>
                         </div>
                         <motion.div
-                            className=' w-full grid grid-cols-3 p-1 gap-2 bg-brand-secondary shadow rounded-xl'>
+                            className=' w-full grid grid-cols-3 p-1 gap-2  dark:bg-brand-secondary shadow rounded-xl'>
                             <button
                                 onClick={() => onToggleUserOrdersTab("completed")}
                                 type='button'
                                 className=' cursor-pointer relative h-10 outline-none'>
-                                <div className=' absolute left-0 top-0 z-10 text-white flex items-center justify-center w-full h-full'>Completed</div>
+                                <div className=' absolute left-0 top-0 z-10 text-black dark:text-white flex items-center justify-center w-full h-full'>Completed</div>
                                 {UserOrdersTab === "completed" && <motion.div layoutId="orders" className=" z-0 rounded-lg bg-brand-primary/60 absolute top-0 w-full left-0 h-full" />}
                             </button>
                             <button
                                 onClick={() => onToggleUserOrdersTab("pending")}
                                 type='button'
                                 className=' cursor-pointer relative h-10 outline-none'>
-                                <div className=' absolute left-0 top-0 z-10 text-white flex items-center justify-center w-full h-full'>Pending</div>
+                                <div className=' absolute left-0 top-0 z-10 text-black dark:text-white flex items-center justify-center w-full h-full'>Pending</div>
                                 {UserOrdersTab === "pending" && <motion.div layoutId="orders" className=" z-0 rounded-lg bg-brand-primary/60 absolute top-0 w-full left-0 h-full" />}
                             </button>
                             <button
                                 onClick={() => onToggleUserOrdersTab("cancelled")}
                                 type='button'
                                 className=' cursor-pointer relative h-10 outline-none'>
-                                <div className=' absolute left-0 top-0 z-10 text-white flex items-center justify-center w-full h-full'>Cancelled</div>
+                                <div className=' absolute left-0 top-0 z-10 text-black dark:text-white flex items-center justify-center w-full h-full'>Cancelled</div>
                                 {UserOrdersTab === "cancelled" && <motion.div layoutId="orders" className=" z-0 rounded-lg bg-brand-primary/60 absolute top-0 w-full left-0 h-full" />}
                             </button>
                         </motion.div>
