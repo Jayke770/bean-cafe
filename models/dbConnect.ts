@@ -11,14 +11,14 @@ if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 async function dbConnect() {
+  const opts = {
+    bufferCommands: false,
+  };
   if (NODE_ENV !== "production") {
     if (cached.conn) {
       return cached.conn;
     }
     if (!cached.promise) {
-      const opts = {
-        bufferCommands: false,
-      };
       cached.promise = await mongoose.connect(MONGODB_URI, opts);
     }
     try {
