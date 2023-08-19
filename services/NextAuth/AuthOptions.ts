@@ -16,7 +16,7 @@ export const AuthOptions: NextAuthOptions = {
   adapter: MongoDBAdapter(NextAuthMongodbAdapter),
   secret: NEXTAUTH_SECRET,
   session: {
-    strategy: "jwt",
+    strategy: "database",
     maxAge: 15 * 24 * 60 * 60,
     updateAge: 24 * 60 * 60,
   },
