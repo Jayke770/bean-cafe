@@ -10,6 +10,7 @@ const Users = new Schema<UserModel>({
   paypal_email: { type: String },
   phone_number: { type: String },
   role: { type: String, default: "user" },
+  status: { type: String, default: "new" },
   orders: [],
 });
 if (models["users"] != null) {

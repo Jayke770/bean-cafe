@@ -17,3 +17,8 @@
 #onboarding .swiper-pagination-bullet.swiper-pagination-bullet-active {
   @apply bg-brand-secondary;
 }
+
+/* skeleteon */
+.react-loading-skeleton {
+  @apply ![--base-color:#eee7e1] ![--highlight-color:#cc9c68] dark:![--highlight-color:#cc9c68] dark:![--base-color:#372e1c]
+}

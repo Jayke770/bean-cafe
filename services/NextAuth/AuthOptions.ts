@@ -28,9 +28,10 @@ export const AuthOptions: NextAuthOptions = {
         await dbConnect();
         const Userdata = await Users.findOne(
           { _id: { $eq: session.user.id } },
-          { role: 1, _id: 0 }
+          { role: 1, _id: 0, status: 1 }
         );
         session.user.role = Userdata?.role ?? "user";
+        session.user.status = Userdata?.status ?? "new";
       }
       return session;
     },

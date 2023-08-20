@@ -1,6 +1,7 @@
 type UserOrderStatus = "pending" | "completed" | "cancelled" | "denied";
 type PaymentMethod = "gcash" | "paypal" | "cash";
 type UserRole = "admin" | "user";
+type UserStatus = "new" | "old";
 interface UserOrderItem {
   id: string;
   product_id: string;
@@ -28,5 +29,6 @@ export interface UserModel {
   orders: UserOrders[];
   paypal_email?: string;
   role: UserRole;
+  status: UserStatus;
   created: number;
 }

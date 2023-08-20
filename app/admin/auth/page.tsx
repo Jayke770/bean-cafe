@@ -1,7 +1,13 @@
-export default function Admin() {
+import Card from './card'
+import { getServerSession } from 'next-auth'
+import { AuthOptions } from '@services/NextAuth/AuthOptions'
+import { redirect } from 'next/navigation'
+export default async function AdminAuth() {
+    const session = await getServerSession(AuthOptions)
+    if (session?.user?.role === "admin") redirect("/admin/dashboard")
     return (
-        <main className='h-full z-10  w-full left-0 top-0 overflow-auto absolute bg-brand-white dark:bg-black pb-5-safe'>
-
-        </main>
+        <>
+            <Card />
+        </>
     )
 }

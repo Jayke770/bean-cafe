@@ -37,7 +37,7 @@ export default function Account({
                 )}
                 {status === "unauthenticated" && (
                     <div className='flex flex-col w-full gap-2 px-2'>
-                        <span className='font-bold text-xl text-brand-primary pb-3'>Get started</span>
+                        <span className='font-bold text-xl text-brand-primary pb-3'>Get Started</span>
                         <Button
                             onClick={() => signIn("google", { callbackUrl: "/home" })}
                             clear
