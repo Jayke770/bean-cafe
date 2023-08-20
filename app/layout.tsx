@@ -1,5 +1,5 @@
 import "@/styles/globals.css"
-import LayoutMain from "@/components/Layout"
+import LayoutMain from "@/app/KonstaProvider"
 import NextAuthSessionProvider from "./NextAuthProvider"
 import { Metadata } from "next"
 export const metadata: Metadata = {
