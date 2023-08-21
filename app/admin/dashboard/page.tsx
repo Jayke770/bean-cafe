@@ -1,10 +1,8 @@
 "use client"
-import NavbarAdmin from "./navbar";
 import Cards from "./cards";
 import Orders from "./orders";
 import Charts from './charts'
 import { BiSolidCoffeeBean } from 'react-icons/bi'
-import NextLink from 'next/link'
 import { useCallback, useState } from "react";
 import { Navbar, Link, Icon } from 'konsta/react'
 import { HiBars3BottomRight, HiOutlineBell } from 'react-icons/hi2'
