@@ -15,11 +15,9 @@ export default function DashBoard() {
         <>
             <nav className={`${openSideNav ? "block" : "hidden"} transition-all fixed lg:block w-18 bg-md-light-surface-2 dark:bg-md-dark-surface-2 k-color-brand-primary h-full`}>
                 <div className="flex flex-col gap-2">
-                    <NextLink
-                        href="/admin/dashboard"
-                        className="flex justify-center items-center h-16 w-full outline-none cursor-pointer border-b border-brand-primary/30 ">
+                    <div className="flex justify-center items-center h-16 w-full outline-none cursor-pointer border-b border-brand-primary/30 ">
                         <BiSolidCoffeeBean className=" w-7 h-7 text-brand-primary" />
-                    </NextLink>
+                    </div>
                 </div>
             </nav>
             <div className={`${openSideNav ? "ml-18" : "ml-0"} lg:ml-18 transition-all flex flex-col gap-4`}>
