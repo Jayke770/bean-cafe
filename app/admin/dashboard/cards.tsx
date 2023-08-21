@@ -1,9 +1,9 @@
 "use client"
 import { Card } from "konsta/react"
-import { BiFoodMenu, BiCart , BiUser} from "react-icons/bi"
+import { BiFoodMenu, BiCart, BiUser } from "react-icons/bi"
 export default function Cards() {
     return (
-        <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4">
+        <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 px-4">
             <Card
                 margin="m-0"
                 className=" k-color-brand-primary !rounded-md ">
