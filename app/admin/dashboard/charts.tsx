@@ -25,7 +25,7 @@ ChartJS.register(
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', "Aug", "Sept", "Oct", "nov", "Dec"]
 export default function Charts() {
     return (
-        <div className='grid lg:grid-cols-2 gap-2 px-4'>
+        <div className='grid lg:grid-cols-2 xl:grid-cols-3 gap-2 px-4'>
             <Card
                 margin='m-0'
                 className=' k-color-brand-primary'>
@@ -35,7 +35,6 @@ export default function Charts() {
                     </div>
                     <div className='w-full h-full'>
                         <Line
-                            height={100}
                             options={{
                                 responsive: true,
                                 plugins: {
@@ -67,9 +66,7 @@ export default function Charts() {
                     </div>
                     <div className='w-full h-full'>
                         <Bar
-                            height={100}
                             options={{
-                                responsive: true,
                                 plugins: {
                                     legend: {
                                         display: false
@@ -83,6 +80,37 @@ export default function Charts() {
                                         label: 'Income',
                                         data: months.map(() => faker.number.int({ min: 0, max: 10000 })),
                                         backgroundColor: "#cc9c68"
+                                    }
+                                ]
+                            }} />
+                    </div>
+                </div>
+            </Card>
+            <Card
+                margin='m-0'
+                className=' k-color-brand-primary'>
+                <div className='flex flex-col gap-2.5'>
+                    <div className='flex justify-between items-baseline'>
+                        <div className='text-lg font-medium'>New Clients</div>
+                    </div>
+                    <div className='w-full h-full'>
+                        <Line
+                            options={{
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    }
+                                },
+                            }}
+                            data={{
+                                labels: months,
+                                datasets: [
+                                    {
+                                        label: 'Clients',
+                                        data: months.map(() => faker.number.int({ min: 0, max: 10000 })),
+                                        borderColor: '#cc9c68',
+                                        backgroundColor: "#372e1c"
                                     }
                                 ]
                             }} />
