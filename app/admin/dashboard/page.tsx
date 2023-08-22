@@ -2,43 +2,31 @@
 import Cards from "./cards";
 import Orders from "./orders";
 import Charts from './charts'
-import { BiSolidCoffeeBean } from 'react-icons/bi'
 import { useCallback, useState } from "react";
-import { Navbar, Link, Icon } from 'konsta/react'
-import { HiBars3BottomRight, HiOutlineBell } from 'react-icons/hi2'
+import { HiXMark } from 'react-icons/hi2'
+import { Navbar, Link, Icon, Panel, Page } from 'konsta/react'
 export default function DashBoard() {
     const [openSideNav, setOpenSideNav] = useState<boolean>()
     const onToggleSideNav = useCallback(() => setOpenSideNav(e => !e), [setOpenSideNav])
     return (
         <>
-            <nav className={`${openSideNav ? "block" : "hidden"} transition-all fixed lg:block w-18 bg-md-light-surface-2 dark:bg-md-dark-surface-2 k-color-brand-primary h-full`}>
-                <div className="flex flex-col gap-2">
-                    <div className="flex justify-center items-center h-16 w-full outline-none cursor-pointer border-b border-brand-primary/30 ">
-                        <BiSolidCoffeeBean className=" w-7 h-7 text-brand-primary" />
-                    </div>
-                </div>
-            </nav>
-            <div className={`${openSideNav ? "ml-18" : "ml-0"} lg:ml-18 transition-all flex flex-col gap-4`}>
-                <Navbar
-                    titleClassName='!font-bold'
-                    title='Dashboard'
-                    className=' k-color-brand-primary'
-                    left={
-                        <Link onClick={onToggleSideNav} navbar iconOnly className=' lg:hidden'>
-                            <Icon>
-                                <HiBars3BottomRight className='h-6 w-6' />
-                            </Icon>
-                        </Link>
-                    }
-                    right={
-                        <>
-                            <Link navbar iconOnly>
-                                <Icon badge="">
-                                    <HiOutlineBell className='h-6 w-6' />
+            <Panel
+                opened={openSideNav}
+                onBackdropClick={onToggleSideNav}
+                floating>
+                <Page className=" k-color-brand-primary">
+                    <Navbar
+                        title="Menu"
+                        right={
+                            <Link onClick={onToggleSideNav} iconOnly navbar className=" k-color-brand-red">
+                                <Icon>
+                                    <HiXMark className=" h-5 w-5 text-red-500" />
                                 </Icon>
                             </Link>
-                        </>
-                    } />
+                        } />
+                </Page>
+            </Panel>
+            <div className="transition-all flex flex-col gap-4 mt-4">
                 <Cards />
                 <Charts />
                 <Orders />

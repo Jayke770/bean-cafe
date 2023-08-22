@@ -32,6 +32,10 @@ export const AuthOptions: NextAuthOptions = {
         );
         session.user.role = Userdata?.role ?? "user";
         session.user.status = Userdata?.status ?? "new";
+        await Users.updateOne(
+          { _id: { $eq: session.user.id } },
+          { $set: { status: "old" } }
+        );
       }
       return session;
     },

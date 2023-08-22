@@ -6,8 +6,8 @@ import { FaCircleXmark, FaCircleCheck } from 'react-icons/fa6'
 import { Popover } from 'konsta/react'
 import { useCallback, useState } from 'react'
 export default function Orders() {
-  const [openAction, setOpenAction] = useState<boolean>(false)
-  const onToggleAction = useCallback(() => setOpenAction(e => !e), [setOpenAction])
+  const [openAction, setOpenAction] = useState<{ open?: boolean, target?: string }>()
+  const onToggleAction = useCallback((target: string) => setOpenAction(e => ({ ...e, open: !e?.open, target: target })), [setOpenAction])
   return (
     <>
       <div className="flex flex-col px-4">
@@ -32,7 +32,7 @@ export default function Orders() {
                 </div>
               </div>
               <div className="overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <table className="min-w-full divide-y divide-brand-primary/20 dark:divide-brand-secondary">
                   <thead className=" k-color-brand-primary bg-md-light-surface-1 dark:bg-md-dark-surface-1">
                     <tr>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">No.</th>
@@ -44,7 +44,7 @@ export default function Orders() {
                       <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  <tbody className="divide-y divide-brand-primary/20 dark:divide-brand-secondary">
                     {Array.from({ length: 20 }).map((_, i) => (
                       <tr key={i}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">{i + 1}</td>
@@ -53,16 +53,16 @@ export default function Orders() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{faker.location.streetAddress()}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{faker.word.words()}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">₱ {faker.string.numeric({ length: { max: 5, min: 1 } })}</td>
-                        <th className='flex h-full w-full items-center justify-end pr-6 pl-5 py-4 '>
+                        <td className='flex h-full w-full items-center justify-end pr-6 pl-5 py-4 '>
                           <Button
-                            onClick={onToggleAction}
+                            onClick={() => onToggleAction(`.order-action-${i}`)}
                             clear
                             outline
                             small
-                            className='order-action !w-auto k-color-brand-primary !px-2'>
+                            className={`order-action-${i} !w-auto k-color-brand-primary !px-2`}>
                             <BsThreeDots className=' h-5 w-5' />
                           </Button>
-                        </th>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -73,9 +73,9 @@ export default function Orders() {
         </div>
       </div>
       <Popover
-        opened={openAction}
+        opened={openAction?.open}
         onBackdropClick={onToggleAction}
-        target={".order-action"}
+        target={openAction?.target}
         className=' k-color-brand-primary'>
         <List nested>
           <ListItem
