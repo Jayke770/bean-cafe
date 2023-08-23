@@ -1,15 +1,25 @@
 "use client"
-import { Button, Fab } from 'konsta/react'
+import { Button, Fab, Navbar, Page, Popup, Link, Icon } from 'konsta/react'
 import { BsThreeDots } from 'react-icons/bs'
-import {  Checkbox } from 'konsta/react'
+import { Checkbox } from 'konsta/react'
 import { MdAdd } from 'react-icons/md';
+import { useCallback, useState } from 'react';
+import { HiXMark } from 'react-icons/hi2'
+import AddItem from './additem';
+interface NewItem {
+    opened?: boolean
+}
 export default function Orders() {
+    const [openNewItem, setOpenNewItem] = useState<boolean>()
+    const onToggleNewItem = useCallback(() => setOpenNewItem(e => !e), [setOpenNewItem])
     return (
         <>
             <Fab
+                onClick={onToggleNewItem}
                 icon={<MdAdd />}
                 text="New Item"
                 className=' fixed bottom-5 right-4 k-color-brand-primary' />
+            <AddItem opened={openNewItem} onToggleNewItem={onToggleNewItem} />
             <div className='p-4'>
                 <div className="flex flex-col">
                     <div className="-m-1.5 overflow-x-auto">
