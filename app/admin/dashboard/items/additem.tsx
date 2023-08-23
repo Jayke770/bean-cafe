@@ -82,7 +82,7 @@ export default function AddItem({ onToggleNewItem, opened }: { opened?: boolean,
                             </div>
                         </div>
                     </div>
-                    <div className="w-full absolute inset-x-0 bottom-0 p-4">
+                    <div className="w-full absolute inset-x-0 bottom-0 p-4 translucent ">
                         <Button
                             className=" k-color-brand-primary">Add Item</Button>
                     </div>
