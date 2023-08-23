@@ -42,6 +42,7 @@ const UserSchema = z.object({
   status: UserStatus,
   created: z.number(),
 });
+export type UserRole = z.infer<typeof UserRole>;
 export type UserModel = z.infer<typeof UserSchema>;
 //add ons
 const AddOnCategory = z.union([z.literal("coffee"), z.literal("burger")]);
