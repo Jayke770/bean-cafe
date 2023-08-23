@@ -39,7 +39,7 @@ export default function AddItem({ onToggleNewItem, opened }: { opened?: boolean,
                                 name="price"
                                 type="number"
                                 inputMode="numeric"
-                                placeholder="e.g. Coffee" />
+                                placeholder="e.g. 10" />
                             <div className="flex flex-col gap-2">
                                 <span className="block text-sm font-medium">Size</span>
                                 <div className="flex gap-2">
