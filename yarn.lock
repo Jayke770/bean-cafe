@@ -3037,10 +3037,10 @@ kareem@2.5.1:
   resolved "https://registry.yarnpkg.com/kareem/-/kareem-2.5.1.tgz#7b8203e11819a8e77a34b3517d3ead206764d15d"
   integrity sha512-7jFxRVm+jD+rkq3kY0iZDJfsO2/t4BBPeEb2qKn2lR/9KhuksYk5hxzfRYWMPV8P/x2d0kHD306YyWLzjjH+uA==
 
-konsta@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/konsta/-/konsta-3.0.0.tgz#90687c4b2f85801b0723cc1bfef7db7f841401ac"
-  integrity sha512-8dKlZmEuZAoUGyT+PyXRjx1Hqmwy1pqtrnx6seoND6JQuSZncvoKaoZPDOk5ODvet2GYfJvgDFr2JM1qaOB7Sg==
+konsta@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/konsta/-/konsta-3.0.1.tgz#c105e9382be70be80e5de3a6fa25c5cc7a9b84d0"
+  integrity sha512-ySSsRUl6Ll1ljZ75UzAoJXk7hSpoDP7x62LIs84Al5N0P8SzJLYwJ958UmsLggDsAQ+WYHZ22PYLvTzOndsFrg==
 
 language-subtag-registry@~0.3.2:
   version "0.3.22"
