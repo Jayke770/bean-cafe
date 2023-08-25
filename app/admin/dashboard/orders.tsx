@@ -11,8 +11,8 @@ export default function Orders() {
   return (
     <>
       <div className="flex flex-col px-4">
-        <div className="-m-1.5 overflow-x-auto">
-          <div className="p-1.5 min-w-full inline-block align-middle">
+        <div className="-m-1.5">
+          <div className="p-1.5 w-full inline-block align-middle">
             <div className="border rounded-lg shadow dark:border-brand-primary/50 border-brand-secondary/50">
               <div className="py-3 px-4 flex justify-between items-center">
                 <div className='text-brand-primary font-bold text-xl'>Order List</div>
@@ -31,8 +31,8 @@ export default function Orders() {
                   </div>
                 </div>
               </div>
-              <div className="overflow-hidden">
-                <table className="min-w-full divide-y divide-brand-primary/20 dark:divide-brand-secondary">
+              <div className="overflow-x-auto">
+                <table className="w-full divide-y table-auto  divide-brand-primary/20 dark:divide-brand-secondary">
                   <thead className=" k-color-brand-primary bg-md-light-surface-1 dark:bg-md-dark-surface-1">
                     <tr>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">No.</th>

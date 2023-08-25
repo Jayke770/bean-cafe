@@ -3,7 +3,7 @@ import { Popup, Page, Navbar, Icon, Link, Chip, Button } from "konsta/react"
 import { HiXMark } from "react-icons/hi2"
 import ImageInput from "@/components/ImageInput"
 import { Input, TextArea, Select } from "@/components/Input"
-export default function AddItem({ onToggleNewItem, opened }: { opened?: boolean, onToggleNewItem: () => void }) {
+export default function NewAddonOrItem({ onToggleNewItem, opened }: { opened?: boolean, onToggleNewItem: () => void }) {
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
     }

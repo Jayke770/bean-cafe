@@ -33,7 +33,7 @@ export default function Index() {
     if (status === "authenticated") router.push("/home")
   }, [status, router])
   return (
-    <main className='h-full w-full left-0 top-0 overflow-auto absolute bg-brand-primary dark:bg-black'>
+    <main className='h-full w-full left-0 top-0 overflow-auto absolute bg-brand-primary dark:bg-brand-secondary/20'>
       <AnimatePresence mode='wait'>
         {(status === "loading" || status === "authenticated") && (
           <motion.div

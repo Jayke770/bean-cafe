@@ -1,14 +1,11 @@
 "use client"
-import { Button, Fab, Navbar, Page, Popup, Link, Icon } from 'konsta/react'
+import { Button, Fab, Card } from 'konsta/react'
 import { BsThreeDots } from 'react-icons/bs'
 import { Checkbox } from 'konsta/react'
 import { MdAdd } from 'react-icons/md';
 import { useCallback, useState } from 'react';
-import { HiXMark } from 'react-icons/hi2'
-import AddItem from './additem';
-interface NewItem {
-    opened?: boolean
-}
+import NewAddonOrItem from './new_addon_or_item';
+import { BiFoodMenu, BiSolidMessageSquareAdd } from 'react-icons/bi';
 export default function Orders() {
     const [openNewItem, setOpenNewItem] = useState<boolean>()
     const onToggleNewItem = useCallback(() => setOpenNewItem(e => !e), [setOpenNewItem])
@@ -16,14 +13,38 @@ export default function Orders() {
         <>
             <Fab
                 onClick={onToggleNewItem}
-                icon={<MdAdd />}
                 text="New Item"
+                icon={<MdAdd />}
                 className=' fixed bottom-5 right-4 k-color-brand-primary' />
-            <AddItem opened={openNewItem} onToggleNewItem={onToggleNewItem} />
+            <NewAddonOrItem opened={openNewItem} onToggleNewItem={onToggleNewItem} />
             <div className='p-4'>
-                <div className="flex flex-col">
+                <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-2'>
+                    <Card
+                        margin="m-0"
+                        className=" k-color-brand-primary !rounded-md ">
+                        <div className="flex justify-between w-full items-center">
+                            <div className="flex flex-col">
+                                <span className="font-bold text-xl">100</span>
+                                <span className="text-sm">Total Items</span>
+                            </div>
+                            <BiFoodMenu className=" h-8 w-8" />
+                        </div>
+                    </Card>
+                    <Card
+                        margin="m-0"
+                        className=" k-color-brand-primary !rounded-md ">
+                        <div className="flex justify-between w-full items-center">
+                            <div className="flex flex-col">
+                                <span className="font-bold text-xl">100</span>
+                                <span className="text-sm">Total Add Ons</span>
+                            </div>
+                            <BiSolidMessageSquareAdd className=" h-8 w-8" />
+                        </div>
+                    </Card>
+                </div>
+                <div className="flex flex-col mt-3">
                     <div className="-m-1.5 overflow-x-auto">
-                        <div className="p-1.5 min-w-full inline-block align-middle">
+                        <div className="p-1.5 w-full inline-block align-middle">
                             <div className="border rounded-lg shadow dark:border-brand-primary/50 border-brand-secondary/50">
                                 <div className="py-3 px-4 flex justify-between items-center">
                                     <div className='text-brand-primary font-bold text-xl'>Items</div>
@@ -50,7 +71,7 @@ export default function Orders() {
                                         </select>
                                     </div>
                                 </div>
-                                <div className="overflow-hidden">
+                                <div className="overflow-x-auto">
                                     <table className="min-w-full divide-y divide-brand-primary/20 dark:divide-brand-secondary">
                                         <thead className=" k-color-brand-primary bg-md-light-surface-1 dark:bg-md-dark-surface-1">
                                             <tr>
