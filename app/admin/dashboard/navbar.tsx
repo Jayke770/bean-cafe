@@ -3,7 +3,6 @@ import { Icon, Link, Navbar } from "konsta/react"
 import { BiSolidCoffeeBean } from "react-icons/bi"
 import { HiOutlineBell } from "react-icons/hi2"
 import NextLink from 'next/link'
-import { useRouter } from "next/router"
 export default function DashboardNavbar() {
     return (
         <Navbar
