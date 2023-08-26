@@ -39,3 +39,5 @@ next-env.d.ts
 **/public/worker**
 **/public/fallback**
 **/public/precache**
+
+/files/*

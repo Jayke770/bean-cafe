@@ -54,9 +54,10 @@ const AddOnOption = z.object({
 });
 const AddOnSchema = z.object({
   name: z.string(),
+  image_id: z.string(),
   category: AddOnCategory,
   options: z.array(AddOnOption),
-  created: z.number(),
+  created: z.number().optional(),
 });
 export type AddOns = z.infer<typeof AddOnSchema>;
 //items
@@ -80,3 +81,7 @@ const ItemsChema = z.object({
   created: z.number(),
 });
 export type Items = z.infer<typeof ItemsChema>;
+export type ApiResponse = {
+  status: boolean;
+  message: string;
+};

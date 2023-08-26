@@ -1,6 +1,8 @@
 import "@/styles/globals.css"
 import LayoutMain from "@/app/KonstaProvider"
 import NextAuthSessionProvider from "./NextAuthProvider"
+import { NoticationProvider } from "@components/notification"
+import { DialogProvider } from '@components/dialog'
 import { Metadata } from "next"
 export const metadata: Metadata = {
   title: "Bean Cafe",
@@ -23,7 +25,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <NextAuthSessionProvider>
           <LayoutMain>
-            {children}
+            <NoticationProvider>
+              <DialogProvider>
+                {children}
+              </DialogProvider>
+            </NoticationProvider>
           </LayoutMain>
         </NextAuthSessionProvider>
       </body>

@@ -21,11 +21,13 @@
     ],
     "paths": {
       "@/*": ["./*"],
+      "@components/*": ["./components/*"],
       "@client_components/*": ["./components/Client/*"],
       "@admin_components/*": ["./components/Admin/*"],
       "@services/*": ["./services/*"],
       "@models/*": ["./models/*"],
-      "@types/*": ["./types/*"]
+      "@types/*": ["./types/*"],
+      "@lib/*": ["./lib/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

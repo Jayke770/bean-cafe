@@ -4,7 +4,7 @@ import { BsThreeDots } from 'react-icons/bs'
 import { Checkbox } from 'konsta/react'
 import { MdAdd } from 'react-icons/md';
 import { useCallback, useState } from 'react';
-import NewAddonOrItem from './new_addon_or_item';
+import AddItemOrAddon from './add_item_or_addon';
 import { BiFoodMenu, BiSolidMessageSquareAdd } from 'react-icons/bi';
 export default function Orders() {
     const [openNewItem, setOpenNewItem] = useState<boolean>()
@@ -13,10 +13,10 @@ export default function Orders() {
         <>
             <Fab
                 onClick={onToggleNewItem}
-                text="New Item"
+                text="New Item/Add On"
                 icon={<MdAdd />}
                 className=' fixed bottom-5 right-4 k-color-brand-primary' />
-            <NewAddonOrItem opened={openNewItem} onToggleNewItem={onToggleNewItem} />
+            <AddItemOrAddon opened={openNewItem} onToggleNewItem={onToggleNewItem} />
             <div className='p-4'>
                 <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-2'>
                     <Card
@@ -46,10 +46,10 @@ export default function Orders() {
                     <div className="-m-1.5 overflow-x-auto">
                         <div className="p-1.5 w-full inline-block align-middle">
                             <div className="border rounded-lg shadow dark:border-brand-primary/50 border-brand-secondary/50">
-                                <div className="py-3 px-4 flex justify-between items-center">
+                                <div className="py-3 px-4 flex flex-col gap-2 lg:gap-0 lg:flex-row justify-between lg:items-center">
                                     <div className='text-brand-primary font-bold text-xl'>Items</div>
                                     <div className='flex gap-2'>
-                                        <div className="relative max-w-xs">
+                                        <div className="relative w-full lg:max-w-xs">
                                             <label htmlFor="hs-table-search" className="sr-only">Search</label>
                                             <input
                                                 type="text"
@@ -64,7 +64,7 @@ export default function Orders() {
                                             </div>
                                         </div>
                                         <select
-                                            className="py-3 px-4 block dark:bg-[#0b0906] dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                            className="py-3 px-4 w-full lg:w-auto block dark:bg-[#0b0906] dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                                             <option>All</option>
                                             <option>Coffee</option>
                                             <option>Burgers</option>
