@@ -251,6 +251,7 @@ export default function AddItemorAddon({ onToggleNewItem, opened }: { opened?: b
                                             <div className="grid grid-cols-3 gap-2">
                                                 {newAddon?.options?.map((addon, i) => (
                                                     <Chip
+                                                        key={i}
                                                         className="m-0.5"
                                                         deleteButton
                                                         onDelete={() => onRemoveOption(i)}>
