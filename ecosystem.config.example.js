@@ -7,6 +7,7 @@ module.exports = {
       exec_mode: "cluster",
       instances: "max",
       env_production: {
+        NODE_ENV: "production",
         NEXTAUTH_SECRET: "",
         NEXTAUTH_URL: "",
         GOOGLE_CLIENT_ID: "",
