@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "production": "yarn global add pm2 && yarn && yarn build && yarn lint"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^1.0.0",
