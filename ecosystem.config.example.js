@@ -7,8 +7,8 @@ module.exports = {
       exec_mode: "cluster",
       instances: "max",
       env_production: {
-        NEXTAUTH_SECRET: "b40c3dd816b8e2d2d0820902b4ea1235",
-        NEXTAUTH_URL: "http://www.beancafe.store",
+        NEXTAUTH_SECRET: "",
+        NEXTAUTH_URL: "",
         GOOGLE_CLIENT_ID: "",
         GOOGLE_CLIENT_SECRET: "",
         MONGODB_URI: "mongodb://127.0.0.1:27017/bean-cafe",
