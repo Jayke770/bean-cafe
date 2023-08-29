@@ -16,8 +16,6 @@ const nextConfig = {
       },
     ],
   },
-  output: "standalone",
-  
 };
 
 module.exports = withPWA(nextConfig);
