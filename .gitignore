@@ -41,4 +41,3 @@ next-env.d.ts
 **/public/precache**
 
 /files/*
-ecosystem.config.js
