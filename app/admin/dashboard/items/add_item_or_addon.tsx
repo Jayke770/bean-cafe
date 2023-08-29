@@ -10,7 +10,8 @@ import { AnimatePresence, type Variants, motion } from "framer-motion"
 import { useDailog } from '@components/dialog'
 import { RiLoader5Fill } from 'react-icons/ri'
 import { BsFillCheckCircleFill, BsInfoCircleFill } from 'react-icons/bs'
-import type { AddOns, ApiResponse } from '@/types'
+import type { ApiResponse } from '@/types'
+import AddOns from "@/lib/Admin/Addons"
 type Tab = "Item" | "Add-on"
 const Itemvariants: Variants = {
     initial: {
@@ -51,6 +52,7 @@ interface NewAddon {
 }
 export default function AddItemorAddon({ onToggleNewItem, opened }: { opened?: boolean, onToggleNewItem: () => void }) {
     const { onShowDialog } = useDailog()
+    const { addons } = AddOns()
     const [newAddon, setNewAddon] = useState<NewAddon>({ options: [] })
     const [tab, setTab] = useLocalstorageState<Tab>("AddItemorAddon", "Item")
     const onToggleTab = useCallback(() => setTab(e => e === "Item" ? "Add-on" : "Item"), [setTab])
@@ -68,7 +70,7 @@ export default function AddItemorAddon({ onToggleNewItem, opened }: { opened?: b
                     </div>
                 )
             })
-            const req = await fetch("/api/admin/items/new-addon", {
+            const req = await fetch("/api/admin/items/addon", {
                 method: 'post',
                 body: new FormData(e.target as any)
             })

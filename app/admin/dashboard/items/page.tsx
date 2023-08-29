@@ -64,7 +64,7 @@ export default function Orders() {
                                             </div>
                                         </div>
                                         <select
-                                            className="py-3 px-4 w-full lg:w-auto block dark:bg-[#0b0906] dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                            className="py-3 px-4 w-full lg:w-auto dark:bg-transparent dark:focus:bg-black dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                                             <option>All</option>
                                             <option>Coffee</option>
                                             <option>Burgers</option>

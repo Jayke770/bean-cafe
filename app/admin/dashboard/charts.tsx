@@ -22,7 +22,7 @@ ChartJS.register(
     Tooltip,
     Legend
 );
-const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', "Aug", "Sept", "Oct", "nov", "Dec"]
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', "Aug", "Sept", "Oct", "Nov", "Dec"]
 export default function Charts() {
     return (
         <div className='grid lg:grid-cols-2 xl:grid-cols-3 gap-2 px-4'>
