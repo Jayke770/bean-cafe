@@ -50,7 +50,6 @@ const AddOnOption = z.object({
   name: z.string(),
   id: z.string(),
   created: z.number(),
-  price: z.number(),
 });
 const AddOnSchema = z.object({
   name: z.string(),
@@ -68,7 +67,7 @@ const CoffeesizeSchema = z.union([
 ]);
 const ItemSizes = z.object({
   id: z.string(),
-  stocks: z.number(),
+  quantity: z.number(),
   size: CoffeesizeSchema,
 });
 const ItemsChema = z.object({

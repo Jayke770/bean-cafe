@@ -1,5 +1,5 @@
 import type { ChangeEventHandler, HTMLInputTypeAttribute, } from "react"
-export function Input({ name, label, placeholder, type, className, inputMode, disabled, required, readonly, onChange }: {
+export function Input({ value, name, label, placeholder, type, className, inputMode, disabled, required, readonly, onChange }: {
     inputMode?: "search" | "text" | "email" | "tel" | "url" | "none" | "numeric" | "decimal"
     className?: string,
     type?: HTMLInputTypeAttribute,
@@ -9,6 +9,7 @@ export function Input({ name, label, placeholder, type, className, inputMode, di
     required?: boolean,
     disabled?: boolean,
     readonly?: boolean,
+    value?: string,
     onChange?: ChangeEventHandler<HTMLInputElement>
 }) {
     return (
@@ -20,6 +21,7 @@ export function Input({ name, label, placeholder, type, className, inputMode, di
                 name={name}
                 onChange={onChange}
                 inputMode={inputMode}
+                value={value}
                 className={`${className ?? ""} py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary`}
                 placeholder={placeholder ?? ""}
                 aria-describedby={name}
@@ -29,13 +31,14 @@ export function Input({ name, label, placeholder, type, className, inputMode, di
         </div>
     )
 }
-export function TextArea({ name, label, placeholder, className, disabled, readonly, required, onChange }: {
+export function TextArea({ value, name, label, placeholder, className, disabled, readonly, required, onChange }: {
     required?: boolean,
     disabled?: boolean,
     readonly?: boolean
     className?: string,
     name: string,
     label: string,
+    value?: string,
     placeholder?: string,
     onChange?: ChangeEventHandler<HTMLInputElement>
 }) {
@@ -47,6 +50,7 @@ export function TextArea({ name, label, placeholder, className, disabled, readon
                 onChange={onChange}
                 id={name}
                 name={name}
+                value={value}
                 className={`${className ?? ""} py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary`}
                 placeholder={placeholder ?? ""}
                 aria-describedby={name}
@@ -59,22 +63,23 @@ export function TextArea({ name, label, placeholder, className, disabled, readon
 export function Select({ name, label, className, children, disabled, required, onChange }: {
     children: React.ReactNode,
     className?: string,
-    name: string,
-    label: string,
+    name?: string,
+    label?: string,
+    value?: string,
     required?: boolean,
     disabled?: boolean,
     onChange?: ChangeEventHandler<HTMLInputElement>
 }) {
     return (
         <div className='flex flex-col gap-2'>
-            <label htmlFor={name} className="block text-sm font-medium">{label}</label>
+            <label htmlFor={name ?? ""} className="block text-sm font-medium">{label ?? ""}</label>
             <select
                 //@ts-ignore
                 onChange={onChange}
                 id={name}
-                name={name}
+                name={name ?? ""}
                 className={`${className ?? ""} py-3 px-4 block w-full dark:bg-transparent dark:focus:bg-black dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary`}
-                aria-describedby={name}
+                aria-describedby={name ?? ""}
                 disabled={disabled}
                 required={required}>
                 {children}
