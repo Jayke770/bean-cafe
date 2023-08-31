@@ -343,7 +343,7 @@ export default function AddItemorAddon({ onToggleNewItem, opened }: { opened?: b
                                         </div>
                                     </div>
                                 </div>
-                                <div className="w-full absolute inset-x-0 bottom-0 p-4 translucent ">
+                                <div className="w-full z-10 absolute inset-x-0 bottom-0 p-4 translucent ">
                                     <Button
                                         className=" k-color-brand-primary">Submit</Button>
                                 </div>
