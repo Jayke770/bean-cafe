@@ -40,4 +40,5 @@ next-env.d.ts
 **/public/fallback**
 **/public/precache**
 
-/files/*
+/files/addons/* 
+/files/items/* 

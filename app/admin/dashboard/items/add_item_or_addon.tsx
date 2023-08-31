@@ -237,15 +237,10 @@ export default function AddItemorAddon({ onToggleNewItem, opened }: { opened?: b
                                                 inputMode="numeric"
                                                 placeholder="e.g. 10" />
                                         </div>
-                                        <Input
-                                            required
-                                            label="Quantity"
-                                            name="quantity"
-                                            placeholder="e.g. 10" />
                                         <TextArea
                                             required
                                             label="Description"
-                                            name="decription"
+                                            name="description"
                                             className=" h-40 resize-none "
                                             placeholder="e.g. Best Coffee" />
                                         <div className="flex flex-col">
@@ -285,7 +280,7 @@ export default function AddItemorAddon({ onToggleNewItem, opened }: { opened?: b
                                                         }
                                                         media={
                                                             <Image
-                                                                src="/logo.png"
+                                                                src={`/api/files?type=addons&file_path=${addon.image}`}
                                                                 width={300}
                                                                 height={300}
                                                                 alt={addon.name}

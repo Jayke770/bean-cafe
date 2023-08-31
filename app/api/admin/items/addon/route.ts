@@ -30,24 +30,24 @@ export async function POST(req: NextRequest) {
     const parse_form = AddonForm.safeParse(data);
     if (parse_form.success) {
       await EnsureUploadDir();
-      const imageId = nanoid();
-      const imageExt = parse_form.data.image.type;
-      const imageFile = parse_form.data.image as Blob | null;
-      //save file
-      const upload_dir = path.join(process.cwd(), "files/addons");
-      const buffer_image = Buffer.from((await imageFile?.arrayBuffer()) as any);
-      await writeFile(
-        `${upload_dir}/${imageId}.${mime.getExtension(imageExt)}`,
-        buffer_image
-      );
       const addOn_Option: any[] = JSON.parse(parse_form.data.options);
       if (addOn_Option.length > 0) {
+        const imageId = nanoid();
+        const imageExt = parse_form.data.image.type;
+        const upload_dir = path.join(process.cwd(), "files/addons");
+        const imageFileName = `${imageId}.${mime.getExtension(imageExt)}`
+        const imageFile = parse_form.data.image as Blob | null;
+        //save file
+        const buffer_image = Buffer.from(
+          (await imageFile?.arrayBuffer()) as any
+        );
+        await writeFile(`${upload_dir}/${imageFileName}`, buffer_image);
         await dbConnect();
         await Addons.create({
           category: parse_form.data.category,
           created: parseInt(moment().format("x")),
           name: parse_form.data.name,
-          image_id: imageId,
+          image: imageFileName,
           options: JSON.parse(parse_form.data.options),
         });
         return NextResponse.json({

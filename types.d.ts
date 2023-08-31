@@ -53,7 +53,7 @@ const AddOnOption = z.object({
 });
 const AddOnSchema = z.object({
   name: z.string(),
-  image_id: z.string(),
+  image: z.string(),
   category: AddOnCategory,
   options: z.array(AddOnOption),
   created: z.number().optional(),
