@@ -111,8 +111,8 @@ export default function Home() {
                             </>
                         ) : (
                             <>
-                                <span className='text-sm font-medium text-black/70 '>{"Bean's Cafe"}</span>
-                                <h1 className='text-xl font-semibold leading-tight'>Best coffee for you!</h1>
+                                <span className='text-sm font-medium text-black/70 dark:text-brand-white/80'>{"Bean's Cafe"}</span>
+                                <h1 className='text-xl font-semibold leading-tight dark:text-brand-white'>Best coffee for you!</h1>
                             </>
                         )}
                     </div>
