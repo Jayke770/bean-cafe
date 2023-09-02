@@ -163,18 +163,18 @@ export default function Home() {
                                 <Card
                                     margin='m-0'
                                     className='z-0 k-color-brand-secondary'>
-                                    <div className='shadow-lg rounded-2xl overflow-hidden'>
+                                    <div className='shadow-lg h-44 rounded-2xl overflow-hidden'>
                                         <Image
                                             src={`/api/files?type=items&file_path=${item.image}`}
                                             alt="test"
                                             width={300}
                                             height={300}
                                             loading='lazy'
-                                            className=' h-44 object-cover ' />
+                                            className=' h-full w-full object-cover ' />
                                     </div>
                                     <div className='flex flex-col mt-3'>
-                                        <span className='text-xl font-bold'>{item.name}</span>
-                                        <span className=' text-brand-primary font-bold text-base'>₱{item.sizes.length > 0 ? item.sizes[0]?.price : item.price}</span>
+                                        <span className='text-base lg:text-lg font-bold'>{item.name}</span>
+                                        <span className=' text-brand-primary font-bold text-sm lg:text-base'>₱{item.sizes.length > 0 ? item.sizes[0]?.price : item.price}</span>
                                     </div>
                                 </Card>
                             </motion.div>
