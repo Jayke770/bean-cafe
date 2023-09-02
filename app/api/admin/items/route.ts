@@ -9,12 +9,14 @@ import path from "path";
 import dbConnect from "@/models/dbConnect";
 import items from "@/models/items";
 import moment from "moment";
+import { getServerSession } from "next-auth";
+import { AuthOptions } from "@services/NextAuth/AuthOptions";
 const ItemForm = z.object({
   image: z.any(),
   sizes: z.string(),
+  category: z.string(),
   addons: z.string(),
   name: z.string(),
-  price: z.number().nonnegative(),
   description: z.string(),
 });
 export async function POST(req: NextRequest) {
@@ -26,8 +28,8 @@ export async function POST(req: NextRequest) {
       sizes: form.get("sizes") as any,
       addons: form.get("addons") as any,
       name: form.get("name") as any,
-      price: parseInt(form.get("price") as any),
       description: form.get("description") as string,
+      category: form.get("category") as any,
     };
     const parse_form = ItemForm.safeParse(data);
     if (parse_form.success) {
@@ -46,7 +48,7 @@ export async function POST(req: NextRequest) {
           message: "Invalid Sizes",
         });
       }
-      const ItemId = nanoid();
+      const ItemId = nanoid(12);
       const upload_dir = path.join(process.cwd(), "files/items");
       const imageExt = parse_form.data.image.type;
       const imageFilename = `${ItemId}.${mime.getExtension(imageExt)}`;
@@ -56,13 +58,14 @@ export async function POST(req: NextRequest) {
       await writeFile(`${upload_dir}/${imageFilename}`, buffer_image);
       await dbConnect();
       await items.create({
+        item_id: ItemId,
         addons: addons,
         created: parseInt(moment().format("x")),
         description: parse_form.data.description,
         image: imageFilename,
         name: parse_form.data.name,
-        price: parse_form.data.price,
-        sizes: parse_form.data.sizes,
+        category: parse_form.data.category,
+        sizes: sizes,
       });
       return NextResponse.json({
         status: true,
@@ -77,5 +80,20 @@ export async function POST(req: NextRequest) {
     }
   } catch (e: any) {
     return NextResponse.json({ status: false, message: e.message });
+  }
+}
+export async function GET(req: NextRequest) {
+  const session = await getServerSession(AuthOptions);
+  try {
+    if (session) {
+      await dbConnect();
+      const skip = parseInt(req.nextUrl.searchParams.get("skip") ?? "0");
+      const data = await items.find({}, { __v: 0 }).skip(skip).limit(20);
+      return NextResponse.json(data);
+    } else {
+      return NextResponse.json({}, { status: 401 });
+    }
+  } catch (e) {
+    return NextResponse.json({}, { status: 500 });
   }
 }

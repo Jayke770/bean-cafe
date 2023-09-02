@@ -1,12 +1,16 @@
 "use client"
-import { Button, Fab, Card } from 'konsta/react'
+import { Button, Fab, Card, Preloader } from 'konsta/react'
 import { BsThreeDots } from 'react-icons/bs'
 import { Checkbox } from 'konsta/react'
 import { MdAdd } from 'react-icons/md';
 import { useCallback, useState } from 'react';
 import AddItemOrAddon from './add_item_or_addon';
 import { BiFoodMenu, BiSolidMessageSquareAdd } from 'react-icons/bi';
+import Items from '@lib/Admin/Items'
+import Addons from "@lib/Admin/Addons"
 export default function Orders() {
+    const { addons } = Addons()
+    const { items, itemsLoading } = Items()
     const [openNewItem, setOpenNewItem] = useState<boolean>()
     const onToggleNewItem = useCallback(() => setOpenNewItem(e => !e), [setOpenNewItem])
     return (
@@ -16,7 +20,7 @@ export default function Orders() {
                 text="New Item/Add On"
                 icon={<MdAdd />}
                 className=' fixed bottom-5 right-4 k-color-brand-primary' />
-            <AddItemOrAddon opened={openNewItem} onToggleNewItem={onToggleNewItem} />
+            <AddItemOrAddon addons={addons} opened={openNewItem} onToggleNewItem={onToggleNewItem} />
             <div className='p-4'>
                 <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-2'>
                     <Card
@@ -24,7 +28,7 @@ export default function Orders() {
                         className=" k-color-brand-primary !rounded-md ">
                         <div className="flex justify-between w-full items-center">
                             <div className="flex flex-col">
-                                <span className="font-bold text-xl">100</span>
+                                <span className="font-bold text-xl">{items?.length ?? 0}</span>
                                 <span className="text-sm">Total Items</span>
                             </div>
                             <BiFoodMenu className=" h-8 w-8" />
@@ -35,7 +39,7 @@ export default function Orders() {
                         className=" k-color-brand-primary !rounded-md ">
                         <div className="flex justify-between w-full items-center">
                             <div className="flex flex-col">
-                                <span className="font-bold text-xl">100</span>
+                                <span className="font-bold text-xl">{addons?.length ?? 0}</span>
                                 <span className="text-sm">Total Add Ons</span>
                             </div>
                             <BiSolidMessageSquareAdd className=" h-8 w-8" />
@@ -79,64 +83,33 @@ export default function Orders() {
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">ID</th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Name</th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Category</th>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Add Ons</th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Price</th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-brand-primary/20 dark:divide-brand-secondary">
-                                            <tr>
-                                                <td className='px-6 py-4'>
-                                                    <Checkbox className=' k-color-brand-primary ' />
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 uppercase">4124414</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">Coffee 1</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">Coffee</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                                    <div className='flex flex-col gap-1'>
-                                                        <span>Regular Milk - ₱0.50</span>
-                                                        <span>Almond Milk - ₱0.75</span>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                                    <span>₱ 100</span>
-                                                </td>
-                                                <td className='px-6 py-4'>
-                                                    <Button
-                                                        clear
-                                                        outline
-                                                        small
-                                                        className={`!w-auto k-color-brand-primary !px-2`}>
-                                                        <BsThreeDots className=' h-5 w-5' />
-                                                    </Button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td className='px-6 py-4'>
-                                                    <Checkbox className=' k-color-brand-primary ' />
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 uppercase">4124414</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 uppercase">Burger 1</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">Burgers</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                                    <div className='flex flex-col gap-1'>
-                                                        <span>Regular Milk - ₱0.50</span>
-                                                        <span>Almond Milk - ₱0.75</span>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                                    <span>₱ 100</span>
-                                                </td>
-                                                <td className='px-6 py-4'>
-                                                    <Button
-                                                        clear
-                                                        outline
-                                                        small
-                                                        className={`!w-auto k-color-brand-primary !px-2`}>
-                                                        <BsThreeDots className=' h-5 w-5' />
-                                                    </Button>
-                                                </td>
-                                            </tr>
+                                            {items?.map(item => (
+                                                <tr key={item._id}>
+                                                    <td className='px-6 py-4'>
+                                                        <Checkbox className=' k-color-brand-primary ' />
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 uppercase">{item.item_id}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{item.name}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 first-letter:uppercase ">{item?.category ?? "Others"}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                                                        <span>₱ 100</span>
+                                                    </td>
+                                                    <td className='px-6 py-4'>
+                                                        <Button
+                                                            clear
+                                                            outline
+                                                            small
+                                                            className={`!w-auto k-color-brand-primary !px-2`}>
+                                                            <BsThreeDots className=' h-5 w-5' />
+                                                        </Button>
+                                                    </td>
+                                                </tr>
+                                            ))}
                                         </tbody>
                                     </table>
                                 </div>

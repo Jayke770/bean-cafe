@@ -71,9 +71,10 @@ const ItemSizes = z.object({
   size: CoffeesizeSchema,
 });
 const ItemsChema = z.object({
+  item_id: z.string(),
   name: z.string(),
+  category: z.string(),
   description: z.string(),
-  price: z.number(),
   image: z.string(),
   sizes: z.array(ItemSizes),
   addons: z.array(AddOnOption),

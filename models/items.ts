@@ -1,10 +1,11 @@
 import { Items } from "@/types";
 import { Schema, models, deleteModel, model } from "mongoose";
 const Items = new Schema<Items>({
+  item_id: { type: String },
   description: { type: String },
   image: { type: String },
   name: { type: String },
-  price: { type: Number },
+  category: { type: String },
   created: { type: Number },
   sizes: [],
   addons: [],

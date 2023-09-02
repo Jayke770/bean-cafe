@@ -32,10 +32,10 @@ export async function POST(req: NextRequest) {
       await EnsureUploadDir();
       const addOn_Option: any[] = JSON.parse(parse_form.data.options);
       if (addOn_Option.length > 0) {
-        const imageId = nanoid();
+        const imageId = nanoid(12);
         const imageExt = parse_form.data.image.type;
         const upload_dir = path.join(process.cwd(), "files/addons");
-        const imageFileName = `${imageId}.${mime.getExtension(imageExt)}`
+        const imageFileName = `${imageId}.${mime.getExtension(imageExt)}`;
         const imageFile = parse_form.data.image as Blob | null;
         //save file
         const buffer_image = Buffer.from(

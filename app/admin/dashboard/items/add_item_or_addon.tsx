@@ -12,8 +12,7 @@ import { useDailog } from '@components/dialog'
 import { RiLoader5Fill } from 'react-icons/ri'
 import { BsFillCheckCircleFill, BsInfoCircleFill } from 'react-icons/bs'
 import { SIZES } from '@lib/constants'
-import type { ApiResponse } from '@/types'
-import AddOns from "@/lib/Admin/Addons"
+import type { ApiResponse, AddOns } from '@/types'
 import Image from "next/image"
 type Tab = "Item" | "Add-on"
 const Itemvariants: Variants = {
@@ -66,9 +65,11 @@ interface NewItemSize {
     price?: number,
     stocks?: number
 }
-export default function AddItemorAddon({ onToggleNewItem, opened }: { opened?: boolean, onToggleNewItem: () => void }) {
+interface Addon extends AddOns {
+    _id: string;
+}
+export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { addons?: Addon[], opened?: boolean, onToggleNewItem: () => void }) {
     const { onShowDialog } = useDailog()
-    const { addons } = AddOns()
     const [newAddon, setNewAddon] = useState<NewAddon>({ options: [] })
     const [newItem, setNewItem] = useState<NewItem>({ sizes: [], addons: [] })
     const [tab, setTab] = useLocalstorageState<Tab>("AddItemorAddon", "Item")
@@ -229,13 +230,13 @@ export default function AddItemorAddon({ onToggleNewItem, opened }: { opened?: b
                                                 label="Name"
                                                 name="name"
                                                 placeholder="e.g. Coffee" />
-                                            <Input
-                                                required
-                                                label="Price"
-                                                name="price"
-                                                type="number"
-                                                inputMode="numeric"
-                                                placeholder="e.g. 10" />
+                                            <Select
+                                                label="Category"
+                                                name="category">
+                                                <option value={undefined}>Select Category</option>
+                                                <option value={"coffee"}>Coffee</option>
+                                                <option value={"burger"}>Burger</option>
+                                            </Select>
                                         </div>
                                         <TextArea
                                             required
