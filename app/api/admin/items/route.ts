@@ -46,26 +46,35 @@ export async function POST(req: NextRequest) {
       const imageExt = parse_form.data.image.type;
       const imageFilename = `${ItemId}.${mime.getExtension(imageExt)}`;
       const imageFile = parse_form.data.image as Blob | null;
-      //save file
-      const buffer_image = Buffer.from((await imageFile?.arrayBuffer()) as any);
-      await writeFile(`${upload_dir}/${imageFilename}`, buffer_image);
-      await dbConnect();
-      await items.create({
-        item_id: ItemId,
-        addons: addons,
-        created: parseInt(moment().format("x")),
-        description: parse_form.data.description,
-        image: imageFilename,
-        name: parse_form.data.name,
-        category: parse_form.data.category,
-        sizes: sizes,
-        price: parse_form.data.price,
-        stocks: parse_form.data.stocks,
-      });
-      return NextResponse.json({
-        status: true,
-        message: "Successfully Saved!",
-      });
+      if ((imageFile?.size ?? 0) > 0) {
+        //save file
+        const buffer_image = Buffer.from(
+          (await imageFile?.arrayBuffer()) as any
+        );
+        await writeFile(`${upload_dir}/${imageFilename}`, buffer_image);
+        await dbConnect();
+        await items.create({
+          item_id: ItemId,
+          addons: addons,
+          created: parseInt(moment().format("x")),
+          description: parse_form.data.description,
+          image: imageFilename,
+          name: parse_form.data.name,
+          category: parse_form.data.category,
+          sizes: sizes,
+          price: parse_form.data.price,
+          stocks: parse_form.data.stocks,
+        });
+        return NextResponse.json({
+          status: true,
+          message: "Successfully Saved!",
+        });
+      } else {
+        return NextResponse.json({
+          status: false,
+          message: "Invalid Item Image!",
+        });
+      }
     } else {
       const error = fromZodError(parse_form.error, { prefix: null }).message;
       return NextResponse.json({

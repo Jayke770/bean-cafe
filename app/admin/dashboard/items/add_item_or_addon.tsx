@@ -244,11 +244,15 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
                                                 required
                                                 label="Price"
                                                 name="price"
+                                                inputMode="numeric"
+                                                type="number"
                                                 placeholder="e.g. 10" />
                                             <Input
                                                 required
                                                 label="Stocks"
                                                 name="stocks"
+                                                inputMode="numeric"
+                                                type="number"
                                                 placeholder="e.g. 10" />
                                         </div>
                                         <TextArea
@@ -324,7 +328,7 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
                                 <div className="flex flex-col gap-2 overflow-auto pb-40-safe p-4">
                                     <ImageInput accept="image/*" name="image" />
                                     <div className="flex flex-col gap-2 mt-2 ">
-                                        <div className="grid grid-cols-2 gap-2">
+                                        <div className="grid lg:grid-cols-2 gap-2">
                                             <Input
                                                 label="Add-on Name"
                                                 name="name"
@@ -337,19 +341,19 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
                                                     <option key={category} value={category.toLowerCase()}>{category}</option>
                                                 ))}
                                             </Select>
+                                            <Input
+                                                label="Price"
+                                                name="price"
+                                                type="number"
+                                                inputMode="numeric"
+                                                placeholder="e.g. 10" />
+                                            <Input
+                                                label="Stocks"
+                                                name="stocks"
+                                                type="number"
+                                                inputMode="numeric"
+                                                placeholder="e.g. 10" />
                                         </div>
-                                        <Input
-                                            label="Price"
-                                            name="price"
-                                            type="number"
-                                            inputMode="numeric"
-                                            placeholder="e.g. 10" />
-                                        <Input
-                                            label="Stocks"
-                                            name="stocks"
-                                            type="number"
-                                            inputMode="numeric"
-                                            placeholder="e.g. 10" />
                                     </div>
                                 </div>
                                 <div className="w-full z-10 absolute inset-x-0 bottom-0 p-4 translucent ">

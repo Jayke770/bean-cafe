@@ -174,7 +174,7 @@ export default function Home() {
                                     </div>
                                     <div className='flex flex-col mt-3'>
                                         <span className='text-xl font-bold'>{item.name}</span>
-                                        <span className=' text-brand-primary font-bold text-base'>₱{item.sizes[0]?.price}</span>
+                                        <span className=' text-brand-primary font-bold text-base'>₱{item.sizes.length > 0 ? item.sizes[0]?.price : item.price}</span>
                                     </div>
                                 </Card>
                             </motion.div>
