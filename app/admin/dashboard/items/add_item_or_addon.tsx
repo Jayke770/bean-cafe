@@ -5,7 +5,6 @@ import ImageInput from "@/components/ImageInput"
 import { Input, TextArea, Select } from "@/components/Input"
 import { useLocalstorageState } from "rooks"
 import { useCallback, useState } from "react"
-import AddOnOption from '@admin_components/Items/AddOnOption'
 import Sizes from "@admin_components/Items/Sizes"
 import { AnimatePresence, type Variants, motion } from "framer-motion"
 import { useDailog } from '@components/dialog'
@@ -240,6 +239,18 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
                                                 ))}
                                             </Select>
                                         </div>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <Input
+                                                required
+                                                label="Price"
+                                                name="price"
+                                                placeholder="e.g. 10" />
+                                            <Input
+                                                required
+                                                label="Stocks"
+                                                name="stocks"
+                                                placeholder="e.g. 10" />
+                                        </div>
                                         <TextArea
                                             required
                                             label="Description"
@@ -312,7 +323,6 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
                                 className="flex flex-col gap-2 z-0 overflow-auto h-full">
                                 <div className="flex flex-col gap-2 overflow-auto pb-40-safe p-4">
                                     <ImageInput accept="image/*" name="image" />
-                                    <input type="hidden" name="options" value={JSON.stringify(newAddon?.options)} />
                                     <div className="flex flex-col gap-2 mt-2 ">
                                         <div className="grid grid-cols-2 gap-2">
                                             <Input
@@ -328,23 +338,18 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
                                                 ))}
                                             </Select>
                                         </div>
-                                        <div className="w-full flex flex-col gap-2">
-                                            <div className="flex flex-col">
-                                                <div className="block text-sm font-medium">Options</div>
-                                                <AddOnOption onAdd={data => onSetAddonOption(data)} />
-                                            </div>
-                                            <div className="grid grid-cols-3 gap-2">
-                                                {newAddon?.options?.map((addon, i) => (
-                                                    <Chip
-                                                        key={i}
-                                                        className="m-0.5"
-                                                        deleteButton
-                                                        onDelete={() => onRemoveOption(i)}>
-                                                        {addon.name} - ₱{addon.price}
-                                                    </Chip>
-                                                ))}
-                                            </div>
-                                        </div>
+                                        <Input
+                                            label="Price"
+                                            name="price"
+                                            type="number"
+                                            inputMode="numeric"
+                                            placeholder="e.g. 10" />
+                                        <Input
+                                            label="Stocks"
+                                            name="stocks"
+                                            type="number"
+                                            inputMode="numeric"
+                                            placeholder="e.g. 10" />
                                     </div>
                                 </div>
                                 <div className="w-full z-10 absolute inset-x-0 bottom-0 p-4 translucent ">

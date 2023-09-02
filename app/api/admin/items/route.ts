@@ -17,6 +17,8 @@ const ItemForm = z.object({
   category: z.string(),
   addons: z.string(),
   name: z.string(),
+  price: z.number().positive(),
+  stocks: z.number().positive(),
   description: z.string(),
 });
 export const revalidate = 60;
@@ -31,24 +33,14 @@ export async function POST(req: NextRequest) {
       name: form.get("name") as any,
       description: form.get("description") as string,
       category: form.get("category") as any,
+      stocks: parseFloat((form.get("stocks") as any) ?? "0"),
+      price: parseFloat((form.get("price") as any) ?? "0"),
     };
     const parse_form = ItemForm.safeParse(data);
     if (parse_form.success) {
       await EnsureUploadDir();
       const addons: any[] = JSON.parse(parse_form.data.addons);
       const sizes: any[] = JSON.parse(parse_form.data.sizes);
-      if (addons.length <= 0) {
-        return NextResponse.json({
-          status: false,
-          message: "Invalid Addon",
-        });
-      }
-      if (sizes.length <= 0) {
-        return NextResponse.json({
-          status: false,
-          message: "Invalid Sizes",
-        });
-      }
       const ItemId = nanoid(12).toUpperCase();
       const upload_dir = path.join(process.cwd(), "files/items");
       const imageExt = parse_form.data.image.type;
@@ -67,6 +59,8 @@ export async function POST(req: NextRequest) {
         name: parse_form.data.name,
         category: parse_form.data.category,
         sizes: sizes,
+        price: parse_form.data.price,
+        stocks: parse_form.data.stocks,
       });
       return NextResponse.json({
         status: true,

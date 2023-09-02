@@ -52,14 +52,17 @@ const Categories = z.union([
 //add ons
 const AddOnOption = z.object({
   name: z.string(),
-  id: z.string(),
+  addon_option_id: z.string(),
+  price: z.number(),
+  stocks: z.number(),
   created: z.number(),
 });
 const AddOnSchema = z.object({
   name: z.string(),
   image: z.string(),
+  price: z.number(),
+  stocks: z.number(),
   category: Categories,
-  options: z.array(AddOnOption),
   created: z.number().optional(),
 });
 export type AddOns = z.infer<typeof AddOnSchema>;
@@ -82,6 +85,8 @@ const ItemsChema = z.object({
   category: z.string(),
   description: z.string(),
   image: z.string(),
+  price: z.number().positive(),
+  stocks: z.number().positive(),
   sizes: z.array(ItemSizes),
   addons: z.array(AddOnOption),
   created: z.number(),
