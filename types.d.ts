@@ -44,8 +44,12 @@ const UserSchema = z.object({
 });
 export type UserRole = z.infer<typeof UserRole>;
 export type UserModel = z.infer<typeof UserSchema>;
+const Categories = z.union([
+  z.literal("coffee"),
+  z.literal("burger"),
+  z.literal("cakes"),
+]);
 //add ons
-const AddOnCategory = z.union([z.literal("coffee"), z.literal("burger")]);
 const AddOnOption = z.object({
   name: z.string(),
   id: z.string(),
@@ -54,7 +58,7 @@ const AddOnOption = z.object({
 const AddOnSchema = z.object({
   name: z.string(),
   image: z.string(),
-  category: AddOnCategory,
+  category: Categories,
   options: z.array(AddOnOption),
   created: z.number().optional(),
 });
@@ -64,11 +68,13 @@ const CoffeesizeSchema = z.union([
   z.literal("small"),
   z.literal("medium"),
   z.literal("large"),
+  z.literal("extra large"),
 ]);
 const ItemSizes = z.object({
   id: z.string(),
-  quantity: z.number(),
-  size: CoffeesizeSchema,
+  stocks: z.number(),
+  price: z.number(),
+  type: CoffeesizeSchema,
 });
 const ItemsChema = z.object({
   item_id: z.string(),

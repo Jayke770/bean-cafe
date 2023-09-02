@@ -24,6 +24,8 @@ import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai'
 import GcashLogo from '@/public/images/gcash.png'
 import { BiMoney } from 'react-icons/bi'
 import NextLink from 'next/link'
+import Items from '@/lib/User/items'
+import { CATEGORIES } from '@lib/constants'
 import { useSession } from 'next-auth/react'
 import Account from './account'
 const mainvariants: Variants = {
@@ -37,11 +39,11 @@ const mainvariants: Variants = {
         opacity: 0
     }
 }
-const categories = ['All', 'Coffee', 'Non Coffee', 'Cakes', 'Flappe/Blended', 'Teas', 'Snacks', 'Others']
 const sizes = ["Short", "Tall", "Grande", "Venti"]
 export default function Home() {
     const { data: session, status } = useSession()
     const [tab, setTab] = useLocalstorageState<string>("home-tab", "All")
+    const { items } = Items(tab.toLowerCase(), 0)
     const onChangeTab = useCallback((data: string) => setTab(data), [setTab])
     const [viewCart, setViewCart] = useState<boolean>(false)
     const [viewAccount, setViewAccount] = useState<boolean>(false)
@@ -61,7 +63,7 @@ export default function Home() {
                 <Navbar
                     component='nav'
                     medium
-                    className=' k-color-brand-primary z-10'
+                    className=' k-color-brand-primary z-10 '
                     transparent={true}
                     title="Bean's Cafe"
                     right={
@@ -92,7 +94,14 @@ export default function Home() {
                 </div>
                 <div className='w-full'>
                     <section className='w-full z-10 px-3 bg-brand-white dark:bg-transparent whitespace-nowrap snap-proximity gap-2 overflow-auto py-3'>
-                        {categories.map(category => (
+                        <Button
+                            clear={tab !== "all"}
+                            onClick={() => onChangeTab("all")}
+                            className='!w-auto k-color-brand-green inline-flex ml-2 first:ml-0'
+                            rounded>
+                            All
+                        </Button>
+                        {CATEGORIES.map(category => (
                             <Button
                                 key={category}
                                 clear={category !== tab}
@@ -103,11 +112,18 @@ export default function Home() {
                             </Button>
                         ))}
                     </section>
-                    <section className='grid px-4 gap-2.5 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 mt-5'>
-                        {Array.from({ length: 10 }).map((_, i) => (
+                    <motion.section
+                        key={tab}
+                        variants={mainvariants}
+                        initial={"initial"}
+                        animate={"animate"}
+                        exit={"exit"}
+                        transition={{ ease: "easeInOut", duration: 0.5, delay: 0.2 }}
+                        className='grid px-4 gap-2.5 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 mt-5'>
+                        {items?.map(item => (
                             <motion.div
                                 onClick={onToggleItem}
-                                key={i}
+                                key={item.item_id}
                                 whileTap={{ scale: 0.95 }}
                                 className=' cursor-pointer'>
                                 <Card
@@ -115,21 +131,21 @@ export default function Home() {
                                     className='z-0 k-color-brand-secondary'>
                                     <div className='shadow-lg rounded-2xl overflow-hidden'>
                                         <Image
-                                            src={`/images/catalog/${i + 1}.jpg`}
+                                            src={`/api/files?type=items&file_path=${item.image}`}
                                             alt="test"
                                             width={300}
                                             height={300}
                                             loading='lazy'
-                                            className='aspect-square ' />
+                                            className=' h-44 object-cover ' />
                                     </div>
                                     <div className='flex flex-col mt-3'>
-                                        <span className='text-xl font-bold'>Item {i + 1}</span>
-                                        <span className=' text-brand-primary font-bold text-base'>₱{i + 1}</span>
+                                        <span className='text-xl font-bold'>{item.name}</span>
+                                        <span className=' text-brand-primary font-bold text-base'>₱{item.sizes[0]?.price}</span>
                                     </div>
                                 </Card>
                             </motion.div>
                         ))}
-                    </section>
+                    </motion.section>
                 </div>
                 {/* Account */}
                 <Account

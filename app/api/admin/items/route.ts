@@ -19,6 +19,7 @@ const ItemForm = z.object({
   name: z.string(),
   description: z.string(),
 });
+export const revalidate = 60;
 export async function POST(req: NextRequest) {
   const { formData } = req;
   try {
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest) {
           message: "Invalid Sizes",
         });
       }
-      const ItemId = nanoid(12);
+      const ItemId = nanoid(12).toUpperCase();
       const upload_dir = path.join(process.cwd(), "files/items");
       const imageExt = parse_form.data.image.type;
       const imageFilename = `${ItemId}.${mime.getExtension(imageExt)}`;

@@ -17,6 +17,7 @@ const AddonForm = z.object({
   image: z.any(),
   options: z.string(),
 });
+export const revalidate = 60;
 export async function POST(req: NextRequest) {
   const { formData } = req;
   try {
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
       await EnsureUploadDir();
       const addOn_Option: any[] = JSON.parse(parse_form.data.options);
       if (addOn_Option.length > 0) {
-        const imageId = nanoid(12);
+        const imageId = nanoid(12).toUpperCase();
         const imageExt = parse_form.data.image.type;
         const upload_dir = path.join(process.cwd(), "files/addons");
         const imageFileName = `${imageId}.${mime.getExtension(imageExt)}`;

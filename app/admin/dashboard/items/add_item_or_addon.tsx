@@ -13,6 +13,7 @@ import { RiLoader5Fill } from 'react-icons/ri'
 import { BsFillCheckCircleFill, BsInfoCircleFill } from 'react-icons/bs'
 import { SIZES } from '@lib/constants'
 import type { ApiResponse, AddOns } from '@/types'
+import { CATEGORIES } from '@lib/constants'
 import Image from "next/image"
 type Tab = "Item" | "Add-on"
 const Itemvariants: Variants = {
@@ -172,7 +173,7 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
     }
     const onSetAddonOption = useCallback((data: AddonOption) => setNewAddon(e => ({ ...e, options: [...e.options, data] })), [])
     const onRemoveOption = useCallback((i: number) => setNewAddon(e => ({ ...e, options: [...e.options.slice(0, i), ...e.options.slice(i + 1)] })), [])
-    const onAddNewItemSize = useCallback((data: NewItemSize) => setNewItem(e => ({ ...e, sizes: [...e.sizes, { price: data.price, type: data.type }] })), [])
+    const onAddNewItemSize = useCallback((data: NewItemSize) => setNewItem(e => ({ ...e, sizes: [...e.sizes, { price: data.price, type: data.type, stocks: data.stocks }] })), [])
     const onRemoveSize = useCallback((i: number) => setNewItem(e => ({ ...e, sizes: [...e.sizes.slice(0, i), ...e.sizes.slice(i + 1)] })), [])
     const onToggleItemAddon = useCallback((id: string) => {
         const index = newItem.addons.findIndex(x => x === id)
@@ -234,8 +235,9 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
                                                 label="Category"
                                                 name="category">
                                                 <option value={undefined}>Select Category</option>
-                                                <option value={"coffee"}>Coffee</option>
-                                                <option value={"burger"}>Burger</option>
+                                                {CATEGORIES.map(category => (
+                                                    <option key={category} value={category.toLowerCase()}>{category}</option>
+                                                ))}
                                             </Select>
                                         </div>
                                         <TextArea
@@ -321,8 +323,9 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
                                                 label="Category"
                                                 name="category">
                                                 <option value={undefined}>Select Category</option>
-                                                <option value={"coffee"}>Coffee</option>
-                                                <option value={"burger"}>Burger</option>
+                                                {CATEGORIES.map(category => (
+                                                    <option key={category} value={category.toLowerCase()}>{category}</option>
+                                                ))}
                                             </Select>
                                         </div>
                                         <div className="w-full flex flex-col gap-2">

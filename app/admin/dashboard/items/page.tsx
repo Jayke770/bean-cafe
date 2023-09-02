@@ -6,8 +6,9 @@ import { MdAdd } from 'react-icons/md';
 import { useCallback, useState } from 'react';
 import AddItemOrAddon from './add_item_or_addon';
 import { BiFoodMenu, BiSolidMessageSquareAdd } from 'react-icons/bi';
-import Items from '@lib/Admin/Items'
-import Addons from "@lib/Admin/Addons"
+import Items from '@/lib/Admin/items'
+import Addons from "@/lib/Admin/addons"
+import Image from 'next/image';
 export default function Orders() {
     const { addons } = Addons()
     const { items, itemsLoading } = Items()
@@ -51,7 +52,7 @@ export default function Orders() {
                         <div className="p-1.5 w-full inline-block align-middle">
                             <div className="border rounded-lg shadow dark:border-brand-primary/50 border-brand-secondary/50">
                                 <div className="py-3 px-4 flex flex-col gap-2 lg:gap-0 lg:flex-row justify-between lg:items-center">
-                                    <div className='text-brand-primary font-bold text-xl'>Items</div>
+                                    <div className='text-brand-primary font-bold text-xl'>{itemsLoading ? "Please wait..." : "Items"}</div>
                                     <div className='flex gap-2'>
                                         <div className="relative w-full lg:max-w-xs">
                                             <label htmlFor="hs-table-search" className="sr-only">Search</label>
@@ -90,8 +91,13 @@ export default function Orders() {
                                         <tbody className="divide-y divide-brand-primary/20 dark:divide-brand-secondary">
                                             {items?.map(item => (
                                                 <tr key={item._id}>
-                                                    <td className='px-6 py-4'>
-                                                        <Checkbox className=' k-color-brand-primary ' />
+                                                    <td className='w-10'>
+                                                        <Image
+                                                            src={`/api/files?type=items&file_path=${item.image}`}
+                                                            width={300}
+                                                            height={300}
+                                                            alt={item.item_id}
+                                                            className=' mx-3 rounded-lg w-10 aspect-square' />
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 uppercase">{item.item_id}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{item.name}</td>
