@@ -12,7 +12,9 @@ import {
     ListGroup,
     Checkbox,
     Radio,
-    Preloader
+    Preloader,
+    Tabbar,
+    TabbarLink
 } from 'konsta/react'
 import { motion, Variants } from 'framer-motion'
 import { useLocalstorageState } from 'rooks'
@@ -26,9 +28,22 @@ import { BiMoney } from 'react-icons/bi'
 import NextLink from 'next/link'
 import Items from '@/lib/User/items'
 import { CATEGORIES } from '@lib/constants'
+import { greeting } from '@lib/utils'
 import { useSession } from 'next-auth/react'
 import Account from './account'
+import { RiHomeLine, RiShoppingCartLine, RiMessage3Line } from 'react-icons/ri'
 const mainvariants: Variants = {
+    initial: {
+        opacity: 0
+    },
+    animate: {
+        opacity: 1
+    },
+    exit: {
+        opacity: 0
+    }
+}
+const navvariants: Variants = {
     initial: {
         opacity: 0
     },
@@ -53,47 +68,66 @@ export default function Home() {
     const onToggleItem = useCallback(() => setViewItem(e => !e), [setViewItem])
     return (
         <>
+            <motion.nav
+                variants={navvariants}
+                initial={"initial"}
+                animate={"animate"}
+                exit={"exit"}
+                transition={{ ease: "easeInOut", duration: 0.5 }}
+                className=' bottom-0 px-3.5 pb-3 w-full inset-x-0 fixed z-20'>
+                <div className='px-2 py-3.5 rounded-xl shadow-md translucent bg-md-light-surface-1 dark:bg-md-dark-surface-1 k-color-brand-primary grid grid-cols-3 gap-2'>
+                    <button
+                        onClick={onToggleCart}
+                        className=' outline-none flex w-full justify-center items-center'>
+                        <Icon badge={10}>
+                            <RiShoppingCartLine className=' w-8 h-8' />
+                        </Icon>
+                    </button>
+                    <button className=' outline-none flex w-full justify-center items-center'>
+                        <Icon>
+                            <RiHomeLine className=' w-8 h-8' />
+                        </Icon>
+                    </button>
+                    <button className=' outline-none flex w-full justify-center items-center'>
+                        <Icon badge={20}>
+                            <RiMessage3Line className=' w-8 h-8' />
+                        </Icon>
+                    </button>
+                </div>
+            </motion.nav>
             <motion.main
                 variants={mainvariants}
                 initial={"initial"}
                 animate={"animate"}
                 exit={"exit"}
                 transition={{ ease: "easeInOut", duration: 0.5, delay: 0.2 }}
-                className='h-full z-10  w-full left-0 top-0 overflow-auto absolute bg-brand-white dark:bg-brand-secondary/20 pb-5-safe'>
-                <Navbar
-                    component='nav'
-                    medium
-                    className=' k-color-brand-primary z-10 '
-                    transparent={true}
-                    title="Bean's Cafe"
-                    right={
-                        <>
-                            <Link
-                                onClick={onToggleCart}
-                                navbar
-                                iconOnly
-                                className=' k-color-brand-primary'>
-                                <Icon badge="2">
-                                    <IoMdCart className='h-7 w-7' />
-                                </Icon>
-                            </Link>
-                            <Link
-                                onClick={onToggleAccount}
-                                navbar
-                                iconOnly
-                                className=' k-color-brand-primary'>
-                                <Icon badge={status === "unauthenticated" ? "" : null}>
-                                    <IoPersonCircleSharp className='h-7 w-7' />
-                                </Icon>
-                            </Link>
-                        </>
-                    }
-                />
-                <div className='px-4 pb-4'>
-                    <h1 className='dark:text-zinc-400 font-bold '>Best coffee for you</h1>
+                className='h-full z-5 w-full left-0 top-0 overflow-auto absolute bg-brand-white dark:bg-brand-secondary/20 pb-15-safe'>
+                <div className='flex justify-between items-center px-3 pt-4'>
+                    <div>
+                        {session?.user ? (
+                            <>
+                                <span className='text-sm font-medium text-black/70 dark:text-brand-white/80'>{greeting()}</span>
+                                <h1 className='text-xl font-semibold leading-tight dark:text-brand-white'>{session?.user.name}</h1>
+                            </>
+                        ) : (
+                            <>
+                                <span className='text-sm font-medium text-black/70 '>{"Bean's Cafe"}</span>
+                                <h1 className='text-xl font-semibold leading-tight'>Best coffee for you!</h1>
+                            </>
+                        )}
+                    </div>
+                    <Link
+                        onClick={onToggleAccount}
+                        navbar
+                        iconOnly
+                        className=' k-color-brand-primary'>
+                        <Icon badge={status === "unauthenticated" ? "" : null}>
+                            <IoPersonCircleSharp className='h-7 w-7' />
+                        </Icon>
+                    </Link>
                 </div>
-                <div className='w-full'>
-                    <section className='w-full z-10 px-3 bg-brand-white dark:bg-transparent whitespace-nowrap snap-proximity gap-2 overflow-auto py-3'>
+                <div className='w-full mt-2'>
+                    <section className='w-full translucent z-10 px-3 bg-brand-white dark:bg-transparent whitespace-nowrap snap-proximity gap-2 overflow-auto py-3'>
                         <Button
                             clear={tab !== "all"}
                             onClick={() => onChangeTab("all")}
