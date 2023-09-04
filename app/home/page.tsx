@@ -72,7 +72,13 @@ export default function Home() {
     const [viewItem, setViewItem] = useState<ViewItem>({ quantity: 0 })
     const onToggleCart = useCallback(() => setViewCart(e => !e), [setViewCart])
     const onToggleAccount = useCallback(() => setViewAccount(e => !e), [setViewAccount])
-    const onToggleItem = useCallback((data?: Item) => setViewItem(e => ({ ...e, data: data, opened: !e.opened })), [setViewItem])
+    const onToggleItem = useCallback((data?: Item) => {
+        if (data) {
+            setViewItem(e => ({ ...e, data: data, opened: !e.opened }))
+        } else {
+            setViewItem(e => ({ ...e, data: data, selected_size: undefined, quantity: 0, opened: !e.opened }))
+        }
+    }, [setViewItem])
     const onSelectSize = useCallback((data: Item['sizes'][0]) => setViewItem(e => ({ ...e, selected_size: e?.selected_size?.type === data.type ? undefined : data })), [])
     const onPlusQuantity = () => {
         if (viewItem?.selected_size) {
