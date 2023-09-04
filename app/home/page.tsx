@@ -28,10 +28,11 @@ import { BiMoney } from 'react-icons/bi'
 import NextLink from 'next/link'
 import Items from '@/lib/User/items'
 import { CATEGORIES } from '@lib/constants'
-import { greeting } from '@lib/utils'
+import { greeting, capitalize } from '@lib/utils'
 import { useSession } from 'next-auth/react'
 import Account from './account'
 import { RiHomeLine, RiShoppingCartLine, RiMessage3Line } from 'react-icons/ri'
+import type { Items as Item } from "@/types";
 const mainvariants: Variants = {
     initial: {
         opacity: 0
@@ -55,6 +56,12 @@ const navvariants: Variants = {
     }
 }
 const sizes = ["Short", "Tall", "Grande", "Venti"]
+interface ViewItem {
+    data?: Item,
+    selected_size?: Item['sizes'][0],
+    quantity: number,
+    opened?: boolean
+}
 export default function Home() {
     const { data: session, status } = useSession()
     const [tab, setTab] = useLocalstorageState<string>("home-tab", "All")
@@ -62,10 +69,29 @@ export default function Home() {
     const onChangeTab = useCallback((data: string) => setTab(data), [setTab])
     const [viewCart, setViewCart] = useState<boolean>(false)
     const [viewAccount, setViewAccount] = useState<boolean>(false)
-    const [viewItem, setViewItem] = useState<boolean>(false)
+    const [viewItem, setViewItem] = useState<ViewItem>({ quantity: 0 })
     const onToggleCart = useCallback(() => setViewCart(e => !e), [setViewCart])
     const onToggleAccount = useCallback(() => setViewAccount(e => !e), [setViewAccount])
-    const onToggleItem = useCallback(() => setViewItem(e => !e), [setViewItem])
+    const onToggleItem = useCallback((data?: Item) => setViewItem(e => ({ ...e, data: data, opened: !e.opened })), [setViewItem])
+    const onSelectSize = useCallback((data: Item['sizes'][0]) => setViewItem(e => ({ ...e, selected_size: e?.selected_size?.type === data.type ? undefined : data })), [])
+    const onPlusQuantity = () => {
+        if (viewItem?.selected_size) {
+            const quantity = viewItem.quantity + 1
+            if ((viewItem?.selected_size?.stocks ?? 0) >= quantity) {
+                setViewItem(e => ({ ...e, quantity: quantity }))
+            }
+        }
+    }
+    const onMinusQuantity = () => {
+        if (viewItem?.selected_size) {
+            const quantity = viewItem.quantity - 1
+            if (quantity > 0) {
+                setViewItem(e => ({ ...e, quantity: quantity }))
+            } else {
+                setViewItem(e => ({ ...e, quantity: 0 }))
+            }
+        }
+    }
     return (
         <>
             <motion.nav
@@ -101,7 +127,7 @@ export default function Home() {
                 animate={"animate"}
                 exit={"exit"}
                 transition={{ ease: "easeInOut", duration: 0.5, delay: 0.2 }}
-                className='h-full z-5 w-full left-0 top-0 overflow-auto absolute bg-brand-white dark:bg-brand-secondary/20 pb-15-safe'>
+                className='h-full z-5 w-full left-0 top-0 overflow-auto absolute bg-brand-white dark:bg-brand-secondary/20 pb-20-safe'>
                 <div className='flex justify-between items-center px-3 pt-4'>
                     <div>
                         {session?.user ? (
@@ -156,7 +182,7 @@ export default function Home() {
                         className='grid px-4 gap-2.5 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 mt-5'>
                         {items?.map(item => (
                             <motion.div
-                                onClick={onToggleItem}
+                                onClick={() => onToggleItem(item)}
                                 key={item.item_id}
                                 whileTap={{ scale: 0.95 }}
                                 className=' cursor-pointer'>
@@ -265,7 +291,7 @@ export default function Home() {
                 </Actions>
                 {/* View Item */}
                 <Actions
-                    opened={viewItem}
+                    opened={viewItem?.opened}
                     onBackdropClick={onToggleItem}
                     className=' k-color-brand-primary'>
                     <Card
@@ -274,43 +300,45 @@ export default function Home() {
                         <div className='flex flex-col'>
                             <div className='flex justify-between items-center'>
                                 <div className='flex flex-col'>
-                                    <span className='font-bold text-xl'>Item 1</span>
-                                    <span className='text-sm'>Item Description</span>
-                                </div>
-                                <div className='flex justify-end items-center'>
-                                    <span className=' text-brand-primary font-bold text-lg'>₱100</span>
+                                    <span className='font-bold text-xl'>{viewItem?.data?.name}</span>
+                                    <span className='text-sm'>{viewItem?.data?.description}</span>
                                 </div>
                             </div>
-                            <List margin='my-0' className='mt-5'>
-                                <ListGroup>
-                                    <span className=' px-3'>Select Size</span>
-                                    <div className='grid grid-cols-2 gap-2'>
-                                        {sizes.map((size, i) => (
-                                            <ListItem
-                                                key={size}
-                                                title={size}
-                                                subtitle={`${i + 1}oz`}
-                                                link
-                                                chevron={false}
-                                                media={
-                                                    <Radio />
-                                                } />
-                                        ))}
-                                    </div>
-                                </ListGroup>
-                            </List>
+                            {(viewItem?.data?.sizes?.length ?? 0) > 0 && (
+                                <List margin='my-0' className='mt-5'>
+                                    <ListGroup>
+                                        <span className=' px-3'>Select Size</span>
+                                        <div className='grid grid-cols-2 gap-2'>
+                                            {viewItem?.data?.sizes?.map(size => (
+                                                <ListItem
+                                                    key={size?.id}
+                                                    onClick={() => onSelectSize(size)}
+                                                    title={capitalize(size?.type)}
+                                                    subtitle={`₱${size?.price}`}
+                                                    link
+                                                    chevron={false}
+                                                    media={<Radio readOnly className=' pointer-events-none' checked={viewItem?.selected_size?.type === size.type} />} />
+                                            ))}
+                                        </div>
+                                    </ListGroup>
+                                </List>
+                            )}
                             <div className='flex justify-between items-center gap-3 px-3 mt-5'>
                                 <div className='w-full flex items-center'>
                                     <div className='flex gap-3 items-center'>
                                         <Button
+                                            disabled={!viewItem?.selected_size}
+                                            onClick={onMinusQuantity}
                                             rounded
                                             outline
                                             small
                                             className=' !px-2.5'>
                                             <AiOutlineMinus />
                                         </Button>
-                                        <span>1</span>
+                                        <span>{viewItem?.quantity}</span>
                                         <Button
+                                            disabled={!viewItem?.selected_size}
+                                            onClick={onPlusQuantity}
                                             rounded
                                             outline
                                             small
@@ -320,6 +348,7 @@ export default function Home() {
                                     </div>
                                 </div>
                                 <Button
+                                    disabled={!viewItem?.selected_size || viewItem?.quantity <= 0}
                                     small
                                     rounded>
                                     Add to cart
@@ -328,7 +357,7 @@ export default function Home() {
                         </div>
                     </Card>
                 </Actions>
-            </motion.main>
+            </motion.main >
         </>
     )
 }
