@@ -98,6 +98,7 @@ export default function Home() {
             }
         }
     }
+    console.log(viewItem)
     return (
         <>
             <motion.nav
@@ -215,7 +216,7 @@ export default function Home() {
                 </div>
                 {/* Account */}
                 <Account
-                    onToggleAccount={onToggleAccount}
+                    onToggleAccount={() => onToggleAccount()}
                     session={session}
                     status={status}
                     viewAccount={viewAccount} />
@@ -298,7 +299,7 @@ export default function Home() {
                 {/* View Item */}
                 <Actions
                     opened={viewItem?.opened}
-                    onBackdropClick={onToggleItem}
+                    onBackdropClick={() => onToggleItem()}
                     className=' k-color-brand-primary'>
                     <Card
                         margin='m-0'
