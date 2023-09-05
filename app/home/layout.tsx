@@ -5,8 +5,8 @@ export const metadata: Metadata = {
 }
 export default async function HomeLayout({ children }: { children: React.ReactNode }) {
     return (
-        <>
+        <div className='h-full z-5 w-full left-0 top-0 overflow-auto absolute bg-brand-white dark:bg-brand-secondary/20 pb-20-safe'>
             {children}
-        </>
+        </div>
     )
 }

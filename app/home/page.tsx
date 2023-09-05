@@ -26,6 +26,7 @@ import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai'
 import GcashLogo from '@/public/images/gcash.png'
 import { BiMoney } from 'react-icons/bi'
 import NextLink from 'next/link'
+import { RiLoader5Fill } from 'react-icons/ri'
 import Items from '@/lib/User/items'
 import { CATEGORIES } from '@lib/constants'
 import { greeting, capitalize } from '@lib/utils'
@@ -33,6 +34,7 @@ import { useSession } from 'next-auth/react'
 import Account from './account'
 import { RiHomeLine, RiShoppingCartLine, RiMessage3Line } from 'react-icons/ri'
 import type { Items as Item } from "@/types";
+import { useDailog, DialogInfo, DialogLoading, DialogSuccess } from '@components/dialog'
 const mainvariants: Variants = {
     initial: {
         opacity: 0
@@ -60,9 +62,11 @@ interface ViewItem {
     data?: Item,
     selected_size?: Item['sizes'][0],
     quantity: number,
-    opened?: boolean
+    opened?: boolean,
+    adding_to_cart?: boolean
 }
 export default function Home() {
+    const { onShowDialog } = useDailog()
     const { data: session, status } = useSession()
     const [tab, setTab] = useLocalstorageState<string>("home-tab", "All")
     const { items } = Items(tab.toLowerCase(), 0)
@@ -98,7 +102,20 @@ export default function Home() {
             }
         }
     }
-    console.log(viewItem)
+    const onAddtoCart = async () => {
+        try {
+            onShowDialog({
+                timer: 2000,
+                content: <DialogLoading text="Adding to cart.." />
+            })
+            console.log(viewItem)
+        } catch (e: any) {
+            onShowDialog({
+                timer: 2000,
+                content: <DialogInfo text={e?.message} />
+            })
+        }
+    }
     return (
         <>
             <motion.nav
@@ -355,10 +372,11 @@ export default function Home() {
                                     </div>
                                 </div>
                                 <Button
+                                    onClick={onAddtoCart}
                                     disabled={!viewItem?.selected_size || viewItem?.quantity <= 0}
                                     small
                                     rounded>
-                                    Add to cart
+                                    {viewItem?.adding_to_cart ? <RiLoader5Fill className=' animate-spin h-5 w-5 text-brand-primary' /> : <span>Add to cart</span>}
                                 </Button>
                             </div>
                         </div>

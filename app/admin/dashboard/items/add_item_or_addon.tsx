@@ -7,7 +7,7 @@ import { useLocalstorageState } from "rooks"
 import { useCallback, useState } from "react"
 import Sizes from "@admin_components/Items/Sizes"
 import { AnimatePresence, type Variants, motion } from "framer-motion"
-import { useDailog } from '@components/dialog'
+import { useDailog, DialogInfo, DialogSuccess, DialogLoading } from '@components/dialog'
 import { RiLoader5Fill } from 'react-icons/ri'
 import { BsFillCheckCircleFill, BsInfoCircleFill } from 'react-icons/bs'
 import { SIZES } from '@lib/constants'
@@ -78,12 +78,7 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
         e.preventDefault()
         try {
             onShowDialog({
-                content: (
-                    <div className="flex flex-col items-center justify-center  gap-3">
-                        <span className=" text-lg font-bold">Saving Item</span>
-                        <RiLoader5Fill className=" h-8 w-8 animate-spin text-brand-primary " />
-                    </div>
-                )
+                content: <DialogLoading text="Saving Item" />
             })
             const req = await fetch("/api/admin/items", {
                 method: 'post',
@@ -93,19 +88,7 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
                 const res: ApiResponse = await req.json()
                 onShowDialog({
                     timer: 2000,
-                    content: (
-                        res?.status ? (
-                            <div className="flex flex-col items-center justify-center  gap-3">
-                                <BsFillCheckCircleFill className=" h-8 w-8 text-teal-500 " />
-                                <span className=" text-lg font-bold">{res?.message}</span>
-                            </div>
-                        ) : (
-                            <div className="flex flex-col items-center justify-center  gap-3">
-                                <BsInfoCircleFill className=" h-8 w-8  text-blue-500 " />
-                                <span className=" text-lg font-bold">{res?.message}</span>
-                            </div>
-                        )
-                    )
+                    content: res?.status ? <DialogSuccess text={res?.message} /> : <DialogInfo text={res?.message} />
                 })
             } else {
                 throw new Error(`${req.status} ${req.statusText}`)
@@ -113,12 +96,7 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
         } catch (e: any) {
             onShowDialog({
                 timer: 2000,
-                content: (
-                    <div className="flex flex-col items-center justify-center  gap-3">
-                        <BsInfoCircleFill className=" h-8 w-8  text-red-500 " />
-                        <span className=" text-lg font-bold">{e.message}</span>
-                    </div>
-                )
+                content: <DialogInfo text={e?.message} />
             })
         }
     }
@@ -126,12 +104,7 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
         e.preventDefault()
         try {
             onShowDialog({
-                content: (
-                    <div className="flex flex-col items-center justify-center  gap-3">
-                        <span className=" text-lg font-bold">Saving Add-On</span>
-                        <RiLoader5Fill className=" h-8 w-8 animate-spin text-brand-primary " />
-                    </div>
-                )
+                content: <DialogLoading text="Saving Add-On" />
             })
             const req = await fetch("/api/admin/items/addon", {
                 method: 'post',
@@ -141,19 +114,7 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
                 const res: ApiResponse = await req.json()
                 onShowDialog({
                     timer: 2000,
-                    content: (
-                        res?.status ? (
-                            <div className="flex flex-col items-center justify-center  gap-3">
-                                <BsFillCheckCircleFill className=" h-8 w-8 text-teal-500 " />
-                                <span className=" text-lg font-bold">{res?.message}</span>
-                            </div>
-                        ) : (
-                            <div className="flex flex-col items-center justify-center  gap-3">
-                                <BsInfoCircleFill className=" h-8 w-8  text-blue-500 " />
-                                <span className=" text-lg font-bold">{res?.message}</span>
-                            </div>
-                        )
-                    )
+                    content: res?.status ? <DialogSuccess text={res?.message} /> : <DialogInfo text={res?.message} />
                 })
             } else {
                 throw new Error(`${req.status} ${req.statusText}`)
@@ -161,12 +122,7 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
         } catch (e: any) {
             onShowDialog({
                 timer: 2000,
-                content: (
-                    <div className="flex flex-col items-center justify-center  gap-3">
-                        <BsInfoCircleFill className=" h-8 w-8  text-red-500 " />
-                        <span className=" text-lg font-bold">{e.message}</span>
-                    </div>
-                )
+                content: <DialogInfo text={e?.message} />
             })
         }
     }

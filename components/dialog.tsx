@@ -1,6 +1,8 @@
 "use client"
 import { Dialog } from 'konsta/react'
 import { createContext, useState, useCallback, useContext } from 'react'
+import { BsFillCheckCircleFill, BsInfoCircleFill } from 'react-icons/bs'
+import { RiLoader5Fill } from 'react-icons/ri'
 interface DialogType {
     onShowDialog: ({
         title,
@@ -23,6 +25,30 @@ interface DialogData {
     timer?: number
 }
 const DialogCtx = createContext<any>(undefined)
+export const DialogSuccess = ({ text }: { text: string }) => {
+    return (
+        <div className="flex flex-col items-center justify-center  gap-3">
+            <BsFillCheckCircleFill className=" h-8 w-8 text-teal-500 " />
+            <span className=" text-lg font-bold">{text}</span>
+        </div>
+    )
+}
+export const DialogLoading = ({ text }: { text: string }) => {
+    return (
+        <div className="flex flex-col items-center justify-center  gap-3">
+            <span className=" text-lg font-bold">{text}</span>
+            <RiLoader5Fill className=" h-8 w-8 animate-spin text-brand-primary " />
+        </div>
+    )
+}
+export const DialogInfo = ({ text }: { text: string }) => {
+    return (
+        <div className="flex flex-col items-center justify-center  gap-3">
+            <BsInfoCircleFill className=" h-8 w-8  text-blue-500 " />
+            <span className=" text-lg font-bold">{text}</span>
+        </div>
+    )
+}
 export function DialogProvider({ children }: { children: React.ReactNode }) {
     const [data, setData] = useState<DialogData>()
     const onShowDialog = useCallback((param: DialogData) => {
