@@ -33,8 +33,9 @@ import { greeting, capitalize } from '@lib/utils'
 import { useSession } from 'next-auth/react'
 import Account from './account'
 import { RiHomeLine, RiShoppingCartLine, RiMessage3Line } from 'react-icons/ri'
-import type { Items as Item } from "@/types";
+import type { ApiResponse, Items as Item } from "@/types";
 import { useDailog, DialogInfo, DialogLoading, DialogSuccess } from '@components/dialog'
+import CartData from "@lib/User/cart"
 const mainvariants: Variants = {
     initial: {
         opacity: 0
@@ -57,7 +58,6 @@ const navvariants: Variants = {
         opacity: 0
     }
 }
-const sizes = ["Short", "Tall", "Grande", "Venti"]
 interface ViewItem {
     data?: Item,
     selected_size?: Item['sizes'][0],
@@ -67,6 +67,7 @@ interface ViewItem {
 }
 export default function Home() {
     const { onShowDialog } = useDailog()
+    const { cartData } = CartData()
     const { data: session, status } = useSession()
     const [tab, setTab] = useLocalstorageState<string>("home-tab", "All")
     const { items } = Items(tab.toLowerCase(), 0)
@@ -105,10 +106,28 @@ export default function Home() {
     const onAddtoCart = async () => {
         try {
             onShowDialog({
-                timer: 2000,
                 content: <DialogLoading text="Adding to cart.." />
             })
-            console.log(viewItem)
+            const req = await fetch("/api/user/cart", {
+                method: 'POST',
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify({
+                    item_id: viewItem.data?.item_id,
+                    quantity: viewItem.quantity,
+                    selected_size: viewItem.selected_size?.type
+                })
+            })
+            if (req.ok) {
+                const res: ApiResponse = await req.json()
+                onShowDialog({
+                    timer: 4000,
+                    content: res?.status ? <DialogSuccess text={res?.message} /> : <DialogInfo text={res?.message} />
+                })
+            } else {
+                throw new Error(`${req.status} ${req.statusText}`)
+            }
         } catch (e: any) {
             onShowDialog({
                 timer: 2000,
@@ -177,7 +196,7 @@ export default function Home() {
                     </Link>
                 </div>
                 <div className='w-full mt-2'>
-                    <section className='w-full translucent z-10 px-3 bg-brand-white dark:bg-transparent whitespace-nowrap snap-proximity gap-2 overflow-auto py-3'>
+                    <section className='w-full z-10 px-3 whitespace-nowrap snap-proximity gap-2 overflow-auto py-3'>
                         <Button
                             clear={tab !== "all"}
                             onClick={() => onChangeTab("all")}
@@ -220,7 +239,7 @@ export default function Home() {
                                             width={300}
                                             height={300}
                                             loading='lazy'
-                                            className=' h-full w-full object-cover ' />
+                                            className=' aspect-square h-full w-full object-cover ' />
                                     </div>
                                     <div className='flex flex-col mt-3'>
                                         <span className='text-base lg:text-lg font-bold'>{item.name}</span>
@@ -248,23 +267,23 @@ export default function Home() {
                         <h1 className='font-bold text-lg text-brand-primary px-3.5'>Your Cart</h1>
                         <List margin='my-0' className='mt-3'>
                             <ListGroup>
-                                {Array.from({ length: 5 }).map((_, i) => (
+                                {cartData?.map(cart => (
                                     <ListItem
-                                        key={i}
-                                        title={`Item ${i + 1}`}
+                                        key={cart.id}
+                                        title={cart.item_name}
                                         chevron={false}
-                                        subtitle={`Quantity: 1`}
-                                        after={`₱${i + 1}`}
+                                        subtitle={`Quantity: ${cart.quantity}`}
+                                        after={`₱${cart.price * cart.quantity}`}
                                         media={
                                             <div className='flex items-center gap-4 pl-3'>
                                                 <Checkbox />
                                                 <Image
-                                                    src={`/images/catalog/${i + 1}.jpg`}
+                                                    src={`/api/files?type=items&item_id=${cart.item_id}`}
                                                     alt="test"
                                                     width={300}
                                                     height={300}
                                                     loading='lazy'
-                                                    className='aspect-square h-10 w-10 rounded-xl ' />
+                                                    className='aspect-square object-cover h-10 w-10 rounded-xl ' />
                                             </div>
                                         } />
                                 ))}

@@ -2,18 +2,21 @@ import { z } from "zod";
 //user
 const UserStatus = z.union([z.literal("new"), z.literal("old")]);
 const UserRole = z.union([z.literal("admin"), z.literal("user")]);
-const OrderStatus = z.union([
+const OrderStatusData = z.union([
   z.literal("pending"),
-  z.literal("comleted"),
+  z.literal("completed"),
   z.literal("cancelled"),
   z.literal("denied"),
 ]);
+export type OrderStatus = z.infer<typeof OrderStatus>
 const UserOrderItem = z.object({
   id: z.string(),
   product_id: z.string(),
   quantity: z.number(),
   price: z.number(),
   size: z.string(),
+  item_name: z.string(),
+  price: z.number(),
   created: z.number(),
 });
 const PaymentMethod = z.union([
@@ -23,12 +26,23 @@ const PaymentMethod = z.union([
 ]);
 const UserOrder = z.object({
   id: z.string(),
-  status: OrderStatus,
+  status: OrderStatusData,
   items: z.array(UserOrderItem),
   payment_method: PaymentMethod,
   total_payment: z.string(),
   created: z.number(),
 });
+const UserCartData = z.object({
+  id: z.string(),
+  item_id: z.string(),
+  quantity: z.number(),
+  size: z.string().optional(),
+  item_name: z.string(),
+  price: z.number(),
+  category: z.string(),
+  created: z.number()
+})
+export type UserCart = z.infer<typeof UserCartData>
 const UserSchema = z.object({
   name: z.string(),
   email: z.string(),
@@ -37,6 +51,7 @@ const UserSchema = z.object({
   address: z.string(),
   phone_number: z.string(),
   orders: z.array(UserOrder),
+  cart: z.array(UserCart),
   paypal_email: z.string().optional(),
   role: UserRole,
   status: UserStatus,
@@ -67,12 +82,12 @@ const AddOnSchema = z.object({
 });
 export type AddOns = z.infer<typeof AddOnSchema>;
 //items
-const CoffeesizeSchema = z.union([
+export const CoffeesizeSchema = z.union([
   z.literal("small"),
   z.literal("medium"),
   z.literal("large"),
   z.literal("extra large"),
-]);
+]).or(z.optional());
 const ItemSizes = z.object({
   id: z.string(),
   stocks: z.number(),
@@ -93,6 +108,6 @@ const ItemsChema = z.object({
 });
 export type Items = z.infer<typeof ItemsChema>;
 export type ApiResponse = {
-  status: boolean;
-  message: string;
+  status?: boolean;
+  message?: string;
 };

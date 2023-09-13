@@ -12,6 +12,7 @@ const Users = new Schema<UserModel>({
   role: { type: String, default: "user" },
   status: { type: String, default: "new" },
   orders: [],
+  cart: []
 });
 if (models["users"] != null) {
   deleteModel("users");

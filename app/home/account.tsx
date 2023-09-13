@@ -7,21 +7,21 @@ import { useLocalstorageState } from 'rooks'
 import { useCallback } from 'react'
 import { FcGoogle } from 'react-icons/fc'
 import { signIn, signOut } from 'next-auth/react'
+import { UserCart, OrderStatus } from '@/types'
 interface Props {
     viewAccount: boolean,
     onToggleAccount: () => void,
     session: Session | null,
     status: "authenticated" | "loading" | "unauthenticated"
 }
-type User_Orders_Tab = "completed" | "pending" | "cancelled"
 export default function Account({
     viewAccount,
     onToggleAccount,
     session,
     status
 }: Props) {
-    const [UserOrdersTab, setUserUsersTab] = useLocalstorageState<User_Orders_Tab>("user-orders-tab", "completed")
-    const onToggleUserOrdersTab = useCallback((data: User_Orders_Tab) => setUserUsersTab(data), [setUserUsersTab])
+    const [UserOrdersTab, setUserUsersTab] = useLocalstorageState<OrderStatus>("user-orders-tab", "completed")
+    const onToggleUserOrdersTab = useCallback((data: OrderStatus) => setUserUsersTab(data), [setUserUsersTab])
     return (
         <Actions
             opened={viewAccount}

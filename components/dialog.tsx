@@ -25,7 +25,7 @@ interface DialogData {
     timer?: number
 }
 const DialogCtx = createContext<any>(undefined)
-export const DialogSuccess = ({ text }: { text: string }) => {
+export const DialogSuccess = ({ text }: { text?: string }) => {
     return (
         <div className="flex flex-col items-center justify-center  gap-3">
             <BsFillCheckCircleFill className=" h-8 w-8 text-teal-500 " />
@@ -33,7 +33,7 @@ export const DialogSuccess = ({ text }: { text: string }) => {
         </div>
     )
 }
-export const DialogLoading = ({ text }: { text: string }) => {
+export const DialogLoading = ({ text }: { text?: string }) => {
     return (
         <div className="flex flex-col items-center justify-center  gap-3">
             <span className=" text-lg font-bold">{text}</span>
@@ -41,7 +41,7 @@ export const DialogLoading = ({ text }: { text: string }) => {
         </div>
     )
 }
-export const DialogInfo = ({ text }: { text: string }) => {
+export const DialogInfo = ({ text }: { text?: string }) => {
     return (
         <div className="flex flex-col items-center justify-center  gap-3">
             <BsInfoCircleFill className=" h-8 w-8  text-blue-500 " />
