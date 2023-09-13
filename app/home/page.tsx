@@ -267,19 +267,24 @@ export default function Home() {
                         <h1 className='font-bold text-lg text-brand-primary px-3.5'>Your Cart</h1>
                         <List margin='my-0' className='mt-3'>
                             <ListGroup>
-                                {cartData && cartData?.map(cart => (
+                                {cartData && cartData?.map(item => (
                                     <ListItem
-                                        key={cart.id}
-                                        title={cart.item_name}
+                                        key={item.id}
+                                        title={item.item_name}
                                         chevron={false}
                                         link
-                                        subtitle={`Quantity: ${cart.quantity}`}
-                                        after={`₱${cart.price * cart.quantity}`}
+                                        subtitle={
+                                            <div className='flex flex-col text-xs'>
+                                                {item?.size && <span>Size: {item.size.toUpperCase()}</span>}
+                                                <span>{`Quantity: ${item.quantity}`}</span>
+                                            </div>
+                                        }
+                                        after={`₱${item.price * item.quantity}`}
                                         media={
                                             <div className='flex items-center gap-4 pl-3'>
                                                 <Checkbox />
                                                 <Image
-                                                    src={`/api/files?type=items&item_id=${cart.item_id}`}
+                                                    src={`/api/files?type=items&item_id=${item.item_id}`}
                                                     alt="test"
                                                     width={300}
                                                     height={300}

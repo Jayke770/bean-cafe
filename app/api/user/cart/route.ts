@@ -29,12 +29,12 @@ export async function POST(req: NextRequest) {
                     //check if the item is already added to cart 
                     const isAlreadyAdded = await User.findOne({
                         _id: { $eq: session.user.id },
-                        cart: { $elemMatch: { item_id: { $eq: data.item_id }, size: { $ne: data.selected_size } } }
-                    }, { cart: { $elemMatch: { item_id: { $eq: data.item_id } } } })
+                        cart: { $elemMatch: { item_id: data.item_id, size: data.selected_size } }
+                    }, { cart: { $elemMatch: { item_id: data.item_id, size: data.selected_size } } })
                     if (isAlreadyAdded) {
                         await User.updateOne({
                             _id: { $eq: session.user.id },
-                            cart: { $elemMatch: { item_id: { $eq: data.item_id } } }
+                            cart: { $elemMatch: { item_id: data.item_id, size: data.selected_size } }
                         }, {
                             $inc: { "cart.$.quantity": data.quantity }
                         })
