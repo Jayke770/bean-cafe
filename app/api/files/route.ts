@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
     if (item_id) {
       await dbConnect()
       const ItemData = await Item.findOne({ item_id: { $eq: item_id } }, { image: 1 })
-      file_path = ItemData?.image ?? `files/logo.png`
+      file_path = ItemData ? `files/${ItemData.image}` : `files/logo.png`
     }
     const imagePath = path.join(process.cwd(), `files/${type}/${file_path}`);
     let file = path.join(process.cwd(), `files/${type}/${file_path}`);
@@ -54,6 +54,7 @@ export async function GET(req: NextRequest) {
     });
     return res;
   } catch (e) {
+    console.log(e)
     const file = path.join(process.cwd(), `files/logo.png`);
     const stats: Stats = await fs.promises.stat(file);
     const data: ReadableStream<Uint8Array> = streamFile(file);
