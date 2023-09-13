@@ -148,7 +148,7 @@ export default function Home() {
                     <button
                         onClick={onToggleCart}
                         className=' outline-none flex w-full justify-center items-center'>
-                        <Icon badge={10}>
+                        <Icon badge={cartData?.length}>
                             <RiShoppingCartLine className=' w-8 h-8' />
                         </Icon>
                     </button>
