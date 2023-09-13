@@ -267,7 +267,7 @@ export default function Home() {
                         <h1 className='font-bold text-lg text-brand-primary px-3.5'>Your Cart</h1>
                         <List margin='my-0' className='mt-3'>
                             <ListGroup>
-                                {cartData?.map(cart => (
+                                {cartData && cartData?.map(cart => (
                                     <ListItem
                                         key={cart.id}
                                         title={cart.item_name}

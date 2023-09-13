@@ -26,6 +26,7 @@ function streamFile(
     },
   });
 }
+export const dynamic = 'force-dynamic'
 export async function GET(req: NextRequest) {
   try {
     const type = req.nextUrl.searchParams.get("type");
@@ -41,7 +42,6 @@ export async function GET(req: NextRequest) {
     if (!(await fs.pathExists(imagePath))) {
       file = path.join(process.cwd(), `files/logo.png`);
     }
-    console.log(file_path)
     const stats: Stats = await fs.promises.stat(file);
     const data: ReadableStream<Uint8Array> = streamFile(file);
     const res = new NextResponse(data, {

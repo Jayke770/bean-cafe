@@ -81,9 +81,9 @@ export async function GET(req: NextRequest) {
             const cart_data = await User.findOne({ _id: { $eq: session.user.id } }, { cart: 1, _id: 0 })
             return NextResponse.json(cart_data?.cart)
         } else {
-            return NextResponse.json({}, { status: 401 });
+            return NextResponse.json(null, { status: 401 });
         }
     } catch (e) {
-        return NextResponse.json({}, { status: 500 });
+        return NextResponse.json(null, { status: 500 });
     }
 }
