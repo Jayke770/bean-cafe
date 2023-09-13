@@ -26,7 +26,6 @@ function streamFile(
     },
   });
 }
-export const revalidate = 60;
 export async function GET(req: NextRequest) {
   try {
     const type = req.nextUrl.searchParams.get("type");
