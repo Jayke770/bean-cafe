@@ -30,16 +30,15 @@ export const dynamic = 'force-dynamic'
 export async function GET(req: NextRequest) {
   try {
     const type = req.nextUrl.searchParams.get("type");
-    let file_path = req.nextUrl.searchParams.get("file_path");
+    let file_path = `files/${type}/${req.nextUrl.searchParams.get("file_path")}`
     const item_id = req.nextUrl.searchParams.get("item_id")
     if (item_id) {
       await dbConnect()
       const ItemData = await Item.findOne({ item_id: { $eq: item_id } }, { image: 1 })
-      file_path = ItemData ? `files/${ItemData.image}` : `files/logo.png`
+      file_path = ItemData ? `files/${type}/${ItemData.image}` : 'files/logo.png'
     }
-    const imagePath = path.join(process.cwd(), `files/${type}/${file_path}`);
-    let file = path.join(process.cwd(), `files/${type}/${file_path}`);
-    if (!(await fs.pathExists(imagePath))) {
+    let file = path.join(process.cwd(), file_path);
+    if (!(await fs.pathExists(file))) {
       file = path.join(process.cwd(), `files/logo.png`);
     }
     const stats: Stats = await fs.promises.stat(file);

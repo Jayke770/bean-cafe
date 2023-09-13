@@ -272,6 +272,7 @@ export default function Home() {
                                         key={cart.id}
                                         title={cart.item_name}
                                         chevron={false}
+                                        link
                                         subtitle={`Quantity: ${cart.quantity}`}
                                         after={`₱${cart.price * cart.quantity}`}
                                         media={
