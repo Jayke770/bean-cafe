@@ -148,7 +148,7 @@ export default function Home() {
                     <button
                         onClick={onToggleCart}
                         className=' outline-none flex w-full justify-center items-center'>
-                        <Icon badge={cartData?.length}>
+                        <Icon badge={(cartData?.length ?? 0) < 0 ? cartData?.length : null}>
                             <RiShoppingCartLine className=' w-8 h-8' />
                         </Icon>
                     </button>
@@ -267,7 +267,7 @@ export default function Home() {
                         <h1 className='font-bold text-lg text-brand-primary px-3.5'>Your Cart</h1>
                         <List margin='my-0' className='mt-3'>
                             <ListGroup>
-                                {cartData && cartData?.map(item => (
+                                {cartData?.map(item => (
                                     <ListItem
                                         key={item.id}
                                         title={item.item_name}
