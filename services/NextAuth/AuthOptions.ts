@@ -41,6 +41,6 @@ export const AuthOptions: NextAuthOptions = {
     },
   },
   pages: {
-    newUser: "/api/user/new",
+    newUser: "/api/user/new"
   },
 };

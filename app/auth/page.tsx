@@ -20,11 +20,7 @@ const variants: Variants = {
     }
 }
 export default function AdminAuth() {
-    const router = useRouter()
     const { status } = useSession()
-    useEffect(() => {
-        if (status === "authenticated") router.push("/dashboard")
-    }, [status, router])
     return (
         <AnimatePresence mode="wait">
             {(status === "loading" || status === "authenticated") && (
