@@ -7,7 +7,7 @@ export default function Cards() {
     const { stats } = Stats()
     return (
         <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 px-4">
-            <Link href={"/admin/dashboard/items"}>
+            <Link href={"/dashboard/items"}>
                 <Card
                     margin="m-0"
                     className=" k-color-brand-primary !rounded-md ">

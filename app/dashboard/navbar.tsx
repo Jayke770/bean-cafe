@@ -11,7 +11,7 @@ export default function DashboardNavbar() {
             className=' k-color-brand-primary'
             left={
                 <>
-                    <NextLink href={"/admin/dashboard"} className=" h-full w-full flex justify-center items-center">
+                    <NextLink href={"/dashboard"} className=" h-full w-full flex justify-center items-center">
                         <Link navbar iconOnly component="div">
                             <BiSolidCoffeeBean className=" w-7 h-7 text-brand-primary" />
                         </Link>
