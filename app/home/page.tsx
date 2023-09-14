@@ -367,7 +367,7 @@ export default function Home() {
                                     <span className='text-sm'>{viewItem?.data?.description}</span>
                                 </div>
                                 <div className='flex'>
-                                    <span>₱{viewItem?.selected_size?.price ?? 0 * viewItem?.quantity}</span>
+                                    <span>₱{(viewItem?.selected_size?.price ?? 0) * (viewItem?.quantity ?? 0)}</span>
                                 </div>
                             </div>
                             {(viewItem?.data?.sizes?.length ?? 0) > 0 && (
