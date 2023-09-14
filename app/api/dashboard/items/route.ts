@@ -1,6 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
 import { z } from "zod";
-import EnsureUploadDir from "@/services/ensureUploadDir";
 import { fromZodError } from "zod-validation-error";
 import { nanoid } from "nanoid";
 import dbConnect from "@/models/dbConnect";
