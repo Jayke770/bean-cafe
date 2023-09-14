@@ -2,15 +2,13 @@ import { NextResponse, NextRequest } from "next/server";
 import { z } from "zod";
 import mime from "mime";
 import { fromZodError } from "zod-validation-error";
-import { writeFile, pathExists, mkdir } from "fs-extra";
-import { nanoid } from "nanoid";
 import dbConnect from "@/models/dbConnect";
 import Addons from "@/models/addons";
-import path from "path";
 import moment from "moment-timezone";
-import EnsureUploadDir from "@/services/ensureUploadDir";
 import { getServerSession } from "next-auth";
 import { AuthOptions } from "@/services/NextAuth/AuthOptions";
+import { ImgbbUpload } from '@services/imgbb'
+import { nanoid } from "nanoid";
 const AddonForm = z.object({
   name: z.string(),
   category: z.string(),
@@ -32,26 +30,21 @@ export async function POST(req: NextRequest) {
     };
     const parse_form = AddonForm.safeParse(data);
     if (parse_form.success) {
-      await EnsureUploadDir();
-      const imageId = nanoid(12).toUpperCase();
-      const imageExt = parse_form.data.image.type;
-      const upload_dir = path.join(process.cwd(), "files/addons");
-      const imageFileName = `${imageId}.${mime.getExtension(imageExt)}`;
       const imageFile = parse_form.data.image as Blob | null;
       if ((imageFile?.size ?? 0) > 0) {
         //save file
-        const buffer_image = Buffer.from(
-          (await imageFile?.arrayBuffer()) as any
-        );
-        await writeFile(`${upload_dir}/${imageFileName}`, buffer_image);
+        const buffer_image = Buffer.from((await imageFile?.arrayBuffer()) as any);
+        const uploaded_image = await ImgbbUpload(buffer_image.toString("base64"))
+        const AddonId = nanoid(12).toUpperCase();
         await dbConnect();
         await Addons.create({
           category: parse_form.data.category,
           created: parseInt(moment().format("x")),
           name: parse_form.data.name,
-          image: imageFileName,
+          image: uploaded_image.url,
           price: parse_form.data.price,
           stocks: parse_form.data.stocks,
+          id: AddonId
         });
         return NextResponse.json({
           status: true,

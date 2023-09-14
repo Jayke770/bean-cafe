@@ -20,7 +20,7 @@ export default function Orders() {
                 onClick={onToggleNewItem}
                 text="New Item/Add On"
                 icon={<MdAdd />}
-                className=' fixed bottom-5 right-4 k-color-brand-primary' />
+                className=' fixed bottom-5 z-20 right-4 k-color-brand-primary' />
             <AddItemOrAddon addons={addons} opened={openNewItem} onToggleNewItem={onToggleNewItem} />
             <div className='p-4'>
                 <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-2'>
@@ -93,11 +93,11 @@ export default function Orders() {
                                                 <tr key={item._id}>
                                                     <td className='w-10'>
                                                         <Image
-                                                            src={`/api/files?type=items&file_path=${item.image}`}
+                                                            src={item?.image ?? "/logo.png"}
                                                             width={300}
                                                             height={300}
                                                             alt={item.item_id}
-                                                            className=' mx-3 rounded-lg w-10 aspect-square' />
+                                                            className=' mx-3 rounded-lg w-10 object-cover aspect-square' />
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 uppercase">{item.item_id}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{item.name}</td>

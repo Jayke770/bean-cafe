@@ -36,6 +36,7 @@ import { RiHomeLine, RiShoppingCartLine, RiMessage3Line } from 'react-icons/ri'
 import type { ApiResponse, Items as Item } from "@/types";
 import { useDailog, DialogInfo, DialogLoading, DialogSuccess } from '@components/dialog'
 import CartData from "@lib/User/cart"
+import * as changeCase from 'change-case'
 const mainvariants: Variants = {
     initial: {
         opacity: 0
@@ -234,8 +235,8 @@ export default function Home() {
                                     className='z-0 k-color-brand-secondary'>
                                     <div className='shadow-lg h-44 rounded-2xl overflow-hidden'>
                                         <Image
-                                            src={`/api/files?type=items&file_path=${item.image}`}
-                                            alt="test"
+                                            src={item?.image ?? '/logo.png'}
+                                            alt={item?.name}
                                             width={300}
                                             height={300}
                                             loading='lazy'
@@ -265,77 +266,85 @@ export default function Home() {
                         margin='m-0'
                         className=' rounded-b-none'>
                         <h1 className='font-bold text-lg text-brand-primary px-3.5'>Your Cart</h1>
-                        <List margin='my-0' className='mt-3'>
-                            <ListGroup>
-                                {cartData?.map(item => (
-                                    <ListItem
-                                        key={item.id}
-                                        title={item.item_name}
-                                        chevron={false}
-                                        link
-                                        subtitle={
-                                            <div className='flex flex-col text-xs'>
-                                                {item?.size && <span>Size: {item.size.toUpperCase()}</span>}
-                                                <span>{`Quantity: ${item.quantity}`}</span>
-                                            </div>
-                                        }
-                                        after={`₱${item.price * item.quantity}`}
-                                        media={
-                                            <div className='flex items-center gap-4 pl-3'>
-                                                <Checkbox />
-                                                <Image
-                                                    src={`/api/files?type=items&item_id=${item.item_id}`}
-                                                    alt="test"
-                                                    width={300}
-                                                    height={300}
-                                                    loading='lazy'
-                                                    className='aspect-square object-cover h-10 w-10 rounded-xl ' />
-                                            </div>
-                                        } />
-                                ))}
-                            </ListGroup>
-                            <ListGroup className='mt-2'>
-                                <span className='p-4'>Payment</span>
-                                <div className='grid grid-cols-2 gap-2 mt-2'>
-                                    <ListItem
-                                        link
-                                        chevron={false}
-                                        title="PayPal"
-                                        media={
-                                            <div className='flex gap-3 items-center'>
-                                                <Radio />
-                                                <BsPaypal className=' h-5 w-5' />
-                                            </div>
-                                        } />
-                                    <ListItem
-                                        link
-                                        chevron={false}
-                                        title="GCash"
-                                        media={
-                                            <div className='flex gap-3 items-center'>
-                                                <Radio />
-                                                <Image
-                                                    src={GcashLogo}
-                                                    alt="Gcash"
-                                                    className='h-5 w-5 object-contain rounded' />
-                                            </div>
-                                        } />
-                                    <ListItem
-                                        link
-                                        chevron={false}
-                                        title="Cash"
-                                        media={
-                                            <div className='flex gap-3 items-center'>
-                                                <Radio />
-                                                <BiMoney className='h-5 w-5' />
-                                            </div>
-                                        } />
+                        {(cartData?.length ?? 0) > 0 ? (
+                            <>
+                                <List margin='my-0' className='mt-3'>
+                                    <ListGroup>
+                                        {cartData?.map(item => (
+                                            <ListItem
+                                                key={item.id}
+                                                title={item.item_name}
+                                                chevron={false}
+                                                link
+                                                subtitle={
+                                                    <div className='flex flex-col text-xs'>
+                                                        {item?.size && <span>Size: {changeCase.sentenceCase(item.size)}</span>}
+                                                        <span>{`Quantity: ${item.quantity}`}</span>
+                                                    </div>
+                                                }
+                                                after={`₱${item.price * item.quantity}`}
+                                                media={
+                                                    <div className='flex items-center gap-4 pl-3'>
+                                                        <Checkbox />
+                                                        <Image
+                                                            src={`/api/files?type=item&id=${item.item_id}`}
+                                                            alt="test"
+                                                            width={300}
+                                                            height={300}
+                                                            loading='lazy'
+                                                            className='aspect-square object-cover h-10 w-10 rounded-xl ' />
+                                                    </div>
+                                                } />
+                                        ))}
+                                    </ListGroup>
+                                    <ListGroup className='mt-2'>
+                                        <span className='p-4'>Payment</span>
+                                        <div className='grid grid-cols-2 gap-2 mt-2'>
+                                            <ListItem
+                                                link
+                                                chevron={false}
+                                                title="PayPal"
+                                                media={
+                                                    <div className='flex gap-3 items-center'>
+                                                        <Radio />
+                                                        <BsPaypal className=' h-5 w-5' />
+                                                    </div>
+                                                } />
+                                            <ListItem
+                                                link
+                                                chevron={false}
+                                                title="GCash"
+                                                media={
+                                                    <div className='flex gap-3 items-center'>
+                                                        <Radio />
+                                                        <Image
+                                                            src={GcashLogo}
+                                                            alt="Gcash"
+                                                            className='h-5 w-5 object-contain rounded' />
+                                                    </div>
+                                                } />
+                                            <ListItem
+                                                link
+                                                chevron={false}
+                                                title="Cash"
+                                                media={
+                                                    <div className='flex gap-3 items-center'>
+                                                        <Radio />
+                                                        <BiMoney className='h-5 w-5' />
+                                                    </div>
+                                                } />
+                                        </div>
+                                    </ListGroup>
+                                </List>
+                                <div className='px-3 mt-5'>
+                                    <Button>Check Out</Button>
                                 </div>
-                            </ListGroup>
-                        </List>
-                        <div className='px-3 mt-5'>
-                            <Button>Check Out</Button>
-                        </div>
+                            </>
+                        ) : (
+                            <div className=' p-5 flex items-center justify-center w-full'>
+                                <span className='text-xl'>Cart is Empty</span>
+                            </div>
+                        )}
                     </Card>
                 </Actions>
                 {/* View Item */}

@@ -7,6 +7,7 @@ const Addons = new Schema<AddOns>({
   stocks: { type: Number },
   created: { type: Number },
   name: { type: String },
+  id: { type: String }
 });
 if (models["addons"] != null) {
   deleteModel("addons");

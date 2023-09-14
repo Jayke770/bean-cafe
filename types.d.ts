@@ -79,6 +79,7 @@ const AddOnSchema = z.object({
   stocks: z.number(),
   category: Categories,
   created: z.number().optional(),
+  id: z.string()
 });
 export type AddOns = z.infer<typeof AddOnSchema>;
 //items

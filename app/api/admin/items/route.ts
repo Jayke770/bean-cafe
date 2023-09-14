@@ -3,14 +3,12 @@ import { z } from "zod";
 import EnsureUploadDir from "@/services/ensureUploadDir";
 import { fromZodError } from "zod-validation-error";
 import { nanoid } from "nanoid";
-import { writeFile } from "fs-extra";
-import mime from "mime";
-import path from "path";
 import dbConnect from "@/models/dbConnect";
 import items from "@/models/items";
 import moment from "moment";
 import { getServerSession } from "next-auth";
 import { AuthOptions } from "@services/NextAuth/AuthOptions";
+import { ImgbbUpload } from "@/services/imgbb";
 const ItemForm = z.object({
   image: z.any(),
   sizes: z.string(),
@@ -42,23 +40,18 @@ export async function POST(req: NextRequest) {
       const addons: any[] = JSON.parse(parse_form.data.addons);
       const sizes: any[] = JSON.parse(parse_form.data.sizes);
       const ItemId = nanoid(12).toUpperCase();
-      const upload_dir = path.join(process.cwd(), "files/items");
-      const imageExt = parse_form.data.image.type;
-      const imageFilename = `${ItemId}.${mime.getExtension(imageExt)}`;
       const imageFile = parse_form.data.image as Blob | null;
       if ((imageFile?.size ?? 0) > 0) {
         //save file
-        const buffer_image = Buffer.from(
-          (await imageFile?.arrayBuffer()) as any
-        );
-        await writeFile(`${upload_dir}/${imageFilename}`, buffer_image);
+        const buffer_image = Buffer.from((await imageFile?.arrayBuffer()) as any);
+        const uploaded_image = await ImgbbUpload(buffer_image.toString("base64"))
         await dbConnect();
         await items.create({
           item_id: ItemId,
           addons: addons,
           created: parseInt(moment().format("x")),
           description: parse_form.data.description,
-          image: imageFilename,
+          image: uploaded_image.url,
           name: parse_form.data.name,
           category: parse_form.data.category,
           sizes: sizes,

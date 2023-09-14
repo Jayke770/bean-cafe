@@ -65,10 +65,7 @@ interface NewItemSize {
     price?: number,
     stocks?: number
 }
-interface Addon extends AddOns {
-    _id: string;
-}
-export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { addons?: Addon[], opened?: boolean, onToggleNewItem: () => void }) {
+export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { addons?: AddOns[], opened?: boolean, onToggleNewItem: () => void }) {
     const { onShowDialog } = useDailog()
     const [newAddon, setNewAddon] = useState<NewAddon>({ options: [] })
     const [newItem, setNewItem] = useState<NewItem>({ sizes: [], addons: [] })
@@ -241,24 +238,24 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
                                             <List margin="my-0">
                                                 {addons?.map(addon => (
                                                     <ListItem
-                                                        key={addon._id}
+                                                        key={addon.id}
                                                         title={addon?.name}
                                                         link
                                                         chevron={false}
-                                                        onClick={() => onToggleItemAddon(addon._id)}
+                                                        onClick={() => onToggleItemAddon(addon.id)}
                                                         after={
                                                             <Checkbox
-                                                                checked={!!newItem?.addons.find(x => x === addon._id)}
+                                                                checked={!!newItem?.addons.find(x => x === addon.id)}
                                                                 readOnly
                                                                 className=" pointer-events-none" />
                                                         }
                                                         media={
                                                             <Image
-                                                                src={`/api/files?type=addons&file_path=${addon.image}`}
+                                                                src={`/api/files?type=addon&id=${addon.id}`}
                                                                 width={300}
                                                                 height={300}
                                                                 alt={addon.name}
-                                                                className="h-10 w-10" />
+                                                                className="h-10 w-10 aspect-square object-cover" />
                                                         } />
                                                 ))}
                                             </List>
