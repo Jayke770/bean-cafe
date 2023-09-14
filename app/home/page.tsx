@@ -363,7 +363,7 @@ export default function Home() {
                             <div className='flex justify-between items-center'>
                                 <div className='flex flex-col'>
                                     <span className='font-bold text-xl'>{viewItem?.data?.name}</span>
-                                    <span className='text-xs'>Stock: {viewItem?.data?.stocks ?? viewItem?.data?.sizes.reduce((sum, size) => sum + size.stocks, 0)}</span>
+                                    <span className='text-xs'>Stock: {viewItem?.selected_size?.stocks ?? (viewItem?.data?.stocks ?? viewItem?.data?.sizes.reduce((sum, size) => sum + size.stocks, 0))}</span>
                                     <span className='text-sm'>{viewItem?.data?.description}</span>
                                 </div>
                                 <div className='flex'>
