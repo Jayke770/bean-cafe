@@ -90,10 +90,10 @@ export default function Orders() {
                                         </thead>
                                         <tbody className="divide-y divide-brand-primary/20 dark:divide-brand-secondary">
                                             {items?.map(item => (
-                                                <tr key={item._id}>
+                                                <tr key={item.item_id}>
                                                     <td className='w-10'>
                                                         <Image
-                                                            src={item?.image ?? "/logo.png"}
+                                                            src={`/api/files?type=item&id=${item.item_id}`}
                                                             width={300}
                                                             height={300}
                                                             alt={item.item_id}

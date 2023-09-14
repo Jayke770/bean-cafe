@@ -9,7 +9,7 @@ export default function Stats(): {
   statsLoading: boolean;
   statsError: boolean;
 } {
-  const { data, error, isLoading } = useSWR("/api/admin/stats", fetcher, {
+  const { data, error, isLoading } = useSWR("/api/dashboard/stats", fetcher, {
     shouldRetryOnError: true,
     revalidateOnMount: true,
     revalidateOnFocus: true,

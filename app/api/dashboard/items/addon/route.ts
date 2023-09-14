@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
     if (session) {
       await dbConnect();
       const skip = parseInt(req.nextUrl.searchParams.get("skip") ?? "0");
-      const data = await Addons.find({}, { __v: 0 }).skip(skip).limit(20);
+      const data = await Addons.find({}, { __v: 0, image: 0 }).skip(skip).limit(20);
       return NextResponse.json(data);
     } else {
       return NextResponse.json({}, { status: 401 });

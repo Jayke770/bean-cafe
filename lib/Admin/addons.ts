@@ -10,7 +10,7 @@ export default function AddOns(skip?: string | number): {
   addonsError: boolean;
 } {
   const { data, error, isLoading } = useSWR(
-    `/api/admin/items/addon?skip=${skip ?? 0}`,
+    `/api/dashboard/items/addon?skip=${skip ?? 0}`,
     fetcher,
     {
       shouldRetryOnError: true,

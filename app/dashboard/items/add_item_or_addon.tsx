@@ -77,7 +77,7 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
             onShowDialog({
                 content: <DialogLoading text="Saving Item" />
             })
-            const req = await fetch("/api/admin/items", {
+            const req = await fetch("/api/dashboard/items", {
                 method: 'post',
                 body: new FormData(e.target as any)
             })
@@ -103,7 +103,7 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
             onShowDialog({
                 content: <DialogLoading text="Saving Add-On" />
             })
-            const req = await fetch("/api/admin/items/addon", {
+            const req = await fetch("/api/dashboard/items/addon", {
                 method: 'post',
                 body: new FormData(e.target as any)
             })

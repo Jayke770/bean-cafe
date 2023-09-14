@@ -10,7 +10,7 @@ export default function Items(skip?: string | number): {
   itemsError: boolean;
 } {
   const { data, error, isLoading } = useSWR(
-    `/api/admin/items?skip=${skip ?? 0}`,
+    `/api/dashboard/items?skip=${skip ?? 0}`,
     fetcher,
     {
       shouldRetryOnError: true,
