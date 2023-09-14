@@ -56,6 +56,19 @@ export async function POST(req: NextRequest) {
                             $inc: { "cart.$.quantity": data.quantity }
                         })
                     } else {
+                        let price = 0
+                        if (itemData.sizes.length <= 0 && itemData.price) {
+                            price = itemData.price
+                        } else {
+                            const selected_size_data = itemData.sizes.find(x => x.type === data.selected_size)
+                            if (selected_size_data) {
+                                price = selected_size_data?.price
+                            } else {
+                                res.message = "Something went wrong!"
+                                res.status = false
+                                return NextResponse.json(res)
+                            }
+                        }
                         const new_user_cart: UserCart = {
                             created: parseFloat(moment().format("x")),
                             id: nanoid().toUpperCase(),
@@ -64,7 +77,7 @@ export async function POST(req: NextRequest) {
                             category: itemData.category,
                             size: data.selected_size,
                             item_name: itemData.name,
-                            price: itemData.price
+                            price: price
                         }
                         await User.updateOne({ _id: { $eq: session.user.id } }, { $push: { cart: new_user_cart } })
                     }
