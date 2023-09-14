@@ -21,7 +21,7 @@ export default function SizeInput({ onAdd, sizes }: { sizes: string[], onAdd: (d
                 <div className="grid w-full items-center lg:grid-cols-2 gap-1 lg:gap-2">
                     <Select
                         onChange={event => setData(e => ({ ...e, type: event.target.value.toLowerCase() }))}>
-                        <option>Available Size</option>
+                        <option>Select Size</option>
                         {sizes.map((size) => <option key={size}>{size}</option>)};
                     </Select>
                     <Input

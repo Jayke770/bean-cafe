@@ -14,7 +14,8 @@ import {
     Radio,
     Preloader,
     Tabbar,
-    TabbarLink
+    TabbarLink,
+    Badge
 } from 'konsta/react'
 import { motion, Variants } from 'framer-motion'
 import { useLocalstorageState } from 'rooks'
@@ -244,7 +245,10 @@ export default function Home() {
                                     </div>
                                     <div className='flex flex-col mt-3'>
                                         <span className='text-base lg:text-lg font-bold'>{item.name}</span>
-                                        <span className=' text-brand-primary font-bold text-sm lg:text-base'>₱{item.sizes.length > 0 ? item.sizes[0]?.price : item.price}</span>
+                                        <div className='flex justify-between items-baseline'>
+                                            <span className=' text-brand-primary font-bold text-sm lg:text-base'>₱{item.sizes.length > 0 ? item.sizes[0]?.price : item.price}</span>
+                                            <Badge className=' k-color-brand-green'>{changeCase.capitalCase(item.category)}</Badge>
+                                        </div>
                                     </div>
                                 </Card>
                             </motion.div>
@@ -359,7 +363,11 @@ export default function Home() {
                             <div className='flex justify-between items-center'>
                                 <div className='flex flex-col'>
                                     <span className='font-bold text-xl'>{viewItem?.data?.name}</span>
+                                    <span className='text-xs'>Stock: {viewItem?.selected_size?.stocks ?? viewItem?.data?.stocks}</span>
                                     <span className='text-sm'>{viewItem?.data?.description}</span>
+                                </div>
+                                <div className='flex'>
+                                    <span>₱{viewItem?.selected_size?.price ?? 0 * viewItem?.quantity}</span>
                                 </div>
                             </div>
                             {(viewItem?.data?.sizes?.length ?? 0) > 0 && (

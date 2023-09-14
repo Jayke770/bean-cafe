@@ -1,5 +1,5 @@
 "use client"
-import { Popup, Page, Navbar, Icon, Link, Chip, Button, Segmented, SegmentedButton, List, ListItem, Checkbox } from "konsta/react"
+import { Popup, Page, Navbar, Icon, Link, Chip, Button, Segmented, SegmentedButton, List, ListItem, Checkbox, Toggle, Radio } from "konsta/react"
 import { HiXMark } from "react-icons/hi2"
 import ImageInput from "@/components/ImageInput"
 import { Input, TextArea, Select } from "@/components/Input"
@@ -68,6 +68,7 @@ interface NewItemSize {
 export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { addons?: AddOns[], opened?: boolean, onToggleNewItem: () => void }) {
     const { onShowDialog } = useDailog()
     const [newAddon, setNewAddon] = useState<NewAddon>({ options: [] })
+    const [AddItemSize, setAddItemSize] = useState<boolean>(false)
     const [newItem, setNewItem] = useState<NewItem>({ sizes: [], addons: [] })
     const [tab, setTab] = useLocalstorageState<Tab>("AddItemorAddon", "Item")
     const onToggleTab = useCallback(() => setTab(e => e === "Item" ? "Add-on" : "Item"), [setTab])
@@ -131,6 +132,7 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
         const index = newItem.addons.findIndex(x => x === id)
         index >= 0 ? setNewItem(e => ({ ...e, addons: [...e.addons.slice(0, index), ...e.addons.slice(index + 1)] })) : setNewItem(e => ({ ...e, addons: [...e.addons, id] }))
     }, [newItem.addons])
+    const onToggleAddItemSize = () => setAddItemSize(e => !e)
     return (
         <Popup
             opened={opened}
@@ -192,49 +194,51 @@ export default function AddItemorAddon({ onToggleNewItem, opened, addons }: { ad
                                                 ))}
                                             </Select>
                                         </div>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <Input
-                                                required
-                                                label="Price"
-                                                name="price"
-                                                inputMode="numeric"
-                                                type="number"
-                                                placeholder="e.g. 10" />
-                                            <Input
-                                                required
-                                                label="Stocks"
-                                                name="stocks"
-                                                inputMode="numeric"
-                                                type="number"
-                                                placeholder="e.g. 10" />
-                                        </div>
                                         <TextArea
                                             required
                                             label="Description"
                                             name="description"
                                             className=" h-40 resize-none "
                                             placeholder="e.g. Best Coffee" />
-                                        <div className="flex flex-col">
+                                        <div className="flex justify-between items-center mt-2">
+                                            <span className="block text-sm font-medium ">Add Size</span>
+                                            <Toggle onChange={onToggleAddItemSize} checked={AddItemSize} className=" k-color-brand-primary" />
+                                        </div>
+                                        {AddItemSize ? (
                                             <div className="flex flex-col">
-                                                <span className="block text-sm font-medium">Sizes</span>
                                                 <Sizes
                                                     sizes={SIZES.filter(data => !newItem.sizes.find(x => x.type === data.toLowerCase()))}
                                                     onAdd={data => data && onAddNewItemSize(data)} />
+                                                <div className="flex mt-2">
+                                                    {newItem?.sizes.map((size, i) => (
+                                                        <Chip
+                                                            key={i}
+                                                            className="m-0.5 uppercase"
+                                                            deleteButton
+                                                            onDelete={() => onRemoveSize(i)}>
+                                                            {size.type} - ₱{size.price}
+                                                        </Chip>
+                                                    ))}
+                                                </div>
                                             </div>
-                                            <div className="flex mt-2">
-                                                {newItem?.sizes.map((size, i) => (
-                                                    <Chip
-                                                        key={i}
-                                                        className="m-0.5 uppercase"
-                                                        deleteButton
-                                                        onDelete={() => onRemoveSize(i)}>
-                                                        {size.type} - ₱{size.price}
-                                                    </Chip>
-                                                ))}
+                                        ) : (
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <Input
+                                                    label="Price"
+                                                    name="price"
+                                                    inputMode="numeric"
+                                                    type="number"
+                                                    placeholder="e.g. 10" />
+                                                <Input
+                                                    label="Stocks"
+                                                    name="stocks"
+                                                    inputMode="numeric"
+                                                    type="number"
+                                                    placeholder="e.g. 10" />
                                             </div>
-                                        </div>
+                                        )}
                                         <div className="flex flex-col gap-2">
-                                            <span className="block text-sm font-medium px-3.5">Add Ons</span>
+                                            <span className="block text-sm font-medium">Add Ons</span>
                                             <List margin="my-0">
                                                 {addons?.map(addon => (
                                                     <ListItem

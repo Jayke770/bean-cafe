@@ -14,8 +14,8 @@ const ItemForm = z.object({
   category: z.string(),
   addons: z.string(),
   name: z.string(),
-  price: z.number().positive(),
-  stocks: z.number().positive(),
+  price: z.number().optional(),
+  stocks: z.number().optional(),
   description: z.string(),
 });
 export const revalidate = 60;
