@@ -36,7 +36,6 @@ export async function POST(req: NextRequest) {
     };
     const parse_form = ItemForm.safeParse(data);
     if (parse_form.success) {
-      await EnsureUploadDir();
       const addons: any[] = JSON.parse(parse_form.data.addons);
       const sizes: any[] = JSON.parse(parse_form.data.sizes);
       const ItemId = nanoid(12).toUpperCase();
