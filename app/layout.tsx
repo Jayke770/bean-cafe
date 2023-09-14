@@ -1,4 +1,5 @@
 import "@/styles/globals.css"
+import { Analytics } from '@vercel/analytics/react'
 import LayoutMain from "@/app/KonstaProvider"
 import NextAuthSessionProvider from "./NextAuthProvider"
 import { NoticationProvider } from "@components/notification"
@@ -32,6 +33,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </NoticationProvider>
           </LayoutMain>
         </NextAuthSessionProvider>
+        <Analytics />
       </body>
     </html>
   )
