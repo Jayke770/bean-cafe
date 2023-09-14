@@ -235,7 +235,7 @@ export default function Home() {
                                     className='z-0 k-color-brand-secondary'>
                                     <div className='shadow-lg h-44 rounded-2xl overflow-hidden'>
                                         <Image
-                                            src={item?.image ?? '/logo.png'}
+                                            src={`/api/files?type=item&id=${item.item_id}`}
                                             alt={item?.name}
                                             width={300}
                                             height={300}

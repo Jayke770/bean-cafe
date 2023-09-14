@@ -23,7 +23,7 @@ export default function AdminAuth() {
     const router = useRouter()
     const { status } = useSession()
     useEffect(() => {
-        if (status === "authenticated") router.push("/admin/dashboard")
+        if (status === "authenticated") router.push("/dashboard")
     }, [status, router])
     return (
         <AnimatePresence mode="wait">
@@ -48,7 +48,7 @@ export default function AdminAuth() {
                                 <span className="">Hi, Welcome Back 👋</span>
                             </div>
                             <Button
-                                onClick={() => signIn("google", { callbackUrl: "/admin/dashboard" })}
+                                onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
                                 clear
                                 outline
                                 className=' k-color-brand-white'>
