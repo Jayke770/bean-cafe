@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import dbConnect from "@/models/dbConnect";
 import Users from "@/models/users";
 import { UserRole } from "@/types";
+import moment from "moment-timezone";
 export const revalidate = 60;
 export async function GET(req: NextRequest) {
   const session = await getServerSession(AuthOptions);
@@ -13,7 +14,7 @@ export async function GET(req: NextRequest) {
       await dbConnect();
       await Users.updateOne(
         { _id: { $eq: session?.user?.id } },
-        { $set: { role: userRole } }
+        { $set: { role: userRole, created: parseFloat(moment().format("x")) } }
       );
       const redirect_url =
         req.nextUrl.searchParams.get("callbackUrl") ??
