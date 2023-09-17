@@ -43,11 +43,11 @@ export default function UsersPage() {
                                 </thead>
                                 <tbody className="divide-y divide-brand-primary/20 dark:divide-brand-secondary">
                                     {users?.map(user => (
-                                        <>
+                                        <tr key={user._id}>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 uppercase">{user.name}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{user.email}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{moment(user.created).fromNow()}</td>
-                                        </>
+                                        </tr>
                                     ))}
                                 </tbody>
                             </table>
