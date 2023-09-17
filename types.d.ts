@@ -25,6 +25,7 @@ const PaymentMethod = z.union([
   z.literal("paypal"),
   z.literal("cash"),
 ]);
+export type paymentMethod = z.infer<typeof PaymentMethod>
 const UserOrder = z.object({
   id: z.string(),
   status: OrderStatusData,

@@ -20,13 +20,11 @@ import {
 import { motion, Variants } from 'framer-motion'
 import { useLocalstorageState } from 'rooks'
 import { IoPersonCircleSharp } from 'react-icons/io5'
-import { IoMdCart } from 'react-icons/io'
 import Image from 'next/image'
 import { BsPaypal } from 'react-icons/bs'
 import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai'
 import GcashLogo from '@/public/images/gcash.png'
 import { BiMoney } from 'react-icons/bi'
-import NextLink from 'next/link'
 import { RiLoader5Fill } from 'react-icons/ri'
 import Items from '@/lib/User/items'
 import { CATEGORIES } from '@lib/constants'
@@ -34,7 +32,7 @@ import { greeting, capitalize } from '@lib/utils'
 import { useSession } from 'next-auth/react'
 import Account from './account'
 import { RiHomeLine, RiShoppingCartLine, RiMessage3Line } from 'react-icons/ri'
-import type { ApiResponse, Items as Item } from "@/types";
+import type { ApiResponse, Items as Item, UserCart, paymentMethod } from "@/types";
 import { useDailog, DialogInfo, DialogLoading, DialogSuccess } from '@components/dialog'
 import CartData from "@lib/User/cart"
 import * as changeCase from 'change-case'
@@ -67,10 +65,15 @@ interface ViewItem {
     opened?: boolean,
     adding_to_cart?: boolean
 }
+interface selectItemInCart {
+    items: UserCart[],
+    payment_method?: paymentMethod
+}
 export default function Home() {
     const { onShowDialog } = useDailog()
     const { cartData } = CartData()
     const { data: session, status } = useSession()
+    const [selectedItemIncart, setselectedItemIncart] = useLocalstorageState<selectItemInCart>("for-check-out", { items: [] })
     const [tab, setTab] = useLocalstorageState<string>("home-tab", "All")
     const { items } = Items(tab.toLowerCase(), 0)
     const onChangeTab = useCallback((data: string) => setTab(data), [setTab])
@@ -88,6 +91,12 @@ export default function Home() {
     }, [setViewItem])
     const onSelectSize = useCallback((data: Item['sizes'][0]) => setViewItem(e => ({ ...e, selected_size: e?.selected_size?.type === data.type ? undefined : data })), [])
     const onPlusQuantity = () => {
+        if ((viewItem?.data?.sizes.length ?? 0) <= 0) {
+            const quantity = viewItem.quantity + 1
+            if ((viewItem?.data?.stocks ?? 0) >= quantity) {
+                setViewItem(e => ({ ...e, quantity: quantity }))
+            }
+        }
         if (viewItem?.selected_size) {
             const quantity = viewItem.quantity + 1
             if ((viewItem?.selected_size?.stocks ?? 0) >= quantity) {
@@ -96,13 +105,13 @@ export default function Home() {
         }
     }
     const onMinusQuantity = () => {
+        if ((viewItem?.data?.sizes.length ?? 0) <= 0) {
+            const quantity = viewItem.quantity - 1
+            setViewItem(e => ({ ...e, quantity: quantity > 0 ? quantity : 0 }))
+        }
         if (viewItem?.selected_size) {
             const quantity = viewItem.quantity - 1
-            if (quantity > 0) {
-                setViewItem(e => ({ ...e, quantity: quantity }))
-            } else {
-                setViewItem(e => ({ ...e, quantity: 0 }))
-            }
+            setViewItem(e => ({ ...e, quantity: quantity > 0 ? quantity : 0 }))
         }
     }
     const onAddtoCart = async () => {
@@ -137,6 +146,17 @@ export default function Home() {
             })
         }
     }
+    const onSelectItemInCart = (item: UserCart) => {
+        const index = selectedItemIncart.items.findIndex(x => x.id === item.id)
+        if (index < 0) {
+            setselectedItemIncart(e => ({ ...e, items: [...e.items, item] }))
+        } else {
+            let new_items = selectedItemIncart.items
+            new_items.splice(index, 1)
+            setselectedItemIncart(e => ({ ...e, items: new_items }))
+        }
+    }
+    const onSelectPaymentMethod = (payment_method?: paymentMethod) => setselectedItemIncart(e => ({ ...e, payment_method: e?.payment_method === payment_method ? undefined : payment_method }))
     return (
         <>
             <motion.nav
@@ -145,8 +165,8 @@ export default function Home() {
                 animate={"animate"}
                 exit={"exit"}
                 transition={{ ease: "easeInOut", duration: 0.5 }}
-                className=' bottom-0 px-3.5 pb-3 w-full inset-x-0 fixed z-20'>
-                <div className='px-2 py-3.5 rounded-xl shadow-md translucent bg-md-light-surface-1 dark:bg-md-dark-surface-1 k-color-brand-primary grid grid-cols-3 gap-2'>
+                className=' bottom-0 px-3.5 pb-3 w-full inset-x-0 fixed z-20 flex justify-center'>
+                <div className='w-full md:w-96 self-center px-2 py-3.5 rounded-xl shadow-md translucent bg-md-light-surface-1 dark:bg-md-dark-surface-1 k-color-brand-primary grid grid-cols-3 gap-2'>
                     <button
                         onClick={onToggleCart}
                         className=' outline-none flex w-full justify-center items-center'>
@@ -197,70 +217,73 @@ export default function Home() {
                         </Icon>
                     </Link>
                 </div>
-                <div className='w-full mt-2'>
-                    <section className='w-full z-10 px-3 whitespace-nowrap snap-proximity gap-2 overflow-auto py-3'>
+                {/* Category */}
+                <section className='w-full z-10 px-3 whitespace-nowrap snap-proximity gap-2 overflow-auto py-3'>
+                    <Button
+                        clear={tab !== "all"}
+                        onClick={() => onChangeTab("all")}
+                        className='!w-auto k-color-brand-green inline-flex ml-2 first:ml-0'
+                        rounded>
+                        All
+                    </Button>
+                    {CATEGORIES.map(category => (
                         <Button
-                            clear={tab !== "all"}
-                            onClick={() => onChangeTab("all")}
+                            key={category}
+                            clear={category !== tab}
+                            onClick={() => onChangeTab(category as any)}
                             className='!w-auto k-color-brand-green inline-flex ml-2 first:ml-0'
                             rounded>
-                            All
+                            {category}
                         </Button>
-                        {CATEGORIES.map(category => (
-                            <Button
-                                key={category}
-                                clear={category !== tab}
-                                onClick={() => onChangeTab(category as any)}
-                                className='!w-auto k-color-brand-green inline-flex ml-2 first:ml-0'
-                                rounded>
-                                {category}
-                            </Button>
-                        ))}
-                    </section>
-                    <motion.section
-                        key={tab}
-                        variants={mainvariants}
-                        initial={"initial"}
-                        animate={"animate"}
-                        exit={"exit"}
-                        transition={{ ease: "easeInOut", duration: 0.5, delay: 0.2 }}
-                        className='grid px-4 gap-2.5 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 mt-5'>
-                        {items?.map(item => (
-                            <motion.div
-                                onClick={() => onToggleItem(item)}
-                                key={item.item_id}
-                                whileTap={{ scale: 0.95 }}
-                                className=' cursor-pointer'>
-                                <Card
-                                    margin='m-0'
-                                    className='z-0 k-color-brand-secondary'>
-                                    <div className='shadow-lg h-44 rounded-2xl overflow-hidden'>
-                                        <Image
-                                            src={`/api/files?type=item&id=${item.item_id}`}
-                                            alt={item?.name}
-                                            width={300}
-                                            height={300}
-                                            loading='lazy'
-                                            className=' aspect-square h-full w-full object-cover ' />
+                    ))}
+                </section>
+
+                {/* Items */}
+                <motion.section
+                    key={tab}
+                    variants={mainvariants}
+                    initial={"initial"}
+                    animate={"animate"}
+                    exit={"exit"}
+                    transition={{ ease: "easeInOut", duration: 0.5, delay: 0.2 }}
+                    className='grid px-4 gap-2.5 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 mt-5'>
+                    {items?.map(item => (
+                        <motion.div
+                            onClick={() => onToggleItem(item)}
+                            key={item.item_id}
+                            whileTap={{ scale: 0.95 }}
+                            className=' cursor-pointer'>
+                            <Card
+                                margin='m-0'
+                                className='z-0 k-color-brand-secondary'>
+                                <div className='shadow-lg h-44 rounded-2xl overflow-hidden'>
+                                    <Image
+                                        src={`/api/files?type=item&id=${item.item_id}`}
+                                        alt={item?.name}
+                                        width={300}
+                                        height={300}
+                                        loading='lazy'
+                                        className=' aspect-square h-full w-full object-cover ' />
+                                </div>
+                                <div className='flex flex-col mt-3'>
+                                    <span className='text-base lg:text-lg font-bold'>{item.name}</span>
+                                    <div className='flex justify-between items-baseline'>
+                                        <span className=' text-brand-primary font-bold text-sm lg:text-base'>₱{item.sizes.length > 0 ? item.sizes[0]?.price : item.price}</span>
+                                        <Badge className=' k-color-brand-green'>{changeCase.capitalCase(item.category)}</Badge>
                                     </div>
-                                    <div className='flex flex-col mt-3'>
-                                        <span className='text-base lg:text-lg font-bold'>{item.name}</span>
-                                        <div className='flex justify-between items-baseline'>
-                                            <span className=' text-brand-primary font-bold text-sm lg:text-base'>₱{item.sizes.length > 0 ? item.sizes[0]?.price : item.price}</span>
-                                            <Badge className=' k-color-brand-green'>{changeCase.capitalCase(item.category)}</Badge>
-                                        </div>
-                                    </div>
-                                </Card>
-                            </motion.div>
-                        ))}
-                    </motion.section>
-                </div>
+                                </div>
+                            </Card>
+                        </motion.div>
+                    ))}
+                </motion.section>
+
                 {/* Account */}
                 <Account
                     onToggleAccount={() => onToggleAccount()}
                     session={session}
                     status={status}
                     viewAccount={viewAccount} />
+
                 {/* Cart */}
                 <Actions
                     opened={viewCart}
@@ -277,6 +300,7 @@ export default function Home() {
                                         {cartData?.map(item => (
                                             <ListItem
                                                 key={item.id}
+                                                onClick={() => onSelectItemInCart(item)}
                                                 title={item.item_name}
                                                 chevron={false}
                                                 link
@@ -286,10 +310,10 @@ export default function Home() {
                                                         <span>{`Quantity: ${item.quantity}`}</span>
                                                     </div>
                                                 }
-                                                after={`₱${item.price * item.quantity}`}
+                                                after={`₱${(item.price * item.quantity).toLocaleString()}`}
                                                 media={
                                                     <div className='flex items-center gap-4 pl-3'>
-                                                        <Checkbox />
+                                                        <Checkbox checked={!!selectedItemIncart?.items?.find(x => x.id === item.id)} readOnly className=' pointer-events-none' />
                                                         <Image
                                                             src={`/api/files?type=item&id=${item.item_id}`}
                                                             alt="test"
@@ -302,15 +326,16 @@ export default function Home() {
                                         ))}
                                     </ListGroup>
                                     <ListGroup className='mt-2'>
-                                        <span className='p-4'>Payment</span>
+                                        <span className='p-4'>Payment Method</span>
                                         <div className='grid grid-cols-2 gap-2 mt-2'>
                                             <ListItem
                                                 link
+                                                onClick={() => onSelectPaymentMethod("paypal")}
                                                 chevron={false}
                                                 title="PayPal"
                                                 media={
                                                     <div className='flex gap-3 items-center'>
-                                                        <Radio />
+                                                        <Radio checked={selectedItemIncart?.payment_method === "paypal"} readOnly className=' pointer-events-none' />
                                                         <BsPaypal className=' h-5 w-5' />
                                                     </div>
                                                 } />
@@ -318,9 +343,10 @@ export default function Home() {
                                                 link
                                                 chevron={false}
                                                 title="GCash"
+                                                onClick={() => onSelectPaymentMethod("gcash")}
                                                 media={
                                                     <div className='flex gap-3 items-center'>
-                                                        <Radio />
+                                                        <Radio checked={selectedItemIncart?.payment_method === "gcash"} readOnly className=' pointer-events-none' />
                                                         <Image
                                                             src={GcashLogo}
                                                             alt="Gcash"
@@ -331,17 +357,26 @@ export default function Home() {
                                                 link
                                                 chevron={false}
                                                 title="Cash"
+                                                onClick={() => onSelectPaymentMethod("cash")}
                                                 media={
                                                     <div className='flex gap-3 items-center'>
-                                                        <Radio />
+                                                        <Radio checked={selectedItemIncart?.payment_method === "cash"} readOnly className=' pointer-events-none' />
                                                         <BiMoney className='h-5 w-5' />
                                                     </div>
                                                 } />
                                         </div>
                                     </ListGroup>
                                 </List>
-                                <div className='px-3 mt-5'>
-                                    <Button>Check Out</Button>
+                                <div className='px-3 mt-5 grid grid-cols-5'>
+                                    <div className=' col-span-2 flex justify-start items-center'>
+                                        <div className='flex items-baseline gap-1'>
+                                            <span className=' font-medium text-lg'>Total: </span>
+                                            <span className='font-base'>₱{selectedItemIncart?.items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toLocaleString()}</span>
+                                        </div>
+                                    </div>
+                                    <Button
+                                        className=' col-span-3'
+                                        disabled={selectedItemIncart?.items.length <= 0 || !selectedItemIncart?.payment_method}>Check Out</Button>
                                 </div>
                             </>
                         ) : (
@@ -351,6 +386,7 @@ export default function Home() {
                         )}
                     </Card>
                 </Actions>
+
                 {/* View Item */}
                 <Actions
                     opened={viewItem?.opened}
@@ -367,7 +403,7 @@ export default function Home() {
                                     <span className='text-sm'>{viewItem?.data?.description}</span>
                                 </div>
                                 <div className='flex'>
-                                    <span>₱{(viewItem?.selected_size?.price ?? 0) * (viewItem?.quantity ?? 0)}</span>
+                                    <span>₱{(viewItem?.data?.sizes.length ?? 0) > 0 ? (viewItem?.selected_size?.price ?? 0) * (viewItem?.quantity ?? 0) : (viewItem?.data?.price ?? 0) * viewItem?.quantity}</span>
                                 </div>
                             </div>
                             {(viewItem?.data?.sizes?.length ?? 0) > 0 && (
@@ -393,7 +429,7 @@ export default function Home() {
                                 <div className='w-full flex items-center'>
                                     <div className='flex gap-3 items-center'>
                                         <Button
-                                            disabled={!viewItem?.selected_size}
+                                            disabled={(viewItem?.data?.sizes.length ?? 0) > 0 && !viewItem?.selected_size}
                                             onClick={onMinusQuantity}
                                             rounded
                                             outline
@@ -403,7 +439,7 @@ export default function Home() {
                                         </Button>
                                         <span>{viewItem?.quantity}</span>
                                         <Button
-                                            disabled={!viewItem?.selected_size}
+                                            disabled={(viewItem?.data?.sizes.length ?? 0) > 0 && !viewItem?.selected_size}
                                             onClick={onPlusQuantity}
                                             rounded
                                             outline
@@ -415,7 +451,7 @@ export default function Home() {
                                 </div>
                                 <Button
                                     onClick={onAddtoCart}
-                                    disabled={!viewItem?.selected_size || viewItem?.quantity <= 0}
+                                    disabled={!viewItem?.selected_size && viewItem?.quantity <= 0}
                                     small
                                     rounded>
                                     {viewItem?.adding_to_cart ? <RiLoader5Fill className=' animate-spin h-5 w-5 text-brand-primary' /> : <span>Add to cart</span>}

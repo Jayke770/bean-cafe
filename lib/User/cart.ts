@@ -10,7 +10,7 @@ export default function Cart(): { cartData?: UserCart[]; cartDataLoading: boolea
             revalidateOnReconnect: true,
             refreshWhenHidden: true,
             refreshWhenOffline: true,
-            refreshInterval: 5000
+            refreshInterval: 10000
         }
     );
     return {

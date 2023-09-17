@@ -19,6 +19,7 @@ export default function Items(
       revalidateOnReconnect: true,
       refreshWhenHidden: true,
       refreshWhenOffline: true,
+      refreshInterval: 10000
     }
   );
   return {
