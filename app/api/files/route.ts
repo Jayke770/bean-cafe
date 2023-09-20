@@ -32,7 +32,7 @@ function streamFile(
 }
 export const dynamic = 'force-dynamic'
 export const revalidate = 10;
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest): Promise<any> {
   try {
     const type: "item" | "addon" = req.nextUrl.searchParams.get("type") as any
     const id = req.nextUrl.searchParams.get("id")
