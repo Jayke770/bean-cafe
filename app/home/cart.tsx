@@ -20,6 +20,7 @@ import ImageInput from '@/components/ImageInput';
 import toast from 'react-hot-toast';
 interface selectItemInCart {
     items: UserCart[],
+    isProcessing?: boolean,
     payment_method?: paymentMethod
 }
 export default function Cart({
@@ -45,33 +46,38 @@ export default function Cart({
     const onSelectPaymentMethod = (payment_method?: paymentMethod) => setselectedItemIncart(e => ({ ...e, payment_method: e?.payment_method === payment_method ? undefined : payment_method }))
     const onCheckOut = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        toast.promise(((): Promise<ApiResponse> => {
-            return new Promise(async (resolve, reject) => {
-                try {
-                    const req = await fetch("/api/user/items/checkout", {
-                        method: 'post',
-                        body: new FormData(e.target as any)
-                    })
-                    if (req.ok) {
-                        const res: ApiResponse = await req.json()
-                        res?.status ? resolve(res) : reject(res.message)
-                    } else {
-                        throw new Error(`${req.status} ${req.statusText}`)
+        if (!selectedItemIncart?.isProcessing) {
+            setselectedItemIncart(e => ({ ...e, isProcessing: true }))
+            toast.promise(((): Promise<ApiResponse> => {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        const req = await fetch("/api/user/items/checkout", {
+                            method: 'post',
+                            body: new FormData(e.target as any)
+                        })
+                        if (req.ok) {
+                            const res: ApiResponse = await req.json()
+                            setselectedItemIncart(e => ({ ...e, isProcessing: false }))
+                            res?.status ? resolve(res) : reject(res.message)
+                        } else {
+                            throw new Error(`${req.status} ${req.statusText}`)
+                        }
+                    } catch (e: any) {
+                        setselectedItemIncart(e => ({ ...e, isProcessing: false }))
+                        reject(e.message)
                     }
-                } catch (e: any) {
-                    reject(e.message)
-                }
-            })
-        })(), {
-            loading: 'Processing order...',
-            success: (data: ApiResponse) => {
-                if (data?.status && data?.redirect_url) {
+                })
+            })(), {
+                loading: 'Processing order...',
+                success: (data: ApiResponse) => {
+                    if (data?.status && data?.redirect_url) {
 
-                }
-                return `${data.message}`
-            },
-            error: e => e,
-        })
+                    }
+                    return `${data.message}`
+                },
+                error: e => e,
+            })
+        }
     }
     return (
         <Actions
@@ -176,7 +182,7 @@ export default function Cart({
                                 </div>
                                 <Button
                                     className=' col-span-3'
-                                    disabled={selectedItemIncart?.items.length <= 0 || !selectedItemIncart?.payment_method}>Check Out</Button>
+                                    disabled={selectedItemIncart?.items.length <= 0 || !selectedItemIncart?.payment_method || selectedItemIncart?.isProcessing}>Check Out</Button>
                             </div>
                         </>
                     ) : (

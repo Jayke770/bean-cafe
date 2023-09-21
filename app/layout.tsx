@@ -26,7 +26,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en" className=" scroll-smooth">
       <body>
         <Toaster toastOptions={{
-          duration: 3000,
           className: "toast_custom_style"
         }} />
         <NextAuthSessionProvider>

@@ -52,7 +52,8 @@ interface ViewItem {
     selected_size?: Item['sizes'][0],
     quantity: number,
     opened?: boolean,
-    adding_to_cart?: boolean
+    adding_to_cart?: boolean,
+    isProcessing?: boolean
 }
 export default function Home() {
     const { onShowDialog } = useDailog()
@@ -99,40 +100,45 @@ export default function Home() {
         }
     }
     const onAddtoCart = () => {
-        toast.promise(((): Promise<ApiResponse> => {
-            return new Promise(async (resolve, reject) => {
-                try {
-                    const req = await fetch("/api/user/cart", {
-                        method: 'POST',
-                        headers: {
-                            "content-type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            item_id: viewItem.data?.item_id,
-                            quantity: viewItem.quantity,
-                            selected_size: viewItem.selected_size?.type
+        if (!viewItem?.isProcessing) {
+            setViewItem(e => ({ ...e, isProcessing: true }))
+            toast.promise(((): Promise<ApiResponse> => {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        const req = await fetch("/api/user/cart", {
+                            method: 'POST',
+                            headers: {
+                                "content-type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                item_id: viewItem.data?.item_id,
+                                quantity: viewItem.quantity,
+                                selected_size: viewItem.selected_size?.type
+                            })
                         })
-                    })
-                    if (req.ok) {
-                        const res: ApiResponse = await req.json()
-                        res?.status ? resolve(res) : reject(res.message)
-                    } else {
-                        throw new Error(`${req.status} ${req.statusText}`)
+                        if (req.ok) {
+                            const res: ApiResponse = await req.json()
+                            setViewItem(e => ({ ...e, isProcessing: false }))
+                            res?.status ? resolve(res) : reject(res.message)
+                        } else {
+                            throw new Error(`${req.status} ${req.statusText}`)
+                        }
+                    } catch (e: any) {
+                        setViewItem(e => ({ ...e, isProcessing: false }))
+                        reject(e.message)
                     }
-                } catch (e: any) {
-                    reject(e.message)
-                }
-            })
-        })(), {
-            loading: 'Adding to cart..',
-            success: (data: ApiResponse) => {
-                if (data?.status && data?.redirect_url) {
+                })
+            })(), {
+                loading: 'Adding to cart..',
+                success: (data: ApiResponse) => {
+                    if (data?.status && data?.redirect_url) {
 
-                }
-                return `${data.message}`
-            },
-            error: e => e,
-        })
+                    }
+                    return `${data.message}`
+                },
+                error: e => e,
+            })
+        }
     }
     return (
         <motion.div
@@ -311,7 +317,7 @@ export default function Home() {
                             </div>
                             <Button
                                 onClick={onAddtoCart}
-                                disabled={!viewItem?.selected_size && viewItem?.quantity <= 0}
+                                disabled={!viewItem?.selected_size && viewItem?.quantity <= 0 || viewItem?.isProcessing}
                                 small
                                 rounded>
                                 {viewItem?.adding_to_cart ? <RiLoader5Fill className=' animate-spin h-5 w-5 text-brand-primary' /> : <span>Add to cart</span>}
