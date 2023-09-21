@@ -7,8 +7,7 @@ import {
     Card,
     Checkbox,
     Radio,
-    Button,
-    DialogButton
+    Button
 } from 'konsta/react'
 import * as changeCase from 'change-case'
 import type { ApiResponse, UserCart, paymentMethod } from "@/types";
@@ -18,7 +17,7 @@ import { BsPaypal } from 'react-icons/bs'
 import GcashLogo from '@/public/images/gcash.png'
 import { BiMoney } from 'react-icons/bi'
 import ImageInput from '@/components/ImageInput';
-import { useDailog, DialogInfo, DialogLoading, DialogSuccess } from '@components/dialog'
+import toast from 'react-hot-toast';
 interface selectItemInCart {
     items: UserCart[],
     payment_method?: paymentMethod
@@ -32,7 +31,6 @@ export default function Cart({
     onToggleCart: () => void,
     cartData?: UserCart[]
 }) {
-    const { onCloseDialog, onShowDialog } = useDailog()
     const [selectedItemIncart, setselectedItemIncart] = useLocalstorageState<selectItemInCart>("for-check-out", { items: [] })
     const onSelectItemInCart = (item: UserCart) => {
         const index = selectedItemIncart.items.findIndex(x => x.id === item.id)
@@ -47,29 +45,33 @@ export default function Cart({
     const onSelectPaymentMethod = (payment_method?: paymentMethod) => setselectedItemIncart(e => ({ ...e, payment_method: e?.payment_method === payment_method ? undefined : payment_method }))
     const onCheckOut = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        try {
-            onShowDialog({
-                content: <DialogLoading text='Processing order...' />
+        toast.promise(((): Promise<ApiResponse> => {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const req = await fetch("/api/user/items/checkout", {
+                        method: 'post',
+                        body: new FormData(e.target as any)
+                    })
+                    if (req.ok) {
+                        const res: ApiResponse = await req.json()
+                        res?.status ? resolve(res) : reject(res.message)
+                    } else {
+                        throw new Error(`${req.status} ${req.statusText}`)
+                    }
+                } catch (e: any) {
+                    reject(e.message)
+                }
             })
-            const req = await fetch("/api/user/items/checkout", {
-                method: 'post',
-                body: new FormData(e.target as any)
-            })
-            if (req.ok) {
-                const res: ApiResponse = await req.json()
-                onShowDialog({
-                    timer: 3000,
-                    content: res?.status ? <DialogSuccess text={res?.message} /> : <DialogInfo text={res?.message} />
-                })
-            } else {
-                throw new Error(`${req.status} ${req.statusText}`)
-            }
-        } catch (e: any) {
-            onShowDialog({
-                timer: 3000,
-                content: <DialogInfo text={e?.message} />
-            })
-        }
+        })(), {
+            loading: 'Processing order...',
+            success: (data: ApiResponse) => {
+                if (data?.status && data?.redirect_url) {
+
+                }
+                return `${data.message}`
+            },
+            error: e => e,
+        })
     }
     return (
         <Actions

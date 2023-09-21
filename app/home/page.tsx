@@ -35,6 +35,7 @@ import CartData from "@lib/User/cart"
 import * as changeCase from 'change-case'
 import ItemLoader from '@/components/Client/items/loader'
 import Cart from './cart'
+import toast from 'react-hot-toast';
 const mainvariants: Variants = {
     initial: {
         opacity: 0
@@ -97,37 +98,41 @@ export default function Home() {
             setViewItem(e => ({ ...e, quantity: quantity > 0 ? quantity : 0 }))
         }
     }
-    const onAddtoCart = async () => {
-        try {
-            onShowDialog({
-                content: <DialogLoading text="Adding to cart.." />
+    const onAddtoCart = () => {
+        toast.promise(((): Promise<ApiResponse> => {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const req = await fetch("/api/user/cart", {
+                        method: 'POST',
+                        headers: {
+                            "content-type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            item_id: viewItem.data?.item_id,
+                            quantity: viewItem.quantity,
+                            selected_size: viewItem.selected_size?.type
+                        })
+                    })
+                    if (req.ok) {
+                        const res: ApiResponse = await req.json()
+                        res?.status ? resolve(res) : reject(res.message)
+                    } else {
+                        throw new Error(`${req.status} ${req.statusText}`)
+                    }
+                } catch (e: any) {
+                    reject(e.message)
+                }
             })
-            const req = await fetch("/api/user/cart", {
-                method: 'POST',
-                headers: {
-                    "content-type": "application/json"
-                },
-                body: JSON.stringify({
-                    item_id: viewItem.data?.item_id,
-                    quantity: viewItem.quantity,
-                    selected_size: viewItem.selected_size?.type
-                })
-            })
-            if (req.ok) {
-                const res: ApiResponse = await req.json()
-                onShowDialog({
-                    timer: 4000,
-                    content: res?.status ? <DialogSuccess text={res?.message} /> : <DialogInfo text={res?.message} />
-                })
-            } else {
-                throw new Error(`${req.status} ${req.statusText}`)
-            }
-        } catch (e: any) {
-            onShowDialog({
-                timer: 2000,
-                content: <DialogInfo text={e?.message} />
-            })
-        }
+        })(), {
+            loading: 'Adding to cart..',
+            success: (data: ApiResponse) => {
+                if (data?.status && data?.redirect_url) {
+
+                }
+                return `${data.message}`
+            },
+            error: e => e,
+        })
     }
     return (
         <motion.div

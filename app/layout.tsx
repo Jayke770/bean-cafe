@@ -5,6 +5,7 @@ import NextAuthSessionProvider from "./NextAuthProvider"
 import { NoticationProvider } from "@components/notification"
 import { DialogProvider } from '@components/dialog'
 import { Metadata } from "next"
+import { Toaster } from 'react-hot-toast'
 export const metadata: Metadata = {
   title: "Bean Cafe",
   manifest: "/manifest.json",
@@ -24,6 +25,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className=" scroll-smooth">
       <body>
+        <Toaster toastOptions={{
+          duration: 3000,
+          className: "toast_custom_style"
+        }} />
         <NextAuthSessionProvider>
           <LayoutMain>
             <NoticationProvider>

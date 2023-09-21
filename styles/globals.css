@@ -22,3 +22,6 @@
 .react-loading-skeleton {
   @apply ![--base-color:#eee7e1] ![--highlight-color:#cc9c68] dark:![--highlight-color:#cc9c68] dark:![--base-color:#372e1c]
 }
+.toast_custom_style {
+  @apply dark:!bg-brand-secondary dark:!text-brand-white;
+}
