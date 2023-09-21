@@ -1,7 +1,6 @@
 "use client"
 import Users from "@/lib/Admin/users"
 import moment from "moment-timezone"
-import Image from "next/image"
 export default function UsersPage() {
     const { users, usersLoading } = Users()
     return (
