@@ -1,5 +1,4 @@
 "use client"
-import { useCallback } from 'react'
 import {
     Actions,
     List,
@@ -8,17 +7,18 @@ import {
     Card,
     Checkbox,
     Radio,
-    Button
+    Button,
+    DialogButton
 } from 'konsta/react'
 import * as changeCase from 'change-case'
-import type { UserCart, paymentMethod } from "@/types";
+import type { ApiResponse, UserCart, paymentMethod } from "@/types";
 import { useLocalstorageState } from 'rooks'
 import Image from 'next/image';
 import { BsPaypal } from 'react-icons/bs'
 import GcashLogo from '@/public/images/gcash.png'
 import { BiMoney } from 'react-icons/bi'
-import { useDropzone } from 'react-dropzone'
 import ImageInput from '@/components/ImageInput';
+import { useDailog, DialogInfo, DialogLoading, DialogSuccess } from '@components/dialog'
 interface selectItemInCart {
     items: UserCart[],
     payment_method?: paymentMethod
@@ -32,6 +32,7 @@ export default function Cart({
     onToggleCart: () => void,
     cartData?: UserCart[]
 }) {
+    const { onCloseDialog, onShowDialog } = useDailog()
     const [selectedItemIncart, setselectedItemIncart] = useLocalstorageState<selectItemInCart>("for-check-out", { items: [] })
     const onSelectItemInCart = (item: UserCart) => {
         const index = selectedItemIncart.items.findIndex(x => x.id === item.id)
@@ -44,12 +45,32 @@ export default function Cart({
         }
     }
     const onSelectPaymentMethod = (payment_method?: paymentMethod) => setselectedItemIncart(e => ({ ...e, payment_method: e?.payment_method === payment_method ? undefined : payment_method }))
-    const onDrop = useCallback((files?: File[]) => {
-        console.log(files)
-    }, [])
-    const { getRootProps, getInputProps } = useDropzone({
-        onDrop, multiple: false
-    })
+    const onCheckOut = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        try {
+            onShowDialog({
+                content: <DialogLoading text='Processing order...' />
+            })
+            const req = await fetch("/api/user/items/checkout", {
+                method: 'post',
+                body: new FormData(e.target as any)
+            })
+            if (req.ok) {
+                const res: ApiResponse = await req.json()
+                onShowDialog({
+                    timer: 3000,
+                    content: res?.status ? <DialogSuccess text={res?.message} /> : <DialogInfo text={res?.message} />
+                })
+            } else {
+                throw new Error(`${req.status} ${req.statusText}`)
+            }
+        } catch (e: any) {
+            onShowDialog({
+                timer: 3000,
+                content: <DialogInfo text={e?.message} />
+            })
+        }
+    }
     return (
         <Actions
             opened={opened}
@@ -58,10 +79,14 @@ export default function Cart({
             <Card
                 margin='m-0'
                 className=' rounded-b-none'>
-                <div className='k-color-brand-primary max-h-[70vh] overflow-auto pb-15-safe'>
+                <form
+                    onSubmit={onCheckOut}
+                    className='k-color-brand-primary max-h-[70vh] overflow-auto pb-15-safe'>
                     <h1 className='font-bold text-lg text-brand-primary px-3.5 sticky bg-md-light-surface-1 dark:bg-md-dark-surface-1 z-20 top-0'>Your Cart</h1>
                     {(cartData?.length ?? 0) > 0 ? (
                         <>
+                            <input type='hidden' value={JSON.stringify(selectedItemIncart.items)} name='items' />
+                            <input type='hidden' value={JSON.stringify(selectedItemIncart.payment_method)} name='payment_method' />
                             <List margin='my-0' className='mt-3'>
                                 <ListGroup>
                                     {cartData?.map(item => (
@@ -157,7 +182,7 @@ export default function Cart({
                             <span className='text-xl'>Cart is Empty</span>
                         </div>
                     )}
-                </div>
+                </form>
             </Card>
         </Actions>
     )

@@ -113,4 +113,5 @@ export type Items = z.infer<typeof ItemsChema>;
 export type ApiResponse = {
   status?: boolean;
   message?: string;
+  redirect_url?: string
 };

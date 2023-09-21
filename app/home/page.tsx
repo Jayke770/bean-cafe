@@ -29,7 +29,7 @@ import { greeting, capitalize } from '@lib/utils'
 import { useSession } from 'next-auth/react'
 import Account from './account'
 import { RiShoppingCartLine } from 'react-icons/ri'
-import type { ApiResponse, Items as Item, UserCart, paymentMethod } from "@/types";
+import type { ApiResponse, Items as Item } from "@/types";
 import { useDailog, DialogInfo, DialogLoading, DialogSuccess } from '@components/dialog'
 import CartData from "@lib/User/cart"
 import * as changeCase from 'change-case'

@@ -1,5 +1,5 @@
 "use client"
-import { Dialog } from 'konsta/react'
+import { Dialog, DialogButton } from 'konsta/react'
 import { createContext, useState, useCallback, useContext } from 'react'
 import { BsFillCheckCircleFill, BsInfoCircleFill } from 'react-icons/bs'
 import { RiLoader5Fill } from 'react-icons/ri'
