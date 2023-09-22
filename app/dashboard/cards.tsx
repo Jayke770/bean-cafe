@@ -25,7 +25,7 @@ export default function Cards() {
                 className=" k-color-brand-primary !rounded-md ">
                 <div className="flex justify-between w-full items-center">
                     <div className="flex flex-col">
-                        <span className="font-bold text-xl">200</span>
+                        <span className="font-bold text-xl">{stats?.orders ?? "..."}</span>
                         <span className="text-sm">Total Orders</span>
                     </div>
                     <BiCart className=" h-8 w-8" />

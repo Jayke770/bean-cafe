@@ -3,6 +3,7 @@ const fetcher = (url: any) => fetch(url).then((res) => res.json());
 interface Stats {
   items: number;
   users: number;
+  orders: number
 }
 export default function Stats(): {
   stats: Stats;
