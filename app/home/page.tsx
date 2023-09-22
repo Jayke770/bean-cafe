@@ -60,7 +60,7 @@ export default function Home() {
     const { cartData } = CartData()
     const { data: session, status } = useSession()
     const [tab, setTab] = useLocalstorageState<string>("home-tab", "All")
-    const { items } = Items(tab.toLowerCase(), 0)
+    const { items, itemsLoading } = Items(tab.toLowerCase(), 0)
     const onChangeTab = useCallback((data: string) => setTab(data), [setTab])
     const [viewCart, setViewCart] = useState<boolean>(false)
     const [viewAccount, setViewAccount] = useState<boolean>(false)
@@ -213,6 +213,7 @@ export default function Home() {
                 exit={"exit"}
                 transition={{ ease: "easeInOut", duration: 0.5, delay: 0.2 }}
                 className='grid px-4 gap-2.5 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 mt-5'>
+                {itemsLoading && <ItemLoader/>}
                 {items?.map(item => (
                     <motion.div
                         onClick={() => onToggleItem(item)}

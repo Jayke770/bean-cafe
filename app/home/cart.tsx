@@ -18,9 +18,9 @@ import GcashLogo from '@/public/images/gcash.png'
 import { BiMoney } from 'react-icons/bi'
 import ImageInput from '@/components/ImageInput';
 import toast from 'react-hot-toast';
+import { useState } from 'react';
 interface selectItemInCart {
     items: UserCart[],
-    isProcessing?: boolean,
     payment_method?: paymentMethod
 }
 export default function Cart({
@@ -32,6 +32,7 @@ export default function Cart({
     onToggleCart: () => void,
     cartData?: UserCart[]
 }) {
+    const [isProcessing, setIsProcessing] = useState<boolean>(false)
     const [selectedItemIncart, setselectedItemIncart] = useLocalstorageState<selectItemInCart>("for-check-out", { items: [] })
     const onSelectItemInCart = (item: UserCart) => {
         const index = selectedItemIncart.items.findIndex(x => x.id === item.id)
@@ -46,8 +47,8 @@ export default function Cart({
     const onSelectPaymentMethod = (payment_method?: paymentMethod) => setselectedItemIncart(e => ({ ...e, payment_method: e?.payment_method === payment_method ? undefined : payment_method }))
     const onCheckOut = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (!selectedItemIncart?.isProcessing) {
-            setselectedItemIncart(e => ({ ...e, isProcessing: true }))
+        if (isProcessing) {
+            setIsProcessing(true)
             toast.promise(((): Promise<ApiResponse> => {
                 return new Promise(async (resolve, reject) => {
                     try {
@@ -57,13 +58,13 @@ export default function Cart({
                         })
                         if (req.ok) {
                             const res: ApiResponse = await req.json()
-                            setselectedItemIncart(e => ({ ...e, isProcessing: false }))
+                            setIsProcessing(false)
                             res?.status ? resolve(res) : reject(res.message)
                         } else {
                             throw new Error(`${req.status} ${req.statusText}`)
                         }
                     } catch (e: any) {
-                        setselectedItemIncart(e => ({ ...e, isProcessing: false }))
+                        setIsProcessing(false)
                         reject(e.message)
                     }
                 })
@@ -182,7 +183,7 @@ export default function Cart({
                                 </div>
                                 <Button
                                     className=' col-span-3'
-                                    disabled={selectedItemIncart?.items.length <= 0 || !selectedItemIncart?.payment_method || selectedItemIncart?.isProcessing}>Check Out</Button>
+                                    disabled={selectedItemIncart?.items.length <= 0 || !selectedItemIncart?.payment_method || isProcessing}>Check Out</Button>
                             </div>
                         </>
                     ) : (
