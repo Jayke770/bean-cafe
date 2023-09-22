@@ -19,6 +19,7 @@ export const orderNotification = (data: Orders): string => {
     message += `${i + 1}: ${item.item_name} ${item?.size ? `(${changeCase.sentenceCase(item.size)})` : ''} - ₱${item.price} ${item.quantity}x</br>`
   })
   message += "</br><hr/>"
+  message += `<b>ID:</b> ${data.orderId}</br>`
   message += `<b>Payment Method:</b> ${changeCase.sentenceCase(data.payment_method)}</br>`
   message += `<b>Status:</b> ${changeCase.sentenceCase(data.status)}</br>`
   message += `<b>Total Payment:</b> ₱${parseFloat(data.total_payment).toFixed(2)}</br>`
