@@ -17,7 +17,7 @@ import {
     TabbarLink,
     Badge
 } from 'konsta/react'
-import { motion, Variants } from 'framer-motion'
+import { motion, Variants, AnimatePresence } from 'framer-motion'
 import { useLocalstorageState } from 'rooks'
 import { IoPersonCircleSharp } from 'react-icons/io5'
 import Image from 'next/image'
@@ -213,35 +213,37 @@ export default function Home() {
                 exit={"exit"}
                 transition={{ ease: "easeInOut", duration: 0.5, delay: 0.2 }}
                 className='grid px-4 gap-2.5 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 mt-5'>
-                {itemsLoading && <ItemLoader/>}
-                {items?.map(item => (
-                    <motion.div
-                        onClick={() => onToggleItem(item)}
-                        key={item.item_id}
-                        whileTap={{ scale: 0.95 }}
-                        className=' cursor-pointer'>
-                        <Card
-                            margin='m-0'
-                            className='z-0 k-color-brand-secondary'>
-                            <div className='shadow-lg h-44 rounded-2xl overflow-hidden'>
-                                <Image
-                                    src={`/api/files?type=item&id=${item.item_id}`}
-                                    alt={item?.name}
-                                    width={300}
-                                    height={300}
-                                    loading='lazy'
-                                    className=' aspect-square h-full w-full object-cover ' />
-                            </div>
-                            <div className='flex flex-col mt-3'>
-                                <span className='text-base lg:text-lg font-bold'>{item.name}</span>
-                                <div className='flex justify-between items-baseline'>
-                                    <span className=' text-brand-primary font-bold text-sm lg:text-base'>₱{item.sizes.length > 0 ? item.sizes[0]?.price : item.price}</span>
-                                    <Badge className=' k-color-brand-green'>{changeCase.capitalCase(item.category)}</Badge>
+                <AnimatePresence mode='wait'>
+                    {itemsLoading && <ItemLoader key={"items-loader"} />}
+                    {items?.map(item => (
+                        <motion.div
+                            onClick={() => onToggleItem(item)}
+                            key={item.item_id}
+                            whileTap={{ scale: 0.95 }}
+                            className=' cursor-pointer'>
+                            <Card
+                                margin='m-0'
+                                className='z-0 k-color-brand-secondary'>
+                                <div className='shadow-lg h-44 rounded-2xl overflow-hidden'>
+                                    <Image
+                                        src={`/api/files?type=item&id=${item.item_id}`}
+                                        alt={item?.name}
+                                        width={300}
+                                        height={300}
+                                        loading='lazy'
+                                        className=' aspect-square h-full w-full object-cover ' />
                                 </div>
-                            </div>
-                        </Card>
-                    </motion.div>
-                ))}
+                                <div className='flex flex-col mt-3'>
+                                    <span className='text-base lg:text-lg font-bold'>{item.name}</span>
+                                    <div className='flex justify-between items-baseline'>
+                                        <span className=' text-brand-primary font-bold text-sm lg:text-base'>₱{item.sizes.length > 0 ? item.sizes[0]?.price : item.price}</span>
+                                        <Badge className=' k-color-brand-green'>{changeCase.capitalCase(item.category)}</Badge>
+                                    </div>
+                                </div>
+                            </Card>
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
             </motion.section>
 
             {/* Account */}

@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { useEffect } from 'react'
 import { useRouter } from 'next-nprogress-bar'
+import Loader from './index_loader'
 const variants: Variants = {
   initial: {
     opacity: 0,
@@ -35,17 +36,7 @@ export default function Index() {
   return (
     <main className='h-full w-full left-0 top-0 overflow-auto absolute bg-brand-primary dark:bg-brand-secondary/20'>
       <AnimatePresence mode='wait'>
-        {(status === "loading" || status === "authenticated") && (
-          <motion.div
-            variants={variants}
-            initial={"initial"}
-            animate={"animate"}
-            exit={"exit"}
-            transition={{ ease: "easeInOut", duration: 0.3 }}
-            className='fixed h-full flex justify-center items-center w-full p-2 z-50'>
-            <Preloader className=' k-color-brand-primary ' />
-          </motion.div>
-        )}
+        {(status === "loading" || status === "authenticated") && <Loader />}
         {status === "unauthenticated" && (
           <motion.div
             key={"oboarding"}

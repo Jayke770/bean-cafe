@@ -47,7 +47,7 @@ export default function Cart({
     const onSelectPaymentMethod = (payment_method?: paymentMethod) => setselectedItemIncart(e => ({ ...e, payment_method: e?.payment_method === payment_method ? undefined : payment_method }))
     const onCheckOut = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (isProcessing) {
+        if (!isProcessing) {
             setIsProcessing(true)
             toast.promise(((): Promise<ApiResponse> => {
                 return new Promise(async (resolve, reject) => {
