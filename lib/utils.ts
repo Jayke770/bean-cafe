@@ -16,7 +16,7 @@ export const capitalize = (str: string) => str.length > 0 ? str.charAt(0).toUppe
 export const orderNotification = (data: Orders): string => {
   let message = "<b>Order Summary</b></br>"
   data.items.map((item, i) => {
-    message += `${i + 1}: ${item.item_name} - ${item.price} ${item.quantity}x</br>`
+    message += `${i + 1}: ${item.item_name} - ₱${item.price} ${item.quantity}x</br>`
   })
   message += "</br><hr/>"
   message += `<b>Payment Method:</b> ${changeCase.sentenceCase(data.payment_method)}</br>`
