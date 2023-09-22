@@ -6,6 +6,7 @@ import { NoticationProvider } from "@components/notification"
 import { DialogProvider } from '@components/dialog'
 import { Metadata } from "next"
 import { Toaster } from 'react-hot-toast'
+import { Analytics } from '@vercel/analytics/react'
 export const metadata: Metadata = {
   title: "Bean Cafe",
   manifest: "/manifest.json",
@@ -37,6 +38,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </NoticationProvider>
           </LayoutMain>
         </NextAuthSessionProvider>
+        <Analytics />
       </body>
     </html>
   )
