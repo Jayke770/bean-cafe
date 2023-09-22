@@ -33,7 +33,7 @@ export default function Cart({
     cartData?: UserCart[]
 }) {
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
-    const [selectedItemIncart, setselectedItemIncart] = useLocalstorageState<selectItemInCart>("for-check-out", { items: [] })
+    const [selectedItemIncart, setselectedItemIncart] = useLocalstorageState<selectItemInCart>("check-out", { items: [] })
     const onSelectItemInCart = (item: UserCart) => {
         const index = selectedItemIncart.items.findIndex(x => x.id === item.id)
         if (index < 0) {

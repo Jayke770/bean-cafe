@@ -23,7 +23,6 @@ const UserCartData = z.object({
     category: z.string(),
     created: z.number()
 })
-type gsgas = z.infer<typeof UserCartData>
 const CheckOutSchema = z.object({
     items: z.array(UserCartData),
     payment_method: z.union([
