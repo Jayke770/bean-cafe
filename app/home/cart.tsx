@@ -73,6 +73,9 @@ export default function Cart({
                 success: (data: ApiResponse) => {
                     if (data?.status && data?.redirect_url) {
 
+                    } else {
+                        onToggleCart()
+                        setselectedItemIncart({ items: [] })
                     }
                     return `${data.message}`
                 },
@@ -95,7 +98,7 @@ export default function Cart({
                     {(cartData?.length ?? 0) > 0 ? (
                         <>
                             <input type='hidden' value={JSON.stringify(selectedItemIncart.items)} name='items' />
-                            <input type='hidden' value={JSON.stringify(selectedItemIncart.payment_method)} name='payment_method' />
+                            <input type='hidden' value={selectedItemIncart.payment_method} name='payment_method' />
                             <List margin='my-0' className='mt-3'>
                                 <ListGroup>
                                     {cartData?.map(item => (
@@ -171,7 +174,7 @@ export default function Cart({
                             {selectedItemIncart?.payment_method === "gcash" && (
                                 <div className='mx-3 mt-2 flex flex-col gap-2'>
                                     <span className='text-base'>Gcash Proof of Transaction</span>
-                                    <ImageInput accept='image/*' name='gcash-tx' />
+                                    <ImageInput accept='image/*' name='gcash_image' />
                                 </div>
                             )}
                             <div className=' absolute z-20 bottom-0 left-0 w-full bg-md-light-surface-1 dark:bg-md-dark-surface-1 translucent py-3 px-3.5 grid grid-cols-5'>

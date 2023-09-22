@@ -12,10 +12,10 @@ const OrderStatusData = z.union([
 export type OrderStatus = z.infer<typeof OrderStatus>
 const UserOrderItem = z.object({
   id: z.string(),
-  product_id: z.string(),
+  item_id: z.string(),
   quantity: z.number(),
   price: z.number(),
-  size: z.string(),
+  size: z.string().optional().or(z.null()),
   item_name: z.string(),
   price: z.number(),
   created: z.number(),
@@ -25,6 +25,7 @@ const PaymentMethod = z.union([
   z.literal("paypal"),
   z.literal("cash"),
 ]);
+export const PaymentMethod = PaymentMethod
 export type paymentMethod = z.infer<typeof PaymentMethod>
 const UserOrder = z.object({
   id: z.string(),
@@ -38,12 +39,13 @@ const UserCartData = z.object({
   id: z.string(),
   item_id: z.string(),
   quantity: z.number(),
-  size: z.string().optional(),
+  size: z.string().optional().or(z.null()),
   item_name: z.string(),
   price: z.number(),
   category: z.string(),
   created: z.number()
 })
+export const UserCartData = UserCartData
 export type UserCart = z.infer<typeof UserCartData>
 const UserSchema = z.object({
   name: z.string(),
@@ -53,7 +55,7 @@ const UserSchema = z.object({
   address: z.string(),
   phone_number: z.string(),
   orders: z.array(UserOrder),
-  cart: z.array(UserCart),
+  cart: z.array(UserCartData),
   paypal_email: z.string().optional(),
   role: UserRole,
   status: UserStatus,
@@ -115,3 +117,15 @@ export type ApiResponse = {
   message?: string;
   redirect_url?: string
 };
+//orders 
+const OrdersSchema = z.object({
+  orderId: z.string(),
+  userID: z.string(),
+  items: z.array(UserOrderItem),
+  payment_method: PaymentMethod,
+  status: OrderStatusData,
+  message: z.string().optional(),
+  gcash_image: z.string().optional(),
+  created: z.number()
+})
+export type Orders = z.infer<typeof OrdersSchema>

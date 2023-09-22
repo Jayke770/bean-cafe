@@ -1,6 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
 import { z } from "zod";
-import mime from "mime";
 import { fromZodError } from "zod-validation-error";
 import dbConnect from "@/models/dbConnect";
 import Addons from "@/models/addons";
