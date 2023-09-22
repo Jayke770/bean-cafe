@@ -11,6 +11,7 @@ import { fromZodError } from 'zod-validation-error';
 import * as changeCase from 'change-case'
 import moment from 'moment-timezone';
 import { nanoid } from 'nanoid';
+import { orderNotification } from '@lib/utils'
 const emailHandler = new Email("Bean Cafe")
 const UserCartData = z.object({
     id: z.string(),
@@ -64,13 +65,14 @@ export async function POST(req: NextRequest) {
                         })
                         await userData.save()
                         //save to order collection
-                        await Orders.create({
+                        const orderData = await Orders.create({
                             created: parseFloat(moment().format("x")),
                             items: parse_form.data.items,
                             orderId: nanoid().toUpperCase(),
                             status: "pending",
                             payment_method: parse_form.data.payment_method,
-                            userID: session.user.id
+                            userID: session.user.id,
+                            total_payment: total_payment.toString(),
                         })
                         //remove item in user cart 
                         await Users.updateOne({
@@ -83,6 +85,8 @@ export async function POST(req: NextRequest) {
                                 }
                             }
                         })
+                        //send notification 
+                        if (userData.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${orderData.orderId}`, body: orderNotification(orderData) })
                         res = {
                             status: true,
                             message: "Order Success"

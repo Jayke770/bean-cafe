@@ -7,7 +7,8 @@ const Orders = new Schema<ord>({
     created: { type: Number },
     payment_method: { type: String },
     status: { type: String },
-    userID: { type: String }
+    userID: { type: String },
+    total_payment: { type: String }
 });
 if (models["orders"] != null) {
     deleteModel("orders");

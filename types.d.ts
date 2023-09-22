@@ -126,6 +126,7 @@ const OrdersSchema = z.object({
   status: OrderStatusData,
   message: z.string().optional(),
   gcash_image: z.string().optional(),
-  created: z.number()
+  created: z.number(),
+  total_payment: z.string()
 })
 export type Orders = z.infer<typeof OrdersSchema>
