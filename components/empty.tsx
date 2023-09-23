@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion'
 export function ItemEmpty() {
     return (
-        <div className="flex justify-center col-span-full h-[calc(100%-300px)] w-full p-4">
+        <div className="flex justify-center items-center col-span-full flex-col w-full p-4">
             <motion.svg
                 key={"empty"}
                 initial={{ scale: 0.7, opacity: 0 }}
@@ -10,11 +10,12 @@ export function ItemEmpty() {
                 exit={{ scale: 0.7, opacity: 0 }}
                 transition={{ type: "spring", duration: 0.3, delay: 0.3 }}
                 xmlns="http://www.w3.org/2000/svg"
-                className=" h-56 w-56 mt-20"
+                className=" h-56 w-56 mt-20 k-color-brand-primary"
                 data-name="Layer 1"
                 viewBox="0 0 672.532 738.394"
             >
                 <path
+                    className=' '
                     fill="#cc9c68"
                     d="M467 149.804c-46.62-7.44-99.71-11.41-155-11.41-50.6 0-99.35 3.32-142.98 9.58.01-.67.02-1.34.05-2.01a149 149 0 01297.91 1.82c.01.68.02 1.35.02 2.02z"
                 ></path>
@@ -156,6 +157,12 @@ export function ItemEmpty() {
                     d="M671.532 738.394h-236a1 1 0 010-2h236a1 1 0 010 2z"
                 ></path>
             </motion.svg>
+            <motion.span
+                initial={{ scale: 0.7, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.7, opacity: 0 }}
+                transition={{ type: "spring", duration: 0.3, delay: 0.4 }}
+                className='mt-10 font-bold text-xl dark:text-brand-primary'>No Item Found</motion.span>
         </div>
     );
 }
