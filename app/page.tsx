@@ -6,13 +6,13 @@ import { Pagination, Navigation } from 'swiper/modules'
 import Image from 'next/image'
 import IntroImage from '@/public/images/onboarding/intro.png'
 import CupsImage from '@/public/images/onboarding/cups.png'
-import { Button, Preloader } from 'konsta/react'
+import { Button } from 'konsta/react'
 import { AnimatePresence, motion, Variants } from 'framer-motion'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { useEffect } from 'react'
 import { useRouter } from 'next-nprogress-bar'
-import Loader from './index_loader'
+import { Coffee } from "@components/loader"
 const variants: Variants = {
   initial: {
     opacity: 0,
@@ -36,7 +36,7 @@ export default function Index() {
   return (
     <main className='h-full w-full left-0 top-0 overflow-auto absolute bg-brand-primary dark:bg-brand-secondary/20'>
       <AnimatePresence mode='wait'>
-        {(status === "loading" || status === "authenticated") && <Loader />}
+        {(status === "loading" || status === "authenticated") && <Coffee />}
         {status === "unauthenticated" && (
           <motion.div
             key={"oboarding"}
