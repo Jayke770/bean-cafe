@@ -36,6 +36,7 @@ import * as changeCase from 'change-case'
 import ItemLoader from '@/components/Client/items/loader'
 import Cart from './cart'
 import toast from 'react-hot-toast';
+import { ItemEmpty } from '@components/empty'
 const mainvariants: Variants = {
     initial: {
         opacity: 0
@@ -214,6 +215,7 @@ export default function Home() {
                 transition={{ ease: "easeInOut", duration: 0.5, delay: 0.2 }}
                 className='grid px-4 gap-2.5 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 mt-5'>
                 <AnimatePresence mode='wait'>
+                    {items?.length <= 0 && <ItemEmpty key={"items-empty"} />}
                     {itemsLoading && <ItemLoader key={"items-loader"} />}
                     {items?.map(item => (
                         <motion.div
