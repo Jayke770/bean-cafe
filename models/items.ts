@@ -11,7 +11,7 @@ const Items = new Schema<Items>({
   addons: [],
   price: { type: Number },
   stocks: { type: Number },
-});
+}, { timestamps: true });
 if (models["items"] != null) {
   deleteModel("items");
 }

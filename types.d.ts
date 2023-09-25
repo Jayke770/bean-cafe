@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ObjectId } from "mongoose";
 //user
 const UserStatus = z.union([z.literal("new"), z.literal("old")]);
 export type UserStatus = z.infer<typeof UserStatus>
@@ -35,17 +36,19 @@ const UserOrder = z.object({
   total_payment: z.string(),
   created: z.number(),
 });
+const CartStatus = z.union([z.literal("ordered"), z.literal("not-ordered")])
 const UserCartData = z.object({
-  id: z.string(),
+  user_id: z.any(),
+  cart_id: z.string(),
   item_id: z.string(),
   quantity: z.number(),
   size: z.string().optional().or(z.null()),
   item_name: z.string(),
   price: z.number(),
   category: z.string(),
-  created: z.number()
+  created: z.number(),
+  status: CartStatus
 })
-export const UserCartData = UserCartData
 export type UserCart = z.infer<typeof UserCartData>
 const UserSchema = z.object({
   name: z.string(),
@@ -54,8 +57,8 @@ const UserSchema = z.object({
   emailVerified: z.boolean().or(z.null()),
   address: z.string(),
   phone_number: z.string(),
-  orders: z.array(UserOrder),
-  cart: z.array(UserCartData),
+  orders: z.array(z.instanceof(ObjectId)),
+  cart: z.array(z.instanceof(ObjectId)),
   paypal_email: z.string().optional(),
   role: UserRole,
   status: UserStatus,

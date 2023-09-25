@@ -2,7 +2,7 @@ import { UserModel } from "@/types";
 import { Schema, models, deleteModel, model } from "mongoose";
 const Users = new Schema<UserModel>({
   address: { type: String, default: undefined },
-  created: { type: Number},
+  created: { type: Number },
   email: { type: String },
   emailVerified: { type: Boolean },
   image: { type: String },
@@ -11,9 +11,9 @@ const Users = new Schema<UserModel>({
   phone_number: { type: String },
   role: { type: String, default: "user" },
   status: { type: String, default: "new" },
-  orders: [],
-  cart: []
-});
+  orders: [{ type: Schema.Types.ObjectId, ref: "orders" }],
+  cart: [{ type: Schema.Types.ObjectId, ref: "cart" }]
+}, { timestamps: true });
 if (models["users"] != null) {
   deleteModel("users");
 }

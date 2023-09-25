@@ -6,6 +6,7 @@ import { AuthOptions } from '@services/NextAuth/AuthOptions'
 import { fromZodError } from "zod-validation-error";
 import Item from '@models/items'
 import User from '@models/users'
+import Cart from '@models/cart'
 import moment from "moment-timezone";
 import { nanoid } from "nanoid";
 import dbConnect from "@/models/dbConnect";
@@ -24,76 +25,63 @@ export async function POST(req: NextRequest) {
             if (validatedData.success) {
                 const { data } = validatedData
                 await dbConnect()
-                const itemData = await Item.findOne({ item_id: { $eq: data.item_id } })
-                if (itemData) {
-                    //check if the item is already added to cart 
-                    const isAlreadyAdded = await User.findOne({
-                        _id: { $eq: session.user.id },
-                        cart: {
-                            $elemMatch: {
-                                item_id: { $eq: data.item_id },
-                                size: { $eq: data.selected_size }
-                            }
-                        }
-                    }, {
-                        cart: {
-                            $elemMatch: {
-                                item_id: { $eq: data.item_id },
-                                size: { $eq: data.selected_size }
-                            }
-                        }
-                    })
-                    if (isAlreadyAdded) {
-                        await User.updateOne({
-                            _id: { $eq: session.user.id },
-                            cart: {
-                                $elemMatch: {
-                                    item_id: { $eq: data.item_id },
-                                    size: { $eq: data.selected_size }
+                const userData = await User.findOne({ _id: { $eq: session.user.id } })
+                if (userData) {
+                    const itemData = await Item.findOne({ item_id: { $eq: data.item_id } })
+                    if (itemData) {
+                        //check if the item is already added to cart 
+                        const itemInCart = await Cart.findOne({
+                            item_id: { $eq: data.item_id },
+                            size: { $eq: data.selected_size },
+                            status: { $ne: "ordered" }
+                        })
+                        if (itemInCart) {
+                            itemInCart.quantity += data.quantity
+                            await itemInCart.save()
+                        } else {
+                            let price = 0
+                            if (itemData.sizes.length <= 0 && itemData.price) {
+                                price = itemData.price
+                            } else {
+                                const selected_size_data = itemData.sizes.find(x => x.type === data.selected_size)
+                                if (selected_size_data) {
+                                    price = selected_size_data?.price
+                                } else {
+                                    res.message = "Something went wrong!"
+                                    res.status = false
+                                    return NextResponse.json(res)
                                 }
                             }
-                        }, {
-                            $inc: { "cart.$.quantity": data.quantity }
-                        })
+                            const newCartItem = await Cart.create({
+                                user_id: userData._id,
+                                created: parseFloat(moment().format("x")),
+                                cart_id: nanoid().toUpperCase(),
+                                item_id: itemData.item_id,
+                                quantity: data.quantity,
+                                category: itemData.category,
+                                size: data.selected_size,
+                                item_name: itemData.name,
+                                price: price,
+                                status: "not-ordered"
+                            })
+                            userData.cart.push(newCartItem._id)
+                            await userData.save()
+                        }
+                        res.message = "Successfully added to cart!"
+                        res.status = true
+                        return NextResponse.json(res)
                     } else {
-                        let price = 0
-                        if (itemData.sizes.length <= 0 && itemData.price) {
-                            price = itemData.price
-                        } else {
-                            const selected_size_data = itemData.sizes.find(x => x.type === data.selected_size)
-                            if (selected_size_data) {
-                                price = selected_size_data?.price
-                            } else {
-                                res.message = "Something went wrong!"
-                                res.status = false
-                                return NextResponse.json(res)
-                            }
-                        }
-                        const new_user_cart: UserCart = {
-                            created: parseFloat(moment().format("x")),
-                            id: nanoid().toUpperCase(),
-                            item_id: itemData.item_id,
-                            quantity: data.quantity,
-                            category: itemData.category,
-                            size: data.selected_size,
-                            item_name: itemData.name,
-                            price: price
-                        }
-                        await User.updateOne({ _id: { $eq: session.user.id } }, { $push: { cart: new_user_cart } })
+                        res.message = "Item Not Found"
+                        res.status = false
+                        return NextResponse.json(res)
                     }
-                    res.message = "Successfully added to cart!"
-                    res.status = true
-                    return NextResponse.json(res)
                 } else {
-                    res.message = "Item Not Found"
-                    res.status = false
-                    return NextResponse.json(res)
+                    return NextResponse.json({}, { status: 401 });
                 }
             } else {
-                const error = fromZodError(validatedData.error, { prefix: null }).message;
                 return NextResponse.json({
                     status: false,
-                    message: fromZodError(validatedData.error).message,
+                    message: fromZodError(validatedData?.error).message,
                 });
             }
         } else {
@@ -108,7 +96,12 @@ export async function GET(req: NextRequest) {
     try {
         if (session) {
             await dbConnect()
-            const cart_data = await User.findOne({ _id: { $eq: session.user.id } }, { cart: 1, _id: 0 })
+            const cart_data = await User.findOne({ _id: { $eq: session.user.id } }, { cart: 1 })
+                .populate({
+                    path: "cart",
+                    match: { status: { $ne: "ordered" } },
+                    select: { __v: 0 }
+                })
             return NextResponse.json(cart_data?.cart)
         } else {
             return NextResponse.json(null, { status: 401 });

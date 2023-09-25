@@ -9,7 +9,9 @@ export async function GET(req: NextRequest) {
     try {
         if (session) {
             await dbConnect()
-            const userData = await Users.findOne({ _id: { $eq: session?.user?.id } }, { orders: 1 })
+            const userData = await Users.findOne({ _id: session.user.id }).populate({
+                path: "orders"
+            })
             return NextResponse.json(userData?.orders)
         } else {
             return NextResponse.json({}, { status: 401 })

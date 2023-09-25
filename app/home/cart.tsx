@@ -35,7 +35,7 @@ export default function Cart({
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
     const [selectedItemIncart, setselectedItemIncart] = useLocalstorageState<selectItemInCart>("check-out", { items: [] })
     const onSelectItemInCart = (item: UserCart) => {
-        const index = selectedItemIncart.items.findIndex(x => x.id === item.id)
+        const index = selectedItemIncart.items.findIndex(x => x.cart_id === item.cart_id)
         if (index < 0) {
             setselectedItemIncart(e => ({ ...e, items: [...e.items, item] }))
         } else {
@@ -103,7 +103,7 @@ export default function Cart({
                                 <ListGroup>
                                     {cartData?.map(item => (
                                         <ListItem
-                                            key={item.id}
+                                            key={item.cart_id}
                                             onClick={() => onSelectItemInCart(item)}
                                             title={item.item_name}
                                             chevron={false}
@@ -117,7 +117,7 @@ export default function Cart({
                                             after={`₱${(item.price * item.quantity).toLocaleString()}`}
                                             media={
                                                 <div className='flex items-center gap-4 pl-3'>
-                                                    <Checkbox checked={!!selectedItemIncart?.items?.find(x => x.id === item.id)} readOnly className=' pointer-events-none' />
+                                                    <Checkbox checked={!!selectedItemIncart?.items?.find(x => x.cart_id === item.cart_id)} readOnly className=' pointer-events-none' />
                                                     <Image
                                                         src={`/api/files?type=item&id=${item.item_id}`}
                                                         alt="test"

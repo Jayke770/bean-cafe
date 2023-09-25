@@ -5,16 +5,19 @@ import { z } from 'zod'
 import dbConnect from '@/models/dbConnect';
 import Users from '@/models/users';
 import Orders from '@/models/orders';
+import Cart from '@models/cart'
 import { ApiResponse } from '@/types';
 import Email from '@/services/email';
 import { fromZodError } from 'zod-validation-error';
 import * as changeCase from 'change-case'
 import moment from 'moment-timezone';
 import { nanoid } from 'nanoid';
+import { Types } from 'mongoose'
 import { orderNotification } from '@lib/utils'
 const emailHandler = new Email("Bean Cafe")
 const UserCartData = z.object({
-    id: z.string(),
+    _id: z.any(),
+    cart_id: z.string(),
     item_id: z.string(),
     quantity: z.number(),
     size: z.string().optional().or(z.null()),
@@ -47,22 +50,13 @@ export async function POST(req: NextRequest) {
             if (parse_form.success) {
                 if (parse_form.data.payment_method === "cash") {
                     await dbConnect()
-                    //add to order key 
-                    const userData = await Users.findOne({
-                        _id: { $eq: session.user.id },
-                        $and: parse_form.data.items.map(item => ({ cart: { $elemMatch: { id: item.id } } }))
-                    })
+                    const userData = await Users.findOne({ _id: { $eq: session.user.id } })
+                        .populate({
+                            path: "cart",
+                            match: { _id: { $in: parse_form.data.items.map(item => item._id) }, status: { $ne: "ordered" } }
+                        })
                     if (userData) {
                         const total_payment = parse_form.data.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-                        userData.orders.push({
-                            created: parseFloat(moment().format("x")),
-                            id: nanoid().toUpperCase(),
-                            items: parse_form.data.items,
-                            status: "pending",
-                            total_payment: total_payment.toString(),
-                            payment_method: parse_form.data.payment_method
-                        })
-                        await userData.save()
                         //save to order collection
                         const orderData = await Orders.create({
                             created: parseFloat(moment().format("x")),
@@ -73,18 +67,18 @@ export async function POST(req: NextRequest) {
                             userID: session.user.id,
                             total_payment: total_payment.toString(),
                         })
+                        userData.orders.push(orderData._id)
+                        await userData.save()
                         //remove item in user cart 
                         await Users.updateOne({
                             _id: { $eq: session.user.id },
-                            $and: parse_form.data.items.map(item => ({ cart: { $elemMatch: { id: item.id } } }))
+                            cart: { $in: parse_form.data.items.map(item => item._id) }
                         }, {
-                            $pull: {
-                                cart: {
-                                    id: { $in: parse_form.data.items.map(item => item.id) }
-                                }
-                            }
+                            $pull: { cart: { $in: parse_form.data.items.map(item => item._id) } }
                         })
-                        //send notification 
+                        //update cart 
+                        await Cart.updateMany({ $and: parse_form.data.items.map(item => ({ _id: { $eq: item._id } })) }, { $set: { status: "ordered" } })
+                        //send notification
                         if (userData.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${orderData.orderId}`, body: orderNotification(orderData) })
                         res = {
                             status: true,
@@ -92,7 +86,11 @@ export async function POST(req: NextRequest) {
                         }
                         return NextResponse.json(res)
                     } else {
-                        return NextResponse.json({}, { status: 401 });
+                        res = {
+                            status: false,
+                            message: "Item Not Found"
+                        }
+                        return NextResponse.json(res);
                     }
                 } else {
                     res = {
@@ -112,6 +110,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({}, { status: 500 });
         }
     } catch (e: any) {
+        console.log(e)
         return NextResponse.json({}, { status: 500 });
     }
 }

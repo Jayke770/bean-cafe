@@ -8,7 +8,7 @@ const Addons = new Schema<AddOns>({
   created: { type: Number },
   name: { type: String },
   id: { type: String }
-});
+}, { timestamps: true });
 if (models["addons"] != null) {
   deleteModel("addons");
 }
