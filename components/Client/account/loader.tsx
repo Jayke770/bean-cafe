@@ -1,8 +1,9 @@
 "use client"
-import { Button, Card } from "konsta/react";
+import { Button, Card, MenuList, MenuListItem } from "konsta/react";
 import { BsArrowLeft } from 'react-icons/bs'
 import NextLink from 'next/link'
 import Skeleton from "react-loading-skeleton";
+import { RiAccountCircleLine, RiShoppingCartLine } from "react-icons/ri";
 export default function AccountLoader() {
     return (
         <main className='h-full z-5 w-full left-0 top-0 overflow-auto absolute bg-brand-white dark:bg-brand-secondary/20'>
@@ -24,6 +25,14 @@ export default function AccountLoader() {
                     </div>
                 </div>
             </Card>
+            <div className="z-10 px-4 py-1 flex flex-col gap-2 k-color-brand-primary !my-4 ">
+                {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className=" flex items-center p-4 gap-4 rounded-full h-16 w-full k-color-brand-primary bg-md-light-surface-1 dark:bg-md-dark-surface-1">
+                        <Skeleton width={"2rem"} height={"2rem"} borderRadius={"100%"} />
+                        <Skeleton width={"5rem"} height={"1rem"} />
+                    </div>
+                ))}
+            </div>
         </main>
     )
 }
