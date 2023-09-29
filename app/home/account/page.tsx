@@ -10,8 +10,12 @@ import { motion } from 'framer-motion'
 import { MdLogout } from "react-icons/md";
 import { signOut } from "next-auth/react"
 import { RiShoppingCartLine, RiAccountCircleLine } from 'react-icons/ri'
+import AccountInformation from '@/components/Client/account/information'
+import { useState } from "react";
 export default function Account() {
     const { data: session, status } = useSession()
+    const [openAccountInfo, setAccountInfo] = useState<boolean>()
+    const onToggleAccountInfo = () => setAccountInfo(e => !e)
     return (
         <motion.main
             initial={{ opacity: 0 }}
@@ -21,6 +25,7 @@ export default function Account() {
             className='h-full z-5 w-full left-0 top-0 overflow-auto absolute bg-brand-white dark:bg-brand-secondary/20'>
             {status === "authenticated" ? (
                 <>
+                    {/* Card */}
                     <Card margin="m-0" contentWrap={false} className=" overflow-auto k-color-brand-primary !rounded-none">
                         <div className="flex w-full justify-between p-2">
                             <NextLink href="/home">
@@ -46,14 +51,18 @@ export default function Account() {
                             </div>
                         </div>
                     </Card>
+                    {/* Account Menu */}
                     <MenuList className=" k-color-brand-primary !my-4 ">
                         <MenuListItem
+                            onClick={onToggleAccountInfo}
                             media={<RiAccountCircleLine className=" h-7 w-7 text-brand-primary" />}
                             title="Account Information" />
                         <MenuListItem
                             media={<RiShoppingCartLine className=" h-7 w-7 text-brand-primary" />}
                             title="Orders" />
                     </MenuList>
+                    {/* Account Info */}
+                    <AccountInformation key={"account-info"} onToggleAccountInfo={onToggleAccountInfo} userInfo={session?.user} show={openAccountInfo} />
                 </>
             ) : <AccountLoader />}
             {status === "unauthenticated" && <AccountDialog />}

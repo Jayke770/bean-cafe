@@ -33,6 +33,9 @@ export const AuthOptions: NextAuthOptions = {
         );
         session.user.role = Userdata?.role ?? "user";
         session.user.status = Userdata?.status ?? "new";
+        session.user.address = Userdata?.address
+        session.user.phone_number = Userdata?.phone_number
+        session.user.created = Userdata?.created
         await Users.updateOne(
           { _id: { $eq: session.user.id } },
           { $set: { status: "old", created: parseFloat(moment().format("x")) } }
