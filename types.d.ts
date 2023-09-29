@@ -10,7 +10,7 @@ const OrderStatusData = z.union([
   z.literal("cancelled"),
   z.literal("denied"),
 ]);
-export type OrderStatus = z.infer<typeof OrderStatus>
+export type OrderStatus = z.infer<typeof OrderStatusData>
 const UserOrderItem = z.object({
   id: z.string(),
   item_id: z.string(),

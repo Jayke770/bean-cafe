@@ -37,6 +37,7 @@ import ItemLoader from '@/components/Client/items/loader'
 import Cart from './cart'
 import toast from 'react-hot-toast';
 import { ItemEmpty } from '@components/empty'
+import NextLink from 'next/link'
 const mainvariants: Variants = {
     initial: {
         opacity: 0
@@ -57,7 +58,6 @@ interface ViewItem {
     isProcessing?: boolean
 }
 export default function Home() {
-    const { onShowDialog } = useDailog()
     const { cartData } = CartData()
     const { data: session, status } = useSession()
     const [tab, setTab] = useLocalstorageState<string>("home-tab", "All")
@@ -173,15 +173,17 @@ export default function Home() {
                             <RiShoppingCartLine className=' w-7 h-7' />
                         </Icon>
                     </Link>
-                    <Link
-                        onClick={onToggleAccount}
-                        navbar
-                        iconOnly
-                        className=' k-color-brand-primary'>
-                        <Icon badge={status === "unauthenticated" ? "" : null}>
-                            <IoPersonCircleSharp className='h-7 w-7' />
-                        </Icon>
-                    </Link>
+                    <NextLink passHref href={"/home/account"}>
+                        <Link
+                            component='div'
+                            navbar
+                            iconOnly
+                            className=' k-color-brand-primary'>
+                            <Icon badge={status === "unauthenticated" ? "" : null}>
+                                <IoPersonCircleSharp className='h-7 w-7' />
+                            </Icon>
+                        </Link>
+                    </NextLink>
                 </div>
             </nav>
             {/* Category */}
@@ -228,11 +230,11 @@ export default function Home() {
                                 className='z-0 k-color-brand-secondary'>
                                 <div className='shadow-lg h-44 rounded-2xl overflow-hidden'>
                                     <Image
+                                        priority
                                         src={`/api/files?type=item&id=${item.item_id}`}
                                         alt={item?.name}
                                         width={300}
                                         height={300}
-                                        loading='lazy'
                                         className=' aspect-square h-full w-full object-cover ' />
                                 </div>
                                 <div className='flex flex-col mt-3'>
@@ -249,11 +251,11 @@ export default function Home() {
             </motion.section>
 
             {/* Account */}
-            <Account
+            {/* <Account
                 onToggleAccount={() => onToggleAccount()}
                 session={session}
                 status={status}
-                viewAccount={viewAccount} />
+                viewAccount={viewAccount} /> */}
 
             {/* Cart */}
             <Cart key={'cart'} opened={viewCart} onToggleCart={onToggleCart} cartData={cartData} />

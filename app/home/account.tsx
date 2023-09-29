@@ -8,6 +8,7 @@ import { useCallback } from 'react'
 import { FcGoogle } from 'react-icons/fc'
 import { signIn, signOut } from 'next-auth/react'
 import { UserCart, OrderStatus } from '@/types'
+import OrdersData from '@/lib/User/orders'
 interface Props {
     viewAccount: boolean,
     onToggleAccount: () => void,
@@ -20,6 +21,7 @@ export default function Account({
     session,
     status
 }: Props) {
+    const { ordersData } = OrdersData()
     const [UserOrdersTab, setUserUsersTab] = useLocalstorageState<OrderStatus>("user-orders-tab", "completed")
     const onToggleUserOrdersTab = useCallback((data: OrderStatus) => setUserUsersTab(data), [setUserUsersTab])
     return (
