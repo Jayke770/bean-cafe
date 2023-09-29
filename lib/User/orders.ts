@@ -1,7 +1,12 @@
 import useSWR from "swr";
 import { Orders } from "@/types";
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
-export default function OrdersData(status?: Orders['status']): { ordersData?: Orders[]; ordersDataLoading: boolean; ordersDataError: boolean; } {
+export default function OrdersData(status?: Orders['status']): {
+    ordersData?: {
+        total_orders: number,
+        orders: Orders[]
+    }; ordersDataLoading: boolean; ordersDataError: boolean;
+} {
     const { data, error, isLoading } = useSWR(`/api/user/items/orders?status=${status ?? "pending"}`, fetcher,
         {
             shouldRetryOnError: true,

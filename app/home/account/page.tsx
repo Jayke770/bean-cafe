@@ -1,5 +1,5 @@
 "use client"
-import { Button, Card, List, ListItem, MenuList, MenuListItem } from "konsta/react";
+import { Button, Card, Icon, List, ListItem, MenuList, MenuListItem } from "konsta/react";
 import { useSession } from 'next-auth/react'
 import Image from "next/image";
 import { BsArrowLeft } from 'react-icons/bs'
@@ -11,11 +11,15 @@ import { MdLogout } from "react-icons/md";
 import { signOut } from "next-auth/react"
 import { RiShoppingCartLine, RiAccountCircleLine } from 'react-icons/ri'
 import AccountInformation from '@/components/Client/account/information'
+import AccountOrders from '@/components/Client/account/orders'
 import { useState } from "react";
+import OrdersData from "@/lib/User/orders";
 export default function Account() {
+    const { ordersData } = OrdersData()
     const { data: session, status } = useSession()
-    const [openAccountInfo, setAccountInfo] = useState<boolean>()
-    const onToggleAccountInfo = () => setAccountInfo(e => !e)
+    const [open, setOpen] = useState<{ orders?: boolean, info?: boolean }>()
+    const onToggleAccountInfo = () => setOpen(e => ({ ...e, info: !e?.info }))
+    const onToggleAccountOrders = () => setOpen(e => ({ ...e, orders: !e?.orders }))
     return (
         <motion.main
             initial={{ opacity: 0 }}
@@ -58,11 +62,26 @@ export default function Account() {
                             media={<RiAccountCircleLine className=" h-7 w-7 text-brand-primary" />}
                             title="Account Information" />
                         <MenuListItem
-                            media={<RiShoppingCartLine className=" h-7 w-7 text-brand-primary" />}
+                            onClick={onToggleAccountOrders}
+                            media={
+                                <Icon badge={(ordersData?.total_orders ?? 0) > 0 ? ordersData?.total_orders : null}>
+                                    <RiShoppingCartLine className=" h-7 w-7 text-brand-primary" />
+                                </Icon>
+                            }
                             title="Orders" />
                     </MenuList>
                     {/* Account Info */}
-                    <AccountInformation key={"account-info"} onToggleAccountInfo={onToggleAccountInfo} userInfo={session?.user} show={openAccountInfo} />
+                    <AccountInformation
+                        key={"account-info"}
+                        onToggleAccountInfo={onToggleAccountInfo}
+                        userInfo={session?.user}
+                        show={open?.info} />
+                    {/* Account orders */}
+                    <AccountOrders
+                        key={"account-orders"}
+                        onToggleOrders={onToggleAccountOrders}
+                        orders={ordersData?.orders}
+                        show={open?.orders} />
                 </>
             ) : <AccountLoader />}
             {status === "unauthenticated" && <AccountDialog />}
