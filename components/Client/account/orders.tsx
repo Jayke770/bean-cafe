@@ -12,7 +12,9 @@ export default function AccountOrders(props: Props) {
         <Actions
             opened={props.show}
             onBackdropClick={props.onToggleOrders}>
-            <Card className=' k-color-brand-primary max-h-[70vh] overflow-auto '>
+            <Card
+                margin='m-0'
+                className=' rounded-b-none k-color-brand-primary max-h-[70vh] overflow-auto '>
                 <div className=" w-full  flex justify-between items-baseline">
                     <span className=' text-lg px-3.5 text-brand-primary font-bold'>Orders</span>
                     <Button

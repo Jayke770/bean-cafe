@@ -12,7 +12,9 @@ export default function AcountInformation(props: Props) {
         <Actions
             opened={props.show}
             onBackdropClick={props.onToggleAccountInfo}>
-            <Card className=' k-color-brand-primary '>
+            <Card
+                margin='m-0'
+                className=' rounded-b-none k-color-brand-primary '>
                 <span className=' text-lg px-3.5 text-brand-primary font-bold'>Account Information</span>
                 <List margin='my-0' className=' mt-2'>
                     <ListItem
