@@ -1,5 +1,5 @@
 "use client"
-import { Button, Card, Icon, List, ListItem, MenuList, MenuListItem } from "konsta/react";
+import { Button, Card, Icon, MenuList, MenuListItem } from "konsta/react";
 import { useSession } from 'next-auth/react'
 import Image from "next/image";
 import { BsArrowLeft } from 'react-icons/bs'
@@ -10,16 +10,20 @@ import { motion } from 'framer-motion'
 import { MdLogout } from "react-icons/md";
 import { signOut } from "next-auth/react"
 import { RiShoppingCartLine, RiAccountCircleLine } from 'react-icons/ri'
-import AccountInformation from '@/components/Client/account/information'
-import AccountOrders from '@/components/Client/account/orders'
-import { useState } from "react";
+import AccountInformation from './information'
+import AccountOrders from './orders'
+import { useCallback, useMemo, useState } from "react";
 import OrdersData from "@/lib/User/orders";
+import { useLocalstorageState } from "rooks";
+import { OrderStatus } from "@/types";
 export default function Account() {
-    const { ordersData } = OrdersData()
+    const [orderType, setOrderType] = useLocalstorageState<OrderStatus | undefined>("order-type")
+    const { ordersData } = OrdersData(orderType)
     const { data: session, status } = useSession()
     const [open, setOpen] = useState<{ orders?: boolean, info?: boolean }>()
     const onToggleAccountInfo = () => setOpen(e => ({ ...e, info: !e?.info }))
     const onToggleAccountOrders = () => setOpen(e => ({ ...e, orders: !e?.orders }))
+    const onSetOrderType = useCallback((data?: OrderStatus) => setOrderType(e => data), [setOrderType])
     return (
         <motion.main
             initial={{ opacity: 0 }}
@@ -79,6 +83,8 @@ export default function Account() {
                     {/* Account orders */}
                     <AccountOrders
                         key={"account-orders"}
+                        orderType={orderType}
+                        onSetOrderType={onSetOrderType}
                         onToggleOrders={onToggleAccountOrders}
                         orders={ordersData?.orders}
                         show={open?.orders} />
