@@ -4,6 +4,7 @@ import LayoutMain from "@/app/KonstaProvider"
 import NextAuthSessionProvider from "./NextAuthProvider"
 import { NoticationProvider } from "@components/notification"
 import { DialogProvider } from '@components/dialog'
+import { ThemeProvider } from '@components/themeProvider'
 import { Metadata } from "next"
 import { Toaster } from 'react-hot-toast'
 import { Analytics } from '@vercel/analytics/react'
@@ -33,7 +34,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <LayoutMain>
             <NoticationProvider>
               <DialogProvider>
-                {children}
+                <ThemeProvider>
+                  {children}
+                </ThemeProvider>
               </DialogProvider>
             </NoticationProvider>
           </LayoutMain>

@@ -2,7 +2,7 @@
 import { Button, Card, Icon, MenuList, MenuListItem } from "konsta/react";
 import { useSession } from 'next-auth/react'
 import Image from "next/image";
-import { BsArrowLeft } from 'react-icons/bs'
+import { BsArrowLeft, BsFillSunFill, BsMoonStars } from 'react-icons/bs'
 import NextLink from 'next/link'
 import AccountLoader from "@/components/Client/account/loader";
 import AccountDialog from "@/components/Client/account/dialog";
@@ -16,7 +16,9 @@ import { useCallback, useMemo, useState } from "react";
 import OrdersData from "@/lib/User/orders";
 import { useLocalstorageState } from "rooks";
 import { OrderStatus } from "@/types";
+import { useTheme } from "@/components/themeProvider";
 export default function Account() {
+    const { onToggleTheme, theme } = useTheme()
     const [orderType, setOrderType] = useLocalstorageState<OrderStatus | undefined>("order-type")
     const { ordersData } = OrdersData(orderType)
     const { data: session, status } = useSession()
@@ -73,6 +75,22 @@ export default function Account() {
                                 </Icon>
                             }
                             title="Orders" />
+                        <MenuListItem
+                            onClick={onToggleTheme}
+                            media={
+                                <motion.span
+                                    key={theme}
+                                    onClick={onToggleTheme}
+                                    initial={{ scale: 0.9, rotate: 360, opacity: 0 }}
+                                    animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                                    exit={{ scale: 0.9, rotate: 360, opacity: 0 }}
+                                    transition={{ type: "spring", duration: 0.5 }}
+                                    className="text-brand-primary">
+                                    {theme === "dark" ? <BsFillSunFill className="h-7 w-7" /> : <BsMoonStars className="h-7 w-7" />}
+                                </motion.span>
+                            }
+                            title="Dark Mode"
+                            active={theme === "dark"} />
                     </MenuList>
                     {/* Account Info */}
                     <AccountInformation
