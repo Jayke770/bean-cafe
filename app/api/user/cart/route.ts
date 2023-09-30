@@ -24,6 +24,11 @@ export async function POST(req: NextRequest) {
             const validatedData = schema.safeParse(item_data)
             if (validatedData.success) {
                 const { data } = validatedData
+                if (data.quantity <= 0) {
+                    res.message = "Invalid Quantity"
+                    res.status = false
+                    return NextResponse.json(res)
+                }
                 await dbConnect()
                 const userData = await User.findOne({ _id: { $eq: session.user.id } })
                 if (userData) {
