@@ -12,7 +12,7 @@ import { nanoid } from "nanoid";
 import dbConnect from "@/models/dbConnect";
 const schema = z.object({
     item_id: z.string(),
-    quantity: z.number(),
+    quantity: z.number().gt(0, "Invalid Quantity"),
     selected_size: z.string().optional()
 })
 export async function POST(req: NextRequest) {
@@ -24,11 +24,6 @@ export async function POST(req: NextRequest) {
             const validatedData = schema.safeParse(item_data)
             if (validatedData.success) {
                 const { data } = validatedData
-                if (data.quantity <= 0) {
-                    res.message = "Invalid Quantity"
-                    res.status = false
-                    return NextResponse.json(res)
-                }
                 await dbConnect()
                 const userData = await User.findOne({ _id: { $eq: session.user.id } })
                 if (userData) {
@@ -86,7 +81,7 @@ export async function POST(req: NextRequest) {
             } else {
                 return NextResponse.json({
                     status: false,
-                    message: fromZodError(validatedData?.error).message,
+                    message: fromZodError(validatedData?.error, { prefix: null }).message,
                 });
             }
         } else {
