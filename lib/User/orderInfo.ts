@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import { Orders } from "@/types";
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
-export default function OrderInfo(id?: string): {
+export default function OrderInfo(id?: string | null): {
     orderData?: Orders; orderDataLoading: boolean; orderDataError: boolean;
 } {
     const { data, error, isLoading } = useSWR(id ? `/api/user/items/orders?id=${id}` : null, fetcher,

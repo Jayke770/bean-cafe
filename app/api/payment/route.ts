@@ -18,29 +18,29 @@ export async function GET(req: NextRequest) {
             await dbConnect()
             await paypal.authenticate()
             const type: "success" | "cancel" = req.nextUrl.searchParams.get("type") as any
-            if (type === "success") {
-                const payment_id = req.nextUrl.searchParams.get("token")
-                const orderData = await Orders.findOne({ payment_id: { $eq: payment_id } })
-                if (orderData && payment_id) {
+            const payment_id = req.nextUrl.searchParams.get("token")
+            const orderData = await Orders.findOne({ payment_id: { $eq: payment_id } })
+            if (orderData && payment_id) {
+                const params = `?orderId=${orderData.orderId}`
+                if (type === "success") {
                     const data = await paypal.paymentDetails(payment_id)
                     if (data?.status === "APPROVED") {
                         await paypal.capturePayment(payment_id)
                         orderData.status = "processing"
                         await orderData.save()
-                        return NextResponse.redirect(`${NEXTAUTH_URL}/payment/success`)
+                        return NextResponse.redirect(`${NEXTAUTH_URL}/payment/success${params}`)
                     } else if (data?.status === "COMPLETED") {
-                        return NextResponse.redirect(`${NEXTAUTH_URL}/payment/success`)
+                        return NextResponse.redirect(`${NEXTAUTH_URL}/payment/success${params}`)
                     } else {
-                        return NextResponse.redirect(`${NEXTAUTH_URL}/payment/not-found`)
+                        return NextResponse.redirect(`${NEXTAUTH_URL}/payment/not-found${params}`)
                     }
                 } else {
-                    // return NextResponse.redirect(`${NEXTAUTH_URL}/payment/not-found`)
-                    return NextResponse.json({}, { status: 500 })
+                    orderData.status = "cancelled"
+                    await orderData.save()
+                    return NextResponse.redirect(`${NEXTAUTH_URL}/payment/cancelled${params}`)
                 }
             } else {
-                const payment_id = req.nextUrl.searchParams.get("token")
-                await Orders.updateOne({ payment_id: { $eq: payment_id } }, { $set: { status: "cancelled" } })
-                return NextResponse.redirect(`${NEXTAUTH_URL}/payment/cancelled`)
+                return NextResponse.redirect(`${NEXTAUTH_URL}/payment/not-found`)
             }
         } else {
             return NextResponse.json({}, { status: 401 })
