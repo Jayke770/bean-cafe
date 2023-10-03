@@ -12,8 +12,14 @@ import { fromZodError } from 'zod-validation-error';
 import * as changeCase from 'change-case'
 import moment from 'moment-timezone';
 import { nanoid } from 'nanoid';
-import { Types } from 'mongoose'
 import { orderNotification } from '@lib/utils'
+import Paypal from "@/lib/paypal";
+const { PAYPAL_SECRET, PAYPAL_CLIENT_ID, NEXTAUTH_URL, PAYPAL_MODE, PAYPAL_CURRENCY_CODE } = process.env
+const paypal = new Paypal({
+    client_secret: PAYPAL_SECRET as string,
+    client_id: PAYPAL_CLIENT_ID as string,
+    mode: PAYPAL_MODE as any
+})
 const emailHandler = new Email("Bean Cafe")
 const UserCartData = z.object({
     _id: z.any(),
@@ -48,8 +54,8 @@ export async function POST(req: NextRequest) {
                 gcash_image: form_data.get("gcash_image")
             })
             if (parse_form.success) {
+                await dbConnect()
                 if (parse_form.data.payment_method === "cash") {
-                    await dbConnect()
                     const userData = await Users.findOne({ _id: { $eq: session.user.id } })
                         .populate({
                             path: "cart",
@@ -85,6 +91,100 @@ export async function POST(req: NextRequest) {
                             message: "Order Success"
                         }
                         return NextResponse.json(res)
+                    } else {
+                        res = {
+                            status: false,
+                            message: "Item Not Found"
+                        }
+                        return NextResponse.json(res);
+                    }
+                } else if (parse_form.data.payment_method === "paypal") {
+                    const userData = await Users.findOne({ _id: { $eq: session.user.id } })
+                        .populate({
+                            path: "cart",
+                            match: { _id: { $in: parse_form.data.items.map(item => item._id) }, status: { $ne: "ordered" } }
+                        })
+                    if (userData) {
+                        const total_payment = parse_form.data.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+                        //authenticate paypal 
+                        await paypal.authenticate()
+                        //create payment order 
+                        const payment_order = await paypal.createPayment({
+                            intent: "CAPTURE",
+                            purchase_units: [
+                                {
+                                    items: parse_form.data.items.map(item => ({
+                                        name: item.item_name,
+                                        quantity: item.quantity.toString(),
+                                        description: item.item_name,
+                                        unit_amount: {
+                                            currency_code: PAYPAL_CURRENCY_CODE as string,
+                                            value: item.price.toString()
+                                        }
+                                    })),
+                                    amount: {
+                                        currency_code: PAYPAL_CURRENCY_CODE as string,
+                                        value: total_payment.toString(),
+                                        breakdown: {
+                                            item_total: {
+                                                currency_code: PAYPAL_CURRENCY_CODE as string,
+                                                value: total_payment.toString()
+                                            }
+                                        }
+                                    }
+                                }
+                            ],
+                            payment_source: {
+                                paypal: {
+                                    experience_context: {
+                                        brand_name: "Bean Cafe",
+                                        cancel_url: `${NEXTAUTH_URL}/api/payment?type=cancel`,
+                                        return_url: `${NEXTAUTH_URL}/api/payment?type=success`,
+                                        payment_method_selected: "PAYPAL",
+                                        user_action: "PAY_NOW"
+                                    }
+                                }
+                            }
+                        })
+                        if (payment_order.status === "PAYER_ACTION_REQUIRED") {
+                            const redirect_url = payment_order.links.find(x => x.rel === "payer-action")
+                            //save to order collection
+                            const orderData = await Orders.create({
+                                created: parseFloat(moment().format("x")),
+                                items: parse_form.data.items,
+                                orderId: nanoid().toUpperCase(),
+                                status: "pending",
+                                payment_method: parse_form.data.payment_method,
+                                userID: session.user.id,
+                                total_payment: total_payment.toString(),
+                                payment_id: payment_order.id
+                            })
+                            userData.orders.push(orderData._id)
+                            await userData.save()
+                            //remove item in user cart 
+                            await Users.updateOne({
+                                _id: { $eq: session.user.id },
+                                cart: { $in: parse_form.data.items.map(item => item._id) }
+                            }, {
+                                $pull: { cart: { $in: parse_form.data.items.map(item => item._id) } }
+                            })
+                            //update cart 
+                            await Cart.updateMany({ $and: parse_form.data.items.map(item => ({ _id: { $eq: item._id } })) }, { $set: { status: "ordered" } })
+                            //send notification
+                            if (userData.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${orderData.orderId}`, body: orderNotification(orderData) })
+                            res = {
+                                status: true,
+                                message: "Order Success",
+                                redirect_url: redirect_url?.href
+                            }
+                            return NextResponse.json(res)
+                        } else {
+                            res = {
+                                status: false,
+                                message: "Failed to checkout"
+                            }
+                            return NextResponse.json(res)
+                        }
                     } else {
                         res = {
                             status: false,

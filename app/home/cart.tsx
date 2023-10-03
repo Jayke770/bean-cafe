@@ -19,6 +19,8 @@ import { BiMoney } from 'react-icons/bi'
 import ImageInput from '@/components/ImageInput';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation'
+import { RiLoader5Fill } from 'react-icons/ri';
 interface selectItemInCart {
     items: UserCart[],
     payment_method?: paymentMethod
@@ -32,6 +34,7 @@ export default function Cart({
     onToggleCart: () => void,
     cartData?: UserCart[]
 }) {
+    const router = useRouter()
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
     const [selectedItemIncart, setselectedItemIncart] = useLocalstorageState<selectItemInCart>("check-out", { items: [] })
     const onSelectItemInCart = (item: UserCart) => {
@@ -71,11 +74,14 @@ export default function Cart({
             })(), {
                 loading: 'Processing order...',
                 success: (data: ApiResponse) => {
+                    setselectedItemIncart({ items: [] })
                     if (data?.status && data?.redirect_url) {
-
+                        toast("Redirecting...", {
+                            icon: <RiLoader5Fill className=' animate-spin w-5 h-5' />
+                        })
+                        router.push(data.redirect_url)
                     } else {
                         onToggleCart()
-                        setselectedItemIncart({ items: [] })
                     }
                     return `${data.message}`
                 },
