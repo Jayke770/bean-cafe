@@ -6,7 +6,6 @@ interface Stats {
     cancelled: number
     denied: number
     pending: number
-    processing: number
 }
 export function OrderStats(): {
     orderstats: Stats;

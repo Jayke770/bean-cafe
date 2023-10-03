@@ -20,13 +20,11 @@ export async function GET(req: NextRequest) {
                 const cancelled = orders.reduce((sum, order) => sum + (order.status === "cancelled" ? 1 : 0), 0)
                 const denied = orders.reduce((sum, order) => sum + (order.status === "denied" ? 1 : 0), 0)
                 const pending = orders.reduce((sum, order) => sum + (order.status === "pending" ? 1 : 0), 0)
-                const processing = orders.reduce((sum, order) => sum + (order.status === "processing" ? 1 : 0), 0)
                 return NextResponse.json({
                     completed,
                     cancelled,
                     denied,
-                    pending,
-                    processing
+                    pending
                 })
             } else {
                 return NextResponse.json({}, { status: 401 })
