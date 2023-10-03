@@ -17,13 +17,20 @@ export async function GET(req: NextRequest) {
         if (session) {
             await dbConnect()
             await paypal.authenticate()
-            const payment_id = req.nextUrl.searchParams.get("token")
-            const orderData = await Orders.findOne({ payment_id: { $eq: payment_id } })
-            if (orderData && payment_id) {
-                const data = await paypal.capturePayment(payment_id)
-                return NextResponse.redirect("/payment/success")
+            const type: "success" | "cancel" = req.nextUrl.searchParams.get("type") as any
+            if (type === "success") {
+                const payment_id = req.nextUrl.searchParams.get("token")
+                const orderData = await Orders.findOne({ payment_id: { $eq: payment_id } })
+                if (orderData && payment_id) {
+                    const data = await paypal.capturePayment(payment_id)
+                    return NextResponse.redirect("/payment/success")
+                } else {
+                    return NextResponse.redirect("/payment/not-found")
+                }
             } else {
-                return NextResponse.redirect("/payment/not-found")
+                const payment_id = req.nextUrl.searchParams.get("token")
+                await Orders.updateOne({ payment_id: { $eq: payment_id } }, { $set: { status: "cancelled" } })
+                return NextResponse.redirect("/payment/cancelled")
             }
         } else {
             return NextResponse.json({}, { status: 401 })
