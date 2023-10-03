@@ -6,7 +6,6 @@ export type UserStatus = z.infer<typeof UserStatus>
 const UserRole = z.union([z.literal("admin"), z.literal("user")]);
 const OrderStatusData = z.union([
   z.literal("pending"),
-  z.literal("processing"),
   z.literal("completed"),
   z.literal("cancelled"),
   z.literal("denied"),
@@ -132,6 +131,7 @@ const OrdersSchema = z.object({
   gcash_image: z.string().optional(),
   created: z.number(),
   total_payment: z.string(),
-  payment_id: z.string().optional()
+  payment_id: z.string().optional(),
+  isPaid: z.boolean().optional()
 })
 export type Orders = z.infer<typeof OrdersSchema>

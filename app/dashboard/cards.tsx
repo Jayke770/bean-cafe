@@ -20,17 +20,19 @@ export default function Cards() {
                     </div>
                 </Card>
             </Link>
-            <Card
-                margin="m-0"
-                className=" k-color-brand-primary !rounded-md ">
-                <div className="flex justify-between w-full items-center">
-                    <div className="flex flex-col">
-                        <span className="font-bold text-xl">{stats?.orders ?? "..."}</span>
-                        <span className="text-sm">Total Orders</span>
+            <Link href={"/dashboard/orders"}>
+                <Card
+                    margin="m-0"
+                    className=" k-color-brand-primary !rounded-md ">
+                    <div className="flex justify-between w-full items-center">
+                        <div className="flex flex-col">
+                            <span className="font-bold text-xl">{stats?.orders ?? "..."}</span>
+                            <span className="text-sm">Total Orders</span>
+                        </div>
+                        <BiCart className=" h-8 w-8" />
                     </div>
-                    <BiCart className=" h-8 w-8" />
-                </div>
-            </Card>
+                </Card>
+            </Link>
             <Link href={"/dashboard/users"}>
                 <Card
                     margin="m-0"
