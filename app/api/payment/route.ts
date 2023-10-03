@@ -23,14 +23,14 @@ export async function GET(req: NextRequest) {
                 const orderData = await Orders.findOne({ payment_id: { $eq: payment_id } })
                 if (orderData && payment_id) {
                     const data = await paypal.capturePayment(payment_id)
-                    return NextResponse.redirect("/payment/success")
+                    return NextResponse.redirect(`${NEXTAUTH_URL}/payment/success`)
                 } else {
-                    return NextResponse.redirect("/payment/not-found")
+                    return NextResponse.redirect(`${NEXTAUTH_URL}/payment/not-found`)
                 }
             } else {
                 const payment_id = req.nextUrl.searchParams.get("token")
                 await Orders.updateOne({ payment_id: { $eq: payment_id } }, { $set: { status: "cancelled" } })
-                return NextResponse.redirect("/payment/cancelled")
+                return NextResponse.redirect(`${NEXTAUTH_URL}/payment/cancelled`)
             }
         } else {
             return NextResponse.json({}, { status: 401 })
