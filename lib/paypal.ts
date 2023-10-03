@@ -64,7 +64,7 @@ interface CreateOrderResponse {
 interface PaymentDetails {
     id: string
     intent: string
-    status: string
+    status: 'COMPLETED' | 'APPROVED',
     payment_source: {
         paypal: {
             email_address: string

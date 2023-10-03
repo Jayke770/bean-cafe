@@ -22,10 +22,20 @@ export async function GET(req: NextRequest) {
                 const payment_id = req.nextUrl.searchParams.get("token")
                 const orderData = await Orders.findOne({ payment_id: { $eq: payment_id } })
                 if (orderData && payment_id) {
-                    const data = await paypal.capturePayment(payment_id)
-                    return NextResponse.redirect(`${NEXTAUTH_URL}/payment/success`)
+                    const data = await paypal.paymentDetails(payment_id)
+                    if (data?.status === "APPROVED") {
+                        await paypal.capturePayment(payment_id)
+                        orderData.status = "processing"
+                        await orderData.save()
+                        return NextResponse.redirect(`${NEXTAUTH_URL}/payment/success`)
+                    } else if (data?.status === "COMPLETED") {
+                        return NextResponse.redirect(`${NEXTAUTH_URL}/payment/success`)
+                    } else {
+                        return NextResponse.redirect(`${NEXTAUTH_URL}/payment/not-found`)
+                    }
                 } else {
-                    return NextResponse.redirect(`${NEXTAUTH_URL}/payment/not-found`)
+                    // return NextResponse.redirect(`${NEXTAUTH_URL}/payment/not-found`)
+                    return NextResponse.json({}, { status: 500 })
                 }
             } else {
                 const payment_id = req.nextUrl.searchParams.get("token")
