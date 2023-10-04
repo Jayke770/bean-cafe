@@ -45,12 +45,13 @@ export default function RecentOrders() {
                             <table className="min-w-full divide-y divide-brand-primary/20 dark:divide-brand-secondary">
                                 <thead className=" k-color-brand-primary bg-md-light-surface-1 dark:bg-md-dark-surface-1">
                                     <tr>
+
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase whitespace-nowrap">Paid</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase whitespace-nowrap">ID</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase whitespace-nowrap">Name</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase whitespace-nowrap">Payment Method</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase whitespace-nowrap">Total Amount</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase whitespace-nowrap">Status</th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase whitespace-nowrap">Paid</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase whitespace-nowrap">Created</th>
                                     </tr>
                                 </thead>
@@ -60,6 +61,9 @@ export default function RecentOrders() {
                                             onClick={() => onSetViewOrder(order)}
                                             className=' cursor-pointer '
                                             key={order.orderId}>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                                                {emoji(order?.isPaid ? "✅" : "❌")}
+                                            </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{order.orderId}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{order?.name ?? "N/A"}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{changeCase.sentenceCase(order.payment_method ?? "")}</td>
@@ -71,9 +75,6 @@ export default function RecentOrders() {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                                                 <OrderStatus status={order.status} />
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                                {emoji(order?.isPaid ? "✅" : "❌")}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{moment(order.created).fromNow()}</td>
                                         </tr>
