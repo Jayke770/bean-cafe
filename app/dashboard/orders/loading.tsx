@@ -60,6 +60,9 @@ export default function loading() {
                                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">
                                                 <Skeleton width={"2rem"} />
                                             </th>
+                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">
+                                                <Skeleton width={"2rem"} />
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-brand-primary/20 dark:divide-brand-secondary">
@@ -73,6 +76,9 @@ export default function loading() {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                                                     <Skeleton width={"2rem"} />
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                                                    <Skeleton width={"6rem"} />
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                                                     <Skeleton width={"6rem"} />

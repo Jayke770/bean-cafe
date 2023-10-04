@@ -20,7 +20,7 @@ export default function RecentOrders() {
                     <div className="border rounded-lg shadow dark:border-brand-primary/50 border-brand-secondary/50">
                         <div className="py-3 px-4 flex flex-col gap-2 lg:gap-0 lg:flex-row justify-between lg:items-center">
                             <div className='text-brand-primary font-bold text-xl'>Recent Orders</div>
-                            <div className='flex gap-2'>
+                            <div className='flex flex-col-reverse md:flex-row gap-2'>
                                 <div className="relative w-full lg:max-w-xs">
                                     <label htmlFor="hs-table-search" className="sr-only">Search</label>
                                     <input
@@ -50,6 +50,7 @@ export default function RecentOrders() {
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase whitespace-nowrap">Payment Method</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase whitespace-nowrap">Total Amount</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase whitespace-nowrap">Status</th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase whitespace-nowrap">Paid</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase whitespace-nowrap">Created</th>
                                     </tr>
                                 </thead>
@@ -70,6 +71,9 @@ export default function RecentOrders() {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                                                 <OrderStatus status={order.status} />
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                                                {emoji(order?.isPaid ? "✅" : "❌")}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{moment(order.created).fromNow()}</td>
                                         </tr>
