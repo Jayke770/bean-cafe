@@ -1,7 +1,6 @@
 "use client"
 import { Button, Fab, Card, Preloader } from 'konsta/react'
 import { BsThreeDots } from 'react-icons/bs'
-import { Checkbox } from 'konsta/react'
 import { MdAdd } from 'react-icons/md';
 import { useCallback, useState } from 'react';
 import AddItemOrAddon from './add_item_or_addon';
