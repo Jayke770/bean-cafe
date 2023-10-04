@@ -2,7 +2,7 @@
 import { Badge } from "konsta/react"
 import * as changeCase from 'change-case'
 import type { OrderStatus } from '@/types'
-export default function OrderStatus({ status }: { status: OrderStatus }) {
+export default function OrderStatus({ status }: { status?: OrderStatus }) {
     return (
         <>
             {status === "pending" && (

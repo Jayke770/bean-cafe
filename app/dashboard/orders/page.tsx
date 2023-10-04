@@ -5,7 +5,7 @@ import {
     BsCheckCircleFill,
     BsFillCartXFill
 } from 'react-icons/bs'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { MdOutlinePendingActions } from 'react-icons/md'
 import { GiCancel } from 'react-icons/gi'
 import CountUp from 'react-countup'
