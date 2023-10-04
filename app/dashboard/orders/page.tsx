@@ -10,8 +10,16 @@ import { MdOutlinePendingActions } from 'react-icons/md'
 import { GiCancel } from 'react-icons/gi'
 import CountUp from 'react-countup'
 import RecentOrders from './recent'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useEffect } from "react"
 export default function OrdersData() {
+    const router = useRouter()
+    const { data: session } = useSession()
     const { orderstats } = OrderStats()
+    useEffect(() => {
+        if (session?.user?.role !== "admin") router.push("/home")
+    }, [router, session?.user?.role])
     return (
         <div className="p-4 w-full">
             <AnimatePresence mode='wait'>
