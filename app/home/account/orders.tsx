@@ -10,6 +10,7 @@ import { BsArrowLeft } from 'react-icons/bs'
 import OrderInfo from "@/lib/User/orderInfo";
 import { Coffee } from "@components/loader"
 import Image from 'next/image'
+import OrderStatusBadge from "@/components/orderStatus";
 interface Props {
     show?: boolean,
     orders?: Orders[],
@@ -134,11 +135,7 @@ export default function AccountOrders(props: Props) {
                                                 </div>
                                             }
                                             after={
-                                                <>
-                                                    {order.status === "pending" && <Badge className=" bg-amber-500 dark:bg-amber-900 dark:text-amber-500" >{changeCase.sentenceCase(order.status ?? "")}</Badge>}
-                                                    {order.status === "completed" && <Badge className=" bg-teal-500 dark:bg-teal-900 dark:text-teal-500" >{changeCase.sentenceCase(order.status ?? "")}</Badge>}
-                                                    {order.status === "pending" || order.status === "cancelled" && <Badge className=" k-color-brand-red " >{changeCase.sentenceCase(order.status ?? "")}</Badge>}
-                                                </>
+                                                <OrderStatusBadge status={order.status} />
                                             } />
                                     ))}
                                 </List>
