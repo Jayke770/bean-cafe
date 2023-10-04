@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
                             $pull: { cart: { $in: parse_form.data.items.map(item => item._id) } }
                         })
                         //update cart 
-                        await Cart.updateMany({ $and: parse_form.data.items.map(item => ({ _id: { $eq: item._id } })) }, { $set: { status: "ordered" } })
+                        await Cart.updateMany({ _id: { $in: parse_form.data.items.map(item => item._id) } }, { $set: { status: "ordered" } })
                         //send notification
                         if (userData.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${orderData.orderId}`, body: orderNotification(orderData) })
                         res = {
@@ -172,7 +172,7 @@ export async function POST(req: NextRequest) {
                                 $pull: { cart: { $in: parse_form.data.items.map(item => item._id) } }
                             })
                             //update cart 
-                            await Cart.updateMany({ $and: parse_form.data.items.map(item => ({ _id: { $eq: item._id } })) }, { $set: { status: "ordered" } })
+                            await Cart.updateMany({ _id: { $in: parse_form.data.items.map(item => item._id) } }, { $set: { status: "ordered" } })
                             //send notification
                             if (userData.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${orderData.orderId}`, body: orderNotification(orderData) })
                             res = {

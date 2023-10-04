@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
                             size: { $eq: data.selected_size },
                             status: { $ne: "ordered" }
                         })
+                        console.log(itemInCart)
                         if (itemInCart) {
                             itemInCart.quantity += data.quantity
                             await itemInCart.save()
@@ -64,7 +65,6 @@ export async function POST(req: NextRequest) {
                                 price: price,
                                 status: "not-ordered"
                             })
-                            console.log("fafsa", newCartItem)
                             userData.cart.push(newCartItem._id)
                             await userData.save()
                         }
