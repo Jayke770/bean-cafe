@@ -7,12 +7,12 @@ import { OrderStatus } from '@/types'
 export async function GET(req: NextRequest) {
     const session = await getServerSession(AuthOptions)
     const type: "orders" | "stats" = req.nextUrl.searchParams.get("type") as any
-    const status: OrderStatus | undefined | null = req.nextUrl.searchParams.get("status") as any
+    const status: OrderStatus | undefined | null | "all" = req.nextUrl.searchParams.get("status") as any
     try {
         if (session) {
             await dbConnect()
             if (type === "orders") {
-                const data = await Orders.find({ status: { $eq: status ?? "pending" } }).sort({ _id: "desc" })
+                const data = await Orders.find(status === "all" ? {} : { status: { $eq: status } }).sort({ _id: "desc" })
                 return NextResponse.json(data)
             } else if (type === "stats") {
                 const orders = await Orders.find({}, { status: 1 })

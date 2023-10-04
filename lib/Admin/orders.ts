@@ -26,7 +26,7 @@ export function OrderStats(): {
         orderstatsError: error,
     };
 }
-export function Orders(status?: OrderStatus): {
+export function Orders(status?: OrderStatus | "all"): {
     orders: Orders[];
     ordersLoading: boolean;
     ordersError: boolean;
