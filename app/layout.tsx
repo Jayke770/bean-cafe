@@ -8,6 +8,8 @@ import { ThemeProvider } from '@components/themeProvider'
 import { Metadata } from "next"
 import { Toaster } from 'react-hot-toast'
 import { Analytics } from '@vercel/analytics/react'
+import { getServerSession } from 'next-auth'
+import { AuthOptions } from '@services/NextAuth/AuthOptions'
 export const metadata: Metadata = {
   title: "Bean Cafe",
   manifest: "/manifest.json",
@@ -24,13 +26,14 @@ export const metadata: Metadata = {
   ]
 };
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const session = await getServerSession(AuthOptions)
   return (
     <html lang="en" className=" scroll-smooth">
       <body>
         <Toaster toastOptions={{
           className: "toast_custom_style"
         }} />
-        <NextAuthSessionProvider>
+        <NextAuthSessionProvider session={session}>
           <LayoutMain>
             <NoticationProvider>
               <DialogProvider>

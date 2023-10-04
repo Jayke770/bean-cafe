@@ -216,7 +216,7 @@ export default function Home() {
                 exit={"exit"}
                 transition={{ ease: "easeInOut", duration: 0.5, delay: 0.2 }}
                 className='grid px-4 gap-2.5 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 mt-5'>
-                <AnimatePresence mode='wait'>
+                <AnimatePresence mode='sync'>
                     {items?.length <= 0 && <ItemEmpty key={"items-empty"} />}
                     {itemsLoading && <ItemLoader key={"items-loader"} />}
                     {items?.map(item => (
