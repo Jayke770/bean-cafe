@@ -158,7 +158,9 @@ export async function POST(req: NextRequest) {
                                 payment_method: parse_form.data.payment_method,
                                 userID: session.user.id,
                                 total_payment: total_payment.toString(),
-                                payment_id: payment_order.id
+                                payment_id: payment_order.id,
+                                address: userData.address,
+                                name: userData.name
                             })
                             userData.orders.push(orderData._id)
                             await userData.save()
