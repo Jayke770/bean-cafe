@@ -1,11 +1,13 @@
 "use client"
-import { faker } from '@faker-js/faker'
 import { Button, List, ListItem } from 'konsta/react'
 import { BsThreeDots } from 'react-icons/bs'
 import { FaCircleXmark, FaCircleCheck } from 'react-icons/fa6'
 import { Popover } from 'konsta/react'
 import { useCallback, useState } from 'react'
-export default function Orders() {
+import { Orders } from '@lib/Admin/orders'
+import CountUp from 'react-countup'
+export default function OrdersData() {
+  const { orders } = Orders()
   const [openAction, setOpenAction] = useState<{ open?: boolean, target?: string }>()
   const onToggleAction = useCallback((target: string) => setOpenAction(e => ({ ...e, open: !e?.open, target: target })), [setOpenAction])
   return (
@@ -35,7 +37,6 @@ export default function Orders() {
                 <table className="w-full divide-y table-auto  divide-brand-primary/20 dark:divide-brand-secondary">
                   <thead className=" k-color-brand-primary bg-md-light-surface-1 dark:bg-md-dark-surface-1">
                     <tr>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">No.</th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">ID</th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Name</th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Address</th>
@@ -45,21 +46,29 @@ export default function Orders() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-brand-primary/20 dark:divide-brand-secondary">
-                    {Array.from({ length: 20 }).map((_, i) => (
-                      <tr key={i}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">{i + 1}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 uppercase">{faker.string.nanoid(12)}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{faker.person.fullName()}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{faker.location.streetAddress()}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{faker.word.words()}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">₱ {faker.string.numeric({ length: { max: 5, min: 1 } })}</td>
+                    {orders?.map(order => (
+                      <tr key={order.orderId}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">{order.orderId}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 uppercase">{order.name ?? "N/A"}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{order?.address ?? "N/A"}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                          <div className=' flex flex-col gap-1'>
+                            {order.items.map(item => (
+                              <span>{item.item_name} - {item.quantity}x</span>
+                            ))}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                          <CountUp
+                            prefix='₱ '
+                            end={parseFloat(order.total_payment)} />
+                        </td>
                         <td className='flex h-full w-full items-center justify-end pr-6 pl-5 py-4 '>
                           <Button
-                            onClick={() => onToggleAction(`.order-action-${i}`)}
                             clear
                             outline
                             small
-                            className={`order-action-${i} !w-auto k-color-brand-primary !px-2`}>
+                            className={`order-action-${order.orderId} !w-auto k-color-brand-primary !px-2`}>
                             <BsThreeDots className=' h-5 w-5' />
                           </Button>
                         </td>
