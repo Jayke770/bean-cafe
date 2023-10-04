@@ -54,7 +54,7 @@ export default function OrdersData() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                           <div className=' flex flex-col gap-1'>
                             {order.items.map(item => (
-                              <span>{item.item_name} - {item.quantity}x</span>
+                              <span key={item.id}>{item.item_name} - {item.quantity}x</span>
                             ))}
                           </div>
                         </td>
