@@ -91,7 +91,7 @@ export default function AccountOrders(props: Props) {
                                     </List>
                                     <div className="flex gap-2 px-3.5 mt-3">
                                         <Button
-                                            disabled={orderData?.status === "processing"}
+                                            disabled={orderData?.status !== "pending"}
                                             small
                                             className=" k-color-brand-red">Cancel Order</Button>
                                         <NextLink className="w-full" href={`/order?id=${orderData?.orderId}`}>

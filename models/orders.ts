@@ -1,6 +1,5 @@
 import { Orders as ord } from "@/types";
 import { Schema, models, deleteModel, model } from "mongoose";
-import { boolean } from "zod";
 const Orders = new Schema<ord>({
     orderId: { type: String },
     items: [],
@@ -16,6 +15,7 @@ const Orders = new Schema<ord>({
     gcash_image: { type: String },
     isApproved: { type: Boolean, default: false },
     isPaid: { type: Boolean, default: false },
+    isRefunded: { type: Boolean, default: false },
 }, { timestamps: true });
 if (models["orders"] != null) {
     deleteModel("orders");

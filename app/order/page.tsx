@@ -11,6 +11,7 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import * as changeCase from 'change-case'
 import Link from 'next/link'
+import { FaCircleXmark } from 'react-icons/fa6'
 export default function OrderInforamtion() {
     const searchParams = useSearchParams()
     const [stepItems, setStepItems] = useState<StepProps[]>([])
@@ -29,11 +30,25 @@ export default function OrderInforamtion() {
                 title: orderData?.isPaid ? "Payment" : "Waiting for payment",
                 description: orderData?.isPaid ? "Order successfully paid." : ""
             })
-            steps.push({
-                icon: orderData?.isApproved ? <BsFillCheckCircleFill className=" h-4 w-4 text-teal-500 rounded-full" /> : <RiLoader5Fill className=" animate-spin h-4 w-4 text-amber-500 rounded-full" />,
-                title: orderData?.isApproved ? "Order Approved" : "Waiting for approval",
-                description: orderData?.isApproved ? "Order successfully approved." : "",
-            })
+            if (orderData.status === "denied") {
+                steps.push({
+                    icon: <FaCircleXmark className=" h-4 w-4 text-red-500 rounded-full" />,
+                    title: "Order disapproved",
+                    description: "Your was order disapproved ",
+                })
+                steps.push({
+                    icon: orderData?.isRefunded ? <BsFillCheckCircleFill className=" h-4 w-4 text-teal-500 rounded-full" /> : <RiLoader5Fill className=" animate-spin h-4 w-4 text-amber-500 rounded-full" />,
+                    title: orderData?.isRefunded ? "Payment Refunded" : "Waiting for refund",
+                    description: orderData?.isRefunded ? "Already refunded." : "Refund is pending",
+                })
+            }
+            if (orderData.status === "pending") {
+                steps.push({
+                    icon: orderData?.isApproved ? <BsFillCheckCircleFill className=" h-4 w-4 text-teal-500 rounded-full" /> : <RiLoader5Fill className=" animate-spin h-4 w-4 text-amber-500 rounded-full" />,
+                    title: orderData?.isApproved ? "Order Approved" : "Waiting for approval",
+                    description: orderData?.isApproved ? "Order successfully approved." : "",
+                })
+            }
             if (orderData.status === "processing") {
                 steps.push({
                     icon: <RiLoader5Fill className=" animate-spin h-4 w-4 text-amber-500 rounded-full" />,

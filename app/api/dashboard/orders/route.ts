@@ -84,6 +84,7 @@ export async function POST(req: NextRequest) {
                             if (orderData.payment_method === "paypal") {
                                 const data = await paypal.paymentDetails(orderData?.payment_id ?? "")
                                 await paypal.refund(data.purchase_units[0].payments.captures[0].id)
+                                orderData.isRefunded = true
                             }
                             if (userData.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${orderData.orderId}`, body: orderNotification(orderData) })
                             await orderData.save()
