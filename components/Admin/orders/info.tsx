@@ -1,4 +1,4 @@
-import type { Orders } from "@/types";
+import type { ApiResponse, Orders } from "@/types";
 import {
     Dialog,
     DialogButton,
@@ -10,12 +10,84 @@ import Image from "next/image";
 import OrderStatus from "@/components/orderStatus";
 import CountUp from "react-countup";
 import emoji from "react-easy-emoji";
+import toast from 'react-hot-toast';
+import { useState } from "react";
+import { RiLoader5Fill } from "react-icons/ri";
 interface props {
     show?: boolean,
     order?: Orders,
     onToggleOrderInfo: () => void
 }
 export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: props) {
+    const [isProcessing, setIsProcessing] = useState<boolean>(false)
+    const onDisApproveOrder = () => {
+        toast.promise(((): Promise<ApiResponse> => {
+            setIsProcessing(true)
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const req = await fetch("/api/dashboard/orders", {
+                        method: 'post',
+                        headers: {
+                            "content-type": "application/json"
+                        },
+                        body: JSON.stringify({ orderId: order?.orderId, type: "disapprove" })
+                    })
+                    if (req.ok) {
+                        const res: ApiResponse = await req.json()
+                        setIsProcessing(false)
+                        onToggleOrderInfo()
+                        res?.status ? resolve(res) : reject(res.message)
+                    } else {
+                        throw new Error(`${req.status} ${req.statusText}`)
+                    }
+                } catch (e: any) {
+                    setIsProcessing(false)
+                    reject(e.message)
+                }
+            })
+        })(), {
+            loading: 'Checking order...',
+            success: (data: ApiResponse) => {
+                setIsProcessing(false)
+                return `${data.message}`
+            },
+            error: e => e,
+        })
+    }
+    const onApproveOrder = () => {
+        toast.promise(((): Promise<ApiResponse> => {
+            setIsProcessing(true)
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const req = await fetch("/api/dashboard/orders", {
+                        method: 'post',
+                        headers: {
+                            "content-type": "application/json"
+                        },
+                        body: JSON.stringify({ orderId: order?.orderId, type: "approve" })
+                    })
+                    if (req.ok) {
+                        const res: ApiResponse = await req.json()
+                        setIsProcessing(false)
+                        onToggleOrderInfo()
+                        res?.status ? resolve(res) : reject(res.message)
+                    } else {
+                        throw new Error(`${req.status} ${req.statusText}`)
+                    }
+                } catch (e: any) {
+                    setIsProcessing(false)
+                    reject(e.message)
+                }
+            })
+        })(), {
+            loading: 'Checking Order...',
+            success: (data: ApiResponse) => {
+                setIsProcessing(false)
+                return `${data.message}`
+            },
+            error: e => e,
+        })
+    }
     return (
         <Dialog
             className=' k-color-brand-primary w-full md:w-160'
@@ -23,10 +95,22 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
             onBackdropClick={onToggleOrderInfo}
             title="Order Info"
             buttons={
-                <>
-                    <DialogButton className=' k-color-brand-red'>Disapprove</DialogButton>
-                    <DialogButton className=' k-color-brand-green'>Approve</DialogButton>
-                </>
+                order?.status === "pending" && (
+                    <>
+                        <DialogButton
+                            disabled={isProcessing}
+                            onClick={onDisApproveOrder}
+                            className=' k-color-brand-red'>
+                            {isProcessing ? <RiLoader5Fill className=' animate-spin w-5 h-5' /> : <span>Disapprove</span>}
+                        </DialogButton>
+                        <DialogButton
+                            disabled={isProcessing}
+                            onClick={onApproveOrder}
+                            className=' k-color-brand-green'>
+                            {isProcessing ? <RiLoader5Fill className=' animate-spin w-5 h-5' /> : <span>Approve</span>}
+                        </DialogButton>
+                    </>
+                )
             }
             content={
                 <div className='flex flex-col '>

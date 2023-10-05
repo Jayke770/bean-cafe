@@ -22,7 +22,7 @@ interface Options {
     openSort?: boolean,
     selected_order_id?: string
 }
-const ORDER_STATUSES = ["pending", "completed", "cancelled", "denied"]
+const ORDER_STATUSES = ["pending", "processing", "completed", "cancelled", "denied"]
 export default function AccountOrders(props: Props) {
     const [options, setOptions] = useState<Options>()
     const { orderData, orderDataLoading } = OrderInfo(options?.selected_order_id)
@@ -63,9 +63,7 @@ export default function AccountOrders(props: Props) {
                                             <span className=' text-lg px-3.5 text-brand-primary font-bold'>Order Info</span>
                                         </div>
                                         <div>
-                                            {orderData?.status === "pending" && <Badge className=" bg-amber-500 dark:bg-amber-900 dark:text-amber-500" >{changeCase.sentenceCase(orderData?.status ?? "")}</Badge>}
-                                            {orderData?.status === "completed" && <Badge className=" bg-teal-500 dark:bg-teal-900 dark:text-teal-500" >{changeCase.sentenceCase(orderData?.status ?? "")}</Badge>}
-                                            {orderData?.status === "pending" || orderData?.status === "cancelled" && <Badge className=" k-color-brand-red " >{changeCase.sentenceCase(orderData?.status ?? "")}</Badge>}
+                                            <OrderStatusBadge status={orderData?.status} />
                                         </div>
                                     </div>
                                     <List margin="my-0" className="mt-3">

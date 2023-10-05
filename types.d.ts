@@ -8,6 +8,7 @@ const OrderStatusData = z.union([
   z.literal("pending"),
   z.literal("completed"),
   z.literal("cancelled"),
+  z.literal("processing"),
   z.literal("denied"),
 ]);
 export type OrderStatus = z.infer<typeof OrderStatusData>
@@ -125,7 +126,11 @@ const OrdersSchema = z.object({
   orderId: z.string(),
   userID: z.string(),
   items: z.array(UserOrderItem),
-  payment_method: PaymentMethod,
+  payment_method: z.union([
+    z.literal("gcash"),
+    z.literal("paypal"),
+    z.literal("cash"),
+  ]),
   status: OrderStatusData,
   message: z.string().optional(),
   gcash_image: z.string().optional(),

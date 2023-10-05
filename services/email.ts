@@ -28,9 +28,11 @@ export default class Email {
                     to: receiver,
                     subject: subject,
                     html: body,
+                }, (err, info) => {
+                    console.log(err, info)
                 })
             } else {
-                throw new Error("Invalid Transporter")
+                console.error("Invalid Transporter")
             }
         } catch (e) {
             console.error(e)

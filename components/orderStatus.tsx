@@ -19,7 +19,10 @@ export default function OrderStatus({ status }: { status?: OrderStatus }) {
                         text: "text-white dark:text-teal-500"
                     }} >{changeCase.sentenceCase(status ?? "")}</Badge>
             )}
-            {status === "pending" || status === "cancelled" && <Badge className=" k-color-brand-red " >{changeCase.sentenceCase(status ?? "")}</Badge>}
+            {status === "processing" && (
+                <Badge>{changeCase.sentenceCase(status ?? "")}</Badge>
+            )}
+            {status === "pending" || status === "cancelled" || status === "denied" && <Badge className=" k-color-brand-red " >{changeCase.sentenceCase(status ?? "")}</Badge>}
         </>
     )
 }

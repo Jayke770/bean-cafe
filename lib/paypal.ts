@@ -281,7 +281,15 @@ interface CapturePayment {
         method: "GET" | "POST"
     }
 }
-
+interface Refund {
+    id: string,
+    status: 'COMPLETED',
+    links: {
+        href: string,
+        rel: 'self' | "up",
+        method: 'GET'
+    }[]
+}
 export default class Paypal {
     private config?: PaypalConfig
     private live_endpoint: string = ""
@@ -362,6 +370,25 @@ export default class Paypal {
             await fetch(endpoint, {
                 redirect: "follow",
                 headers: {
+                    "Authorization": `${credentials?.token_type} ${credentials?.access_token}`
+                }
+            })
+                .then(e => e.json())
+                .then(res => resolve(res))
+                .catch(e => reject(e))
+        })
+    }
+    refund(id: string) {
+        return new Promise<Refund>(async (resolve, reject) => {
+            if (!this.endpoint || !this.config) reject("Paypal not initialize")
+            if (!this.credentials) reject("Invalid Credentials")
+            const credentials = this.credentials
+            const endpoint = `${this.endpoint}/v2/payments/captures/${id}/refund`
+            await fetch(endpoint, {
+                redirect: "follow",
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
                     "Authorization": `${credentials?.token_type} ${credentials?.access_token}`
                 }
             })

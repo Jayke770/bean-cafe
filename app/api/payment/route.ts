@@ -24,8 +24,10 @@ export async function GET(req: NextRequest) {
                 const params = `?orderId=${orderData.orderId}`
                 if (type === "success") {
                     const data = await paypal.paymentDetails(payment_id)
+                    console.log("data", data)
                     if (data?.status === "APPROVED") {
-                        await paypal.capturePayment(payment_id)
+                        const data = await paypal.capturePayment(payment_id)
+                        console.log("capture", data)
                         orderData.status = "pending"
                         orderData.isPaid = true
                         await orderData.save()
