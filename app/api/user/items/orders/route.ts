@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
             const status: OrderStatus | "all" = req.nextUrl.searchParams.get("status") as any
             const orderId = req.nextUrl.searchParams.get("id")
             if (orderId) {
-                const orderData = await Orders.findOne({ orderId: { $eq: orderId } })
+                const orderData = await Orders.findOne({ orderId: { $eq: orderId }, userID: { $eq: session.user.id } })
                 return NextResponse.json(orderData)
             } else {
                 const total_orders = await Orders.find({ userID: { $eq: session.user.id } }).count()
