@@ -10,14 +10,14 @@ export async function GET(req: NextRequest) {
     try {
         if (session) {
             await dbConnect()
-            const status: OrderStatus = req.nextUrl.searchParams.get("status") as any ?? "pending"
+            const status: OrderStatus | "all" = req.nextUrl.searchParams.get("status") as any
             const orderId = req.nextUrl.searchParams.get("id")
             if (orderId) {
                 const orderData = await Orders.findOne({ orderId: { $eq: orderId } })
                 return NextResponse.json(orderData)
             } else {
                 const total_orders = await Orders.find({ userID: { $eq: session.user.id } }).count()
-                const orders = await Orders.find({ userID: { $eq: session.user.id }, status: status })
+                const orders = await Orders.find(status === "all" ? { userID: { $eq: session.user.id } } : { userID: { $eq: session.user.id }, status: status }).sort({ _id: "desc" })
                 return NextResponse.json({ total_orders, orders })
             }
         } else {

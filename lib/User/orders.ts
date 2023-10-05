@@ -7,7 +7,7 @@ export default function OrdersData(status?: Orders['status']): {
         orders: Orders[]
     }; ordersDataLoading: boolean; ordersDataError: boolean;
 } {
-    const { data, error, isLoading } = useSWR(`/api/user/items/orders?status=${status ?? "pending"}`, fetcher,
+    const { data, error, isLoading } = useSWR(`/api/user/items/orders?status=${status ?? "all"}`, fetcher,
         {
             shouldRetryOnError: true,
             revalidateOnMount: true,

@@ -11,6 +11,7 @@ import OrderInfo from "@/lib/User/orderInfo";
 import { Coffee } from "@components/loader"
 import Image from 'next/image'
 import OrderStatusBadge from "@/components/orderStatus";
+import NextLink from 'next/link'
 interface Props {
     show?: boolean,
     orders?: Orders[],
@@ -88,8 +89,16 @@ export default function AccountOrders(props: Props) {
                                                 } />
                                         ))}
                                     </List>
-                                    <div className="flex px-3.5 mt-3">
-                                        <Button small className=" k-color-brand-red">Cancel Order</Button>
+                                    <div className="flex gap-2 px-3.5 mt-3">
+                                        <Button
+                                            disabled={orderData?.status === "processing"}
+                                            small
+                                            className=" k-color-brand-red">Cancel Order</Button>
+                                        <NextLink className="w-full" href={`/order?id=${orderData?.orderId}`}>
+                                            <Button
+                                                small
+                                                className=" k-color-brand-primary ">View Order</Button>
+                                        </NextLink>
                                     </div>
                                 </motion.div>
                             ) : <Coffee />
@@ -150,7 +159,7 @@ export default function AccountOrders(props: Props) {
                 <List nested>
                     <ListItem
                         key={"default"}
-                        title={"Default"}
+                        title={"All"}
                         link
                         chevron={false}
                         onClick={() => onSetOrderType(undefined)}

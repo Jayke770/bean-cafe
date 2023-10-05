@@ -139,6 +139,7 @@ const OrdersSchema = z.object({
   payment_id: z.string().optional(),
   isPaid: z.boolean().optional(),
   name: z.string(),
-  address: z.string()
+  address: z.string(),
+  isApproved: z.boolean()
 })
 export type Orders = z.infer<typeof OrdersSchema>

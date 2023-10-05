@@ -25,3 +25,20 @@
 .toast_custom_style {
   @apply dark:!bg-brand-secondary dark:!text-brand-white;
 }
+
+/* order steps */
+.rc-steps-item-process .rc-steps-item-title {
+  @apply k-color-brand-primary text-md-light-on-surface dark:text-md-dark-on-surface;
+}
+
+.rc-steps-item-process .rc-steps-item-description{
+  @apply k-color-brand-primary text-md-light-on-surface/50 dark:text-md-dark-on-surface/50;
+}
+
+.rc-steps-item-wait .rc-steps-item-title, 
+.rc-steps-item-wait .rc-steps-item-description {
+   @apply k-color-brand-primary text-md-light-on-surface/50 dark:text-md-dark-on-surface/50;
+}
+.rc-steps-item-wait .rc-steps-item-description {
+   @apply k-color-brand-primary text-md-light-on-surface/40 dark:text-md-dark-on-surface/40;
+}

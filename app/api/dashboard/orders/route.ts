@@ -69,6 +69,7 @@ export async function POST(req: NextRequest) {
                     if (orderData.status === "pending") {
                         if (data.data.type === "approve") {
                             orderData.status = "processing"
+                            orderData.isApproved = true
                             if (userData.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${orderData.orderId}`, body: orderNotification(orderData) })
                             await orderData.save()
                             res = {
@@ -78,6 +79,7 @@ export async function POST(req: NextRequest) {
                             return NextResponse.json(res)
                         } else if (data.data.type === "disapprove") {
                             orderData.status = "denied"
+                            orderData.isApproved = false
                             //if paypal send refund 
                             if (orderData.payment_method === "paypal") {
                                 const data = await paypal.paymentDetails(orderData?.payment_id ?? "")
