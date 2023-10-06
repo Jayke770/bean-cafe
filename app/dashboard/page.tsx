@@ -5,9 +5,16 @@ import Charts from './charts'
 import { useCallback, useEffect, useState } from "react";
 import { HiXMark } from 'react-icons/hi2'
 import { Navbar, Link, Icon, Panel, Page } from 'konsta/react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 export default function DashBoard() {
+    const router = useRouter()
+    const { data: session, status } = useSession()
     const [openSideNav, setOpenSideNav] = useState<boolean>()
     const onToggleSideNav = useCallback(() => setOpenSideNav(e => !e), [setOpenSideNav])
+    useEffect(() => {
+        if (!session || (status === "authenticated" && session?.user?.role === "user")) router.push("/home")
+    }, [router, session, status])
     return (
         <>
             <Panel
@@ -27,9 +34,9 @@ export default function DashBoard() {
                 </Page>
             </Panel>
             <div className="transition-all flex flex-col gap-4 mt-4">
-                <Cards />
-                <Charts />
-                <Orders />
+                {(session?.user?.role === "admin" || session?.user?.role === "staff") && <Cards />}
+                {session?.user?.role === "admin" && <Charts />}
+                {(session?.user?.role === "admin" || session?.user?.role === "staff") && <Orders />}
             </div>
         </>
     )

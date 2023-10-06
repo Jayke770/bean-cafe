@@ -27,7 +27,7 @@ export function OrderStats(): {
     };
 }
 export function Orders(status?: OrderStatus | "all"): {
-    orders: Orders[];
+    orders?: Orders[];
     ordersLoading: boolean;
     ordersError: boolean;
 } {
