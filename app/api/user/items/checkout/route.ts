@@ -161,7 +161,8 @@ export async function POST(req: NextRequest) {
                                 total_payment: total_payment.toString(),
                                 payment_id: payment_order.id,
                                 address: userData.address,
-                                name: userData.name
+                                name: userData.name,
+                                orderStatus: ["order_placed", "waiting_payment"]
                             })
                             userData.orders.push(orderData._id)
                             await userData.save()

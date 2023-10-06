@@ -182,7 +182,7 @@ interface PaymentDetails {
     update_time: string
     links: {
         href: string
-        rel: "self" | "refund" | "up"
+        rel: "self" | "refund" | "up" | "payer-action"
         method: "GET" | "POST"
     }[]
 }

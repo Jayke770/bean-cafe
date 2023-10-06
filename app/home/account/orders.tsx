@@ -94,6 +94,13 @@ export default function AccountOrders(props: Props) {
                                             disabled={orderData?.status !== "pending"}
                                             small
                                             className=" k-color-brand-red">Cancel Order</Button>
+                                        {!orderData?.isPaid && orderData?.payment_method === "paypal" && (
+                                            <NextLink className="w-full" href={`/api/payment?type=payNow&token=${orderData?.payment_id}`}>
+                                                <Button
+                                                    small
+                                                    className=" k-color-brand-green ">Pay Now</Button>
+                                            </NextLink>
+                                        )}
                                         <NextLink className="w-full" href={`/order?id=${orderData?.orderId}`}>
                                             <Button
                                                 small

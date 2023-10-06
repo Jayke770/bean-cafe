@@ -37,10 +37,14 @@ export function Success({ data }: { data?: Orders }) {
                     <span className=" font-light">₱ {parseFloat(data?.total_payment ?? "0").toLocaleString()}</span>
                 </div>
             </div>
-            <div className="px-3.5 mt-5">
-                <Link href={"/home"}>
+            <div className="px-3.5 w-full flex gap-2 mt-5">
+                <Link href={"/home"} className=' w-full'>
                     <Button
                         className=" k-color-brand-primary">Go Back</Button>
+                </Link>
+                <Link href={`/order?id=${data?.orderId}`} className=' w-full'>
+                    <Button
+                        className=" k-color-brand-green">View Order</Button>
                 </Link>
             </div>
         </motion.div>
@@ -72,8 +76,13 @@ export function SuccessLoading() {
                     <Skeleton height={"1rem"} width={"2rem"} />
                 </div>
             </div>
-            <div className="px-3.5 mt-5">
-                <Skeleton height={"2.5rem"} width={"100%"} />
+            <div className="px-3.5 mt-5 flex gap-2 w-full">
+                <div className=' w-full'>
+                    <Skeleton height={"2.5rem"} width={"100%"} />
+                </div>
+                <div className=' w-full'>
+                    <Skeleton height={"2.5rem"} width={"100%"} />
+                </div>
             </div>
         </div>
     )

@@ -8,7 +8,8 @@ export default function PaytmentSuccess() {
     const { orderData, orderDataLoading } = OrderInfo(searchParams.get("orderId"))
     return (
         <div className="flex fixed top-0 left-0 z-50 w-screen h-screen justify-center items-center bg-brand-white dark:bg-brand-secondary/20">
-            {orderDataLoading ? <SuccessLoading /> : <Success data={orderData} />}
+            {/* {orderDataLoading ? <SuccessLoading /> : <Success data={orderData} />} */}
+            <SuccessLoading />
         </div>
     )
 }

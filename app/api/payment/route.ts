@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
         if (session) {
             await dbConnect()
             await paypal.authenticate()
-            const type: "success" | "cancel" = req.nextUrl.searchParams.get("type") as any
+            const type: "success" | "cancel" | "payNow" = req.nextUrl.searchParams.get("type") as any
             const payment_id = req.nextUrl.searchParams.get("token")
             const orderData = await Orders.findOne({ payment_id: { $eq: payment_id } })
             if (orderData && payment_id) {
@@ -26,9 +26,9 @@ export async function GET(req: NextRequest) {
                     const data = await paypal.paymentDetails(payment_id)
                     if (data?.status === "APPROVED") {
                         const data = await paypal.capturePayment(payment_id)
-                        console.log("capture", data)
                         orderData.status = "pending"
                         orderData.isPaid = true
+                        orderData.orderStatus.pop()
                         orderData.orderStatus.push("payment", "waiting_for_approval")
                         await orderData.save()
                         return NextResponse.redirect(`${NEXTAUTH_URL}/payment/success${params}`)
@@ -37,6 +37,10 @@ export async function GET(req: NextRequest) {
                     } else {
                         return NextResponse.redirect(`${NEXTAUTH_URL}/payment/not-found${params}`)
                     }
+                } else if (type === "payNow") {
+                    const data = await paypal.paymentDetails(payment_id)
+                    const paylink = data.links.find(x => x.rel === "payer-action")
+                    return NextResponse.redirect(paylink?.href ?? NEXTAUTH_URL as string)
                 } else {
                     orderData.status = "cancelled"
                     await orderData.save()
