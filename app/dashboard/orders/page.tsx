@@ -4,8 +4,6 @@ import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 export default async function Orders() {
     const session = await getServerSession(AuthOptions)
-    if (session?.user.role === "user" || !session) redirect("/home")
-    return (
-        <OrdersData />
-    )
+    if (session?.user.role === "user" || !session) redirect("/auth")
+    return <OrdersData />
 }

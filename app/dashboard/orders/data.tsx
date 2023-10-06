@@ -10,7 +10,8 @@ import { MdOutlinePendingActions } from 'react-icons/md'
 import { GiCancel } from 'react-icons/gi'
 import CountUp from 'react-countup'
 import RecentOrders from './recent'
-export default function OrdersData() {
+import { type Session } from "next-auth";
+export default function OrdersData({ session }: { session?: Session }) {
     const { orderstats } = OrderStats()
     return (
         <div className="p-4 w-full">
