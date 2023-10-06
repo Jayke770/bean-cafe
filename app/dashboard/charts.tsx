@@ -9,8 +9,8 @@ import {
     BarElement,
     Legend
 } from 'chart.js';
-import { Bar, Line } from 'react-chartjs-2';
-import { Button, Card, Checkbox, Dialog, List, ListItem, Popover, Radio } from 'konsta/react';
+import { Bar } from 'react-chartjs-2';
+import { Button, Card, List, ListItem, Popover, Radio } from 'konsta/react';
 import { OrdersReport, UsersReport } from '@lib/Admin/reports'
 import { FaSort } from 'react-icons/fa';
 import { useLocalstorageState } from 'rooks';
