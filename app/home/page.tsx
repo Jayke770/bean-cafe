@@ -67,7 +67,6 @@ export default function Home() {
     const [viewAccount, setViewAccount] = useState<boolean>(false)
     const [viewItem, setViewItem] = useState<ViewItem>({ quantity: 0 })
     const onToggleCart = useCallback(() => setViewCart(e => !e), [setViewCart])
-    const onToggleAccount = useCallback(() => setViewAccount(e => !e), [setViewAccount])
     const onToggleItem = useCallback((data?: Item) => {
         if (data) {
             setViewItem(e => ({ ...e, data: data, opened: !e.opened }))
