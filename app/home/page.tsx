@@ -58,7 +58,7 @@ interface ViewItem {
     isProcessing?: boolean
 }
 export default function Home() {
-    const { cartData } = CartData()
+    const { cartData, mutate: updateCartData } = CartData()
     const { data: session, status } = useSession()
     const [tab, setTab] = useLocalstorageState<string>("home-tab", "All")
     const { items, itemsLoading } = Items(tab.toLowerCase(), 0)
@@ -132,9 +132,7 @@ export default function Home() {
             })(), {
                 loading: 'Adding to cart..',
                 success: (data: ApiResponse) => {
-                    if (data?.status && data?.redirect_url) {
-
-                    }
+                    updateCartData()
                     return `${data.message}`
                 },
                 error: e => e,
