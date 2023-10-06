@@ -1,64 +1,19 @@
 "use client"
 import "rc-steps/assets/index.css"
-import MainStep, { Step } from 'rc-steps'
-import { StepProps } from 'rc-steps/lib/Step'
-import { BsInfoCircle, BsFillCheckCircleFill, BsArrowLeft } from 'react-icons/bs'
+import MainStep from 'rc-steps'
+import { BsFillCheckCircleFill, BsArrowLeft } from 'react-icons/bs'
 import { RiLoader5Fill } from 'react-icons/ri'
 import { Button, Card, List, ListItem } from "konsta/react"
 import OrderInfo from "@/lib/User/orderInfo"
 import { useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
 import Image from "next/image"
 import * as changeCase from 'change-case'
 import Link from 'next/link'
 import { FaCircleXmark } from 'react-icons/fa6'
+import { ORDER_STATUS } from '@lib/constants'
 export default function OrderInforamtion() {
     const searchParams = useSearchParams()
-    const [stepItems, setStepItems] = useState<StepProps[]>([])
     const { orderData } = OrderInfo(searchParams.get("id"))
-    useEffect(() => {
-        if (orderData) {
-            let steps: StepProps[] = [
-                {
-                    icon: <BsFillCheckCircleFill className=" h-4 w-4 text-teal-500 rounded-full" />,
-                    title: "Order Placed",
-                    description: "You have successfully placed your order."
-                }
-            ]
-            steps.push({
-                icon: orderData?.isPaid ? <BsFillCheckCircleFill className=" h-4 w-4 text-teal-500 rounded-full" /> : < RiLoader5Fill className=" animate-spin h-4 w-4 text-amber-500 rounded-full" />,
-                title: orderData?.isPaid ? "Payment" : "Waiting for payment",
-                description: orderData?.isPaid ? "Order successfully paid." : ""
-            })
-            if (orderData.status === "denied") {
-                steps.push({
-                    icon: <FaCircleXmark className=" h-4 w-4 text-red-500 rounded-full" />,
-                    title: "Order disapproved",
-                    description: "Your was order disapproved ",
-                })
-                steps.push({
-                    icon: orderData?.isRefunded ? <BsFillCheckCircleFill className=" h-4 w-4 text-teal-500 rounded-full" /> : <RiLoader5Fill className=" animate-spin h-4 w-4 text-amber-500 rounded-full" />,
-                    title: orderData?.isRefunded ? "Payment Refunded" : "Waiting for refund",
-                    description: orderData?.isRefunded ? "Already refunded." : "Refund is pending",
-                })
-            }
-            if (orderData.status === "pending") {
-                steps.push({
-                    icon: orderData?.isApproved ? <BsFillCheckCircleFill className=" h-4 w-4 text-teal-500 rounded-full" /> : <RiLoader5Fill className=" animate-spin h-4 w-4 text-amber-500 rounded-full" />,
-                    title: orderData?.isApproved ? "Order Approved" : "Waiting for approval",
-                    description: orderData?.isApproved ? "Order successfully approved." : "",
-                })
-            }
-            if (orderData.status === "processing") {
-                steps.push({
-                    icon: <RiLoader5Fill className=" animate-spin h-4 w-4 text-amber-500 rounded-full" />,
-                    title: "Processing Order",
-                    description: "Store is preparing your order."
-                })
-            }
-            setStepItems(steps.reverse())
-        }
-    }, [orderData])
     return (
         <div className="p-4 h-full z-5 w-full left-0 top-0 overflow-auto absolute bg-brand-white dark:bg-brand-secondary/20">
             <div className="flex flex-col gap-4">
@@ -109,7 +64,18 @@ export default function OrderInforamtion() {
                     <MainStep
                         current={0}
                         direction='vertical'
-                        items={stepItems} />
+                        className="flex flex-col-reverse"
+                        items={orderData?.orderStatus.map(status => ({
+                            icon: (
+                                <>
+                                    {ORDER_STATUS[status]?.showLoader && <RiLoader5Fill className=" animate-spin h-4 w-4 text-amber-500 rounded-full" />}
+                                    {ORDER_STATUS[status]?.showCheckMark && <BsFillCheckCircleFill className=" h-4 w-4 text-teal-500 rounded-full" />}
+                                    {ORDER_STATUS[status]?.showXMark && <FaCircleXmark className=" h-4 w-4 text-red-500 rounded-full" />}
+                                </>
+                            ),
+                            title: ORDER_STATUS[status]?.title,
+                            description: ORDER_STATUS[status]?.description
+                        }))} />
                 </Card>
             </div>
         </div>

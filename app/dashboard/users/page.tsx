@@ -8,9 +8,9 @@ export default function UsersPage() {
     const router = useRouter()
     const { data: session } = useSession()
     const { users, usersLoading } = Users()
-    useEffect(() => {
-        if (session?.user?.role !== "admin") router.push("/home")
-    }, [router, session?.user?.role])
+    // useEffect(() => {
+    //     if (session?.user?.role !== "admin") router.push("/home")
+    // }, [router, session?.user?.role])
     return (
         <div className="p-4">
             <div className="-m-1.5 overflow-x-auto">

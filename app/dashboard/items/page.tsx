@@ -18,9 +18,9 @@ export default function Orders() {
     const { items, itemsLoading } = Items()
     const [openNewItem, setOpenNewItem] = useState<boolean>()
     const onToggleNewItem = useCallback(() => setOpenNewItem(e => !e), [setOpenNewItem])
-    useEffect(() => {
-        if (session?.user?.role !== "admin") router.push("/home")
-    }, [router, session?.user?.role])
+    // useEffect(() => {
+    //     if (session?.user?.role !== "admin") router.push("/home")
+    // }, [router, session?.user?.role])
     return (
         <>
             <Fab
