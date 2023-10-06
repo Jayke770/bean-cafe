@@ -9,7 +9,7 @@ import {
     BarElement,
     Legend
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 import { Button, Card, Checkbox, Dialog, List, ListItem, Popover, Radio } from 'konsta/react';
 import { OrdersReport, UsersReport } from '@lib/Admin/reports'
 import { FaSort } from 'react-icons/fa';
@@ -17,6 +17,8 @@ import { useLocalstorageState } from 'rooks';
 import type { ReportData } from '@/types'
 import * as changeCase from 'change-case'
 import moment from 'moment-timezone';
+import { useState } from 'react';
+import { REPORT_TYPES } from '@lib/constants'
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -29,14 +31,19 @@ ChartJS.register(
 )
 interface ReportDataType {
     users: ReportData,
-    open?: "users" | "orders"
     orders: ReportData
 }
 export default function Charts() {
+    const [open, setOpen] = useState<"users" | "orders">()
     const [reportType, setReportType] = useLocalstorageState<ReportDataType>("report-type", { orders: "daily", users: "daily" })
     const { ordersReport } = OrdersReport(reportType?.orders)
     const { usersReport } = UsersReport(reportType?.users)
-    const onTogglePopOver = (data: any) => setReportType(e => ({ ...e, open: data }))
+    const onTogglePopOver = (data?: any) => setOpen(e => data)
+    const onSetReportType = (data: ReportData) => {
+        if (open === "orders") setReportType(e => ({ ...e, orders: data }))
+        if (open === "users") setReportType(e => ({ ...e, users: data }))
+        onTogglePopOver()
+    }
     return (
         <>
             <div className='flex flex-col px-4 gap-2'>
@@ -53,6 +60,7 @@ export default function Charts() {
                                     small
                                     clear
                                     tonal
+                                    id='orders-report'
                                     className="!w-auto flex items-center gap-2">
                                     {changeCase.sentenceCase(reportType?.orders ?? "")}
                                     <FaSort />
@@ -97,6 +105,7 @@ export default function Charts() {
                                     small
                                     clear
                                     tonal
+                                    id='users-report'
                                     className="!w-auto flex items-center gap-2">
                                     {changeCase.sentenceCase(reportType?.users ?? "")}
                                     <FaSort />
@@ -133,28 +142,34 @@ export default function Charts() {
                     </Card>
                 </div>
             </div>
-            <Dialog
-                opened
-                onBackdropClick={onTogglePopOver}
+            <Popover
+                onBackdropClick={() => onTogglePopOver(undefined)}
+                target={`#${open}-report`}
+                opened={!!open}
                 className=' k-color-brand-primary'>
-                {/* <List margin='my-0' nested>
-                    <ListItem
-                        link
-                        title="Daily"
-                        chevron={false}
-                        media={<Radio readOnly className=' pointer-events-none' />} />
-                    <ListItem
-                        link
-                        title="Monthly"
-                        chevron={false}
-                        media={<Radio readOnly className=' pointer-events-none' />} />
-                    <ListItem
-                        link
-                        title="Yearly"
-                        chevron={false}
-                        media={<Radio readOnly className=' pointer-events-none' />} />
-                </List> */}
-            </Dialog>
+                <List margin='my-0' nested>
+                    {open === "orders" && (
+                        REPORT_TYPES.map(type => (
+                            <ListItem
+                                onClick={() => onSetReportType(type as any)}
+                                link
+                                title={changeCase.sentenceCase(type)}
+                                chevron={false}
+                                media={<Radio readOnly checked={reportType.orders === type} className=' pointer-events-none' />} />
+                        ))
+                    )}
+                    {open === "users" && (
+                        REPORT_TYPES.map(type => (
+                            <ListItem
+                                onClick={() => onSetReportType(type as any)}
+                                link
+                                title={changeCase.sentenceCase(type)}
+                                chevron={false}
+                                media={<Radio readOnly checked={reportType.users === type} className=' pointer-events-none' />} />
+                        ))
+                    )}
+                </List>
+            </Popover>
         </>
     )
 }
