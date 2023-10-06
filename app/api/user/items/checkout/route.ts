@@ -39,6 +39,9 @@ const CheckOutSchema = z.object({
         z.literal("paypal"),
         z.literal("cash"),
     ]),
+    address: z.string(),
+    name: z.string(),
+    message: z.string().optional(),
     gcash_image: z.any().optional()
 })
 export async function POST(req: NextRequest) {
@@ -72,8 +75,10 @@ export async function POST(req: NextRequest) {
                             payment_method: parse_form.data.payment_method,
                             userID: session.user.id,
                             total_payment: total_payment.toString(),
-                            name: userData.name,
-                            orderStatus: ["order_placed", "waiting_payment"]
+                            name: parse_form.data.name,
+                            orderStatus: ["order_placed", "waiting_payment"],
+                            message: parse_form.data.message,
+                            address: parse_form.data.address
                         })
                         userData.orders.push(orderData._id)
                         await userData.save()
@@ -160,9 +165,10 @@ export async function POST(req: NextRequest) {
                                 userID: session.user.id,
                                 total_payment: total_payment.toString(),
                                 payment_id: payment_order.id,
-                                address: userData.address,
-                                name: userData.name,
-                                orderStatus: ["order_placed", "waiting_payment"]
+                                name: parse_form.data,
+                                orderStatus: ["order_placed", "waiting_payment"],
+                                message: parse_form.data.message,
+                                address: parse_form.data.address
                             })
                             userData.orders.push(orderData._id)
                             await userData.save()
