@@ -11,6 +11,7 @@ import { GiCancel } from 'react-icons/gi'
 import CountUp from 'react-countup'
 import RecentOrders from './recent'
 import { type Session } from "next-auth";
+import { PiCookingPotFill } from 'react-icons/pi'
 export default function OrdersData({ session }: { session?: Session }) {
     const { orderstats } = OrderStats()
     return (
@@ -33,6 +34,19 @@ export default function OrdersData({ session }: { session?: Session }) {
                             <span className="text-sm">Completed Orders</span>
                         </div>
                         <BsCheckCircleFill className=" h-8 w-8 text-teal-500" />
+                    </div>
+                </Card>
+                <Card
+                    margin="m-0"
+                    className=" k-color-brand-primary !rounded-md ">
+                    <div className="flex justify-between w-full items-center">
+                        <div className="flex flex-col">
+                            <CountUp
+                                className="font-bold text-xl"
+                                end={orderstats?.completed} />
+                            <span className="text-sm">Processing Orders</span>
+                        </div>
+                        <PiCookingPotFill className=" h-8 w-8 text-yellow-500" />
                     </div>
                 </Card>
                 <Card

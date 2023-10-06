@@ -142,6 +142,8 @@ const OrdersSchema = z.object({
   address: z.string(),
   isApproved: z.boolean(),
   isRefunded: z.boolean(),
-  orderStatus: z.array(z.string())
+  orderStatus: z.array(z.string()),
+  deliveryType: z.union([z.literal("pickup"), z.literal("deliver")]),
+  fee: z.string()
 })
 export type Orders = z.infer<typeof OrdersSchema>

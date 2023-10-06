@@ -11,7 +11,7 @@ const Cart = new Schema<UserCart>({
     quantity: { type: Number },
     size: { type: String },
     status: { type: String, default: "not-ordered" }
-});
+}, { timestamps: true });
 if (models["cart"] != null) {
     deleteModel("cart");
 }

@@ -42,10 +42,11 @@ export default function RecentOrders() {
                                     onChange={e => onSetOrderStatus(e.target.value)}
                                     className="py-3 px-4 w-full lg:w-auto dark:bg-transparent dark:focus:bg-black dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                                     <option value={"all"}>All</option>
+                                    <option value={"processing"}>Processing</option>
                                     <option value={"pending"}>Pending</option>
                                     <option value={"completed"}>Completed</option>
                                     <option value={"cancelled"}>Cancelled</option>
-                                    <option value={"Denied"}>Denied</option>
+                                    <option value={"denied"}>Denied</option>
                                 </select>
                             </div>
                         </div>

@@ -149,6 +149,10 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                             <span className=' font-bold'>{order?.name ?? "N/A"}</span>
                         </div>
                         <div className='flex justify-between'>
+                            <span className=' text-sm'>Address:</span>
+                            <span className=' font-bold'>{order?.address ?? "N/A"}</span>
+                        </div>
+                        <div className='flex justify-between'>
                             <span className=' text-sm'>Order Status:</span>
                             <OrderStatus status={order?.status} />
                         </div>

@@ -13,7 +13,7 @@ export function Success({ data }: { data?: Orders }) {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ type: "spring", duration: 0.3, delay: 0 }}
-            className=" shadow-sm relative p-4 m-4 rounded-2xl bg-md-light-surface-1 dark:bg-md-dark-surface-1 text-md-light-on-surface dark:text-md-dark-on-surface  k-color-brand-primary w-full md:w-160 ">
+            className=" shadow-sm relative p-4 m-4 rounded-2xl bg-md-light-surface-1 dark:bg-md-dark-surface-1 text-md-light-on-surface dark:text-md-dark-on-surface  k-color-brand-primary w-full md:w-96 ">
             <div className="w-full flex items-center absolute justify-center z-50 -top-8 left-0">
                 <div className=" dark:bg-md-dark-surface-1 p-4 rounded-full bg-md-light-surface-1 ">
                     <BsCheckCircleFill className=" w-10 h-10 text-teal-500 " />
@@ -40,10 +40,12 @@ export function Success({ data }: { data?: Orders }) {
             <div className="px-3.5 w-full flex gap-2 mt-5">
                 <Link href={"/home"} className=' w-full'>
                     <Button
+                        small
                         className=" k-color-brand-primary">Go Back</Button>
                 </Link>
                 <Link href={`/order?id=${data?.orderId}`} className=' w-full'>
                     <Button
+                        small
                         className=" k-color-brand-green">View Order</Button>
                 </Link>
             </div>
@@ -52,7 +54,7 @@ export function Success({ data }: { data?: Orders }) {
 }
 export function SuccessLoading() {
     return (
-        <div className=" shadow-sm relative p-4 m-4 rounded-2xl bg-md-light-surface-1 dark:bg-md-dark-surface-1 text-md-light-on-surface dark:text-md-dark-on-surface  k-color-brand-primary w-full md:w-160 ">
+        <div className=" shadow-sm relative p-4 m-4 rounded-2xl bg-md-light-surface-1 dark:bg-md-dark-surface-1 text-md-light-on-surface dark:text-md-dark-on-surface  k-color-brand-primary w-full md:w-96 ">
             <div className="w-full flex items-center absolute justify-center z-50 -top-8 left-0">
                 <div className=" dark:bg-md-dark-surface-1 p-4 rounded-full bg-md-light-surface-1 ">
                     <Skeleton height={"2.5rem"} width={"2.5em"} borderRadius={"100%"} />
@@ -78,10 +80,10 @@ export function SuccessLoading() {
             </div>
             <div className="px-3.5 mt-5 flex gap-2 w-full">
                 <div className=' w-full'>
-                    <Skeleton height={"2.5rem"} width={"100%"} />
+                    <Skeleton height={"2rem"} width={"100%"} />
                 </div>
                 <div className=' w-full'>
-                    <Skeleton height={"2.5rem"} width={"100%"} />
+                    <Skeleton height={"2rem"} width={"100%"} />
                 </div>
             </div>
         </div>

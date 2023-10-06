@@ -11,7 +11,7 @@ export default function loading() {
             transition={{ ease: "easeInOut", duration: 0.3, delay: 0 }}
             className="p-4 w-full">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-                {Array.from({ length: 4 }).map((_, i) => (
+                {Array.from({ length: 5 }).map((_, i) => (
                     <div
                         key={i}
                         className="m-0 p-4 overflow-hidden  bg-md-light-surface-1 dark:bg-md-dark-surface-1 text-md-light-on-surface dark:text-md-dark-on-surface  k-color-brand-primary rounded-md  ">

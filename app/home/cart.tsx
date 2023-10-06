@@ -7,7 +7,8 @@ import {
     Card,
     Checkbox,
     Radio,
-    Button
+    Button,
+    ListInput
 } from 'konsta/react'
 import * as changeCase from 'change-case'
 import type { ApiResponse, UserCart, paymentMethod } from "@/types";
@@ -21,6 +22,7 @@ import toast from 'react-hot-toast';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { RiLoader5Fill } from 'react-icons/ri';
+import type { Session } from 'next-auth';
 interface selectItemInCart {
     items: UserCart[],
     payment_method?: paymentMethod
@@ -28,11 +30,13 @@ interface selectItemInCart {
 export default function Cart({
     opened,
     onToggleCart,
-    cartData
+    cartData,
+    session
 }: {
     opened?: boolean,
     onToggleCart: () => void,
-    cartData?: UserCart[]
+    cartData?: UserCart[],
+    session: Session | null
 }) {
     const router = useRouter()
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
@@ -134,6 +138,26 @@ export default function Cart({
                                                 </div>
                                             } />
                                     ))}
+                                </ListGroup>
+                                <ListGroup className='mt-2'>
+                                    <span className='p-4'>Delivery Information</span>
+                                    <div className='flex flex-col gap-2 px-4 py-2'>
+                                        <input
+                                            name="name"
+                                            required
+                                            defaultValue={session?.user?.name as string}
+                                            className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                            placeholder="Name" />
+                                        <input
+                                            name='address'
+                                            required
+                                            className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                            placeholder="Address" />
+                                        <textarea
+                                            name='message'
+                                            placeholder='Message'
+                                            className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary" />
+                                    </div>
                                 </ListGroup>
                                 <ListGroup className='mt-2'>
                                     <span className='p-4'>Payment Method</span>

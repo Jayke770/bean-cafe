@@ -62,7 +62,7 @@ export default function OrderInforamtion() {
                     header="Order Status"
                     className=" k-color-brand-primary">
                     <MainStep
-                        current={0}
+                        current={(orderData?.orderStatus?.length ?? 0) - 1}
                         direction='vertical'
                         className="flex flex-col-reverse"
                         items={orderData?.orderStatus.map(status => ({
