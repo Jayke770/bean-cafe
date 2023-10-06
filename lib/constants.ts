@@ -1,7 +1,9 @@
-import { ReactNode } from 'react';
-import { FaCircleXmark } from 'react-icons/fa6'
 export const SIZES = ["Small", "Medium", "Large", "Extra Large"];
 export const CATEGORIES = ["Coffee", "Milk Tea", "Burger", "Cakes"];
+export const MONTHS = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+]
 export const ORDER_STATUS: {
     [key: string]: {
         title: string,

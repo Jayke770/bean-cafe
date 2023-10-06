@@ -54,7 +54,10 @@ export async function POST(req: NextRequest) {
             const parse_form = CheckOutSchema.safeParse({
                 items: JSON.parse(form_data.get("items") as any),
                 payment_method: form_data.get("payment_method"),
-                gcash_image: form_data.get("gcash_image")
+                gcash_image: form_data.get("gcash_image"),
+                address: form_data.get("address"),
+                name: form_data.get("name"),
+                message: form_data.get("message")
             })
             if (parse_form.success) {
                 await dbConnect()

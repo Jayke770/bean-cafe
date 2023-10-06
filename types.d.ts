@@ -147,3 +147,5 @@ const OrdersSchema = z.object({
   fee: z.string()
 })
 export type Orders = z.infer<typeof OrdersSchema>
+export type ReportType = "users" | "orders"
+export type ReportData = "daily" | "monthly" | "yearly"

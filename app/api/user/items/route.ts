@@ -8,11 +8,10 @@ export async function GET(req: NextRequest) {
     const skip = parseInt(req.nextUrl.searchParams.get("skip") ?? "0");
     await dbConnect();
     const data = await Items.find(
-      category === "all" ? {} : { category: { $eq: category } },
-      { addons: 0, __v: 0, _id: 0 }
-    )
-      .skip(skip)
-      .limit(20);
+      category === "all" ? {} : {
+        category: { $eq: category },
+      },
+      { addons: 0, __v: 0, _id: 0 }).skip(skip)
     return NextResponse.json(data);
   } catch (e) {
     return NextResponse.json({}, { status: 500 });
