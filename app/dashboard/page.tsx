@@ -12,9 +12,9 @@ export default function DashBoard() {
     const { data: session } = useSession()
     const [openSideNav, setOpenSideNav] = useState<boolean>()
     const onToggleSideNav = useCallback(() => setOpenSideNav(e => !e), [setOpenSideNav])
-    // useEffect(() => {
-    //     if (!session || session?.user?.role === "user") router.push("/home")
-    // }, [router, session])
+    useEffect(() => {
+        if (!session || session?.user?.role === "user") router.push("/home")
+    }, [router, session])
     return (
         <>
             <Panel
