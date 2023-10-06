@@ -7,7 +7,7 @@ interface ThemeProviderCtx {
 }
 const ThemeProviderCtx = createContext<any>(undefined)
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-    const [theme, setTheme] = useLocalstorageState<"dark" | "light">("theme", "light")
+    const [theme, setTheme] = useLocalstorageState<"dark" | "light">("theme", "dark")
     const onToggleTheme = () => {
         if (theme === "dark") {
             setTheme("light")
