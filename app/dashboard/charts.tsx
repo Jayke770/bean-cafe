@@ -137,7 +137,7 @@ export default function Charts() {
                 opened
                 onBackdropClick={onTogglePopOver}
                 className=' k-color-brand-primary'>
-                <List margin='my-0' nested>
+                {/* <List margin='my-0' nested>
                     <ListItem
                         link
                         title="Daily"
@@ -153,7 +153,7 @@ export default function Charts() {
                         title="Yearly"
                         chevron={false}
                         media={<Radio readOnly className=' pointer-events-none' />} />
-                </List>
+                </List> */}
             </Dialog>
         </>
     )
