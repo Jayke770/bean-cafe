@@ -26,24 +26,21 @@ export const metadata: Metadata = {
   ]
 };
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession(AuthOptions)
   return (
     <html lang="en" className=" scroll-smooth">
       <body>
         <Toaster toastOptions={{
           className: "toast_custom_style"
         }} />
-        <NextAuthSessionProvider session={session}>
-          <LayoutMain>
-            <NoticationProvider>
-              <DialogProvider>
-                <ThemeProvider>
-                  {children}
-                </ThemeProvider>
-              </DialogProvider>
-            </NoticationProvider>
-          </LayoutMain>
-        </NextAuthSessionProvider>
+        <LayoutMain>
+          <NoticationProvider>
+            <DialogProvider>
+              <ThemeProvider>
+                {children}
+              </ThemeProvider>
+            </DialogProvider>
+          </NoticationProvider>
+        </LayoutMain>
         <Analytics />
       </body>
     </html>

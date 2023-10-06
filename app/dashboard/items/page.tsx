@@ -8,19 +8,11 @@ import { BiFoodMenu, BiSolidMessageSquareAdd } from 'react-icons/bi';
 import Items from '@/lib/Admin/items'
 import Addons from "@/lib/Admin/addons"
 import Image from 'next/image';
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { useEffect } from "react"
 export default function Orders() {
-    const router = useRouter()
-    const { data: session } = useSession()
     const { addons } = Addons()
     const { items, itemsLoading } = Items()
     const [openNewItem, setOpenNewItem] = useState<boolean>()
     const onToggleNewItem = useCallback(() => setOpenNewItem(e => !e), [setOpenNewItem])
-    useEffect(() => {
-        if (session?.user?.role !== "admin") router.push("/home")
-    }, [router, session?.user?.role])
     return (
         <>
             <Fab
