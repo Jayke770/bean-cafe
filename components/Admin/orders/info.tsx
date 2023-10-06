@@ -115,7 +115,7 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                     <List
                         margin='my-0'
                         nested
-                        className="overflow-auto max-h-[50vh]">
+                        className="overflow-auto max-h-[40vh]">
                         {order?.items.map(item => (
                             <ListItem
                                 key={item.id}
