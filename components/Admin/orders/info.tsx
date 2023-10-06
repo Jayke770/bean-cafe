@@ -94,27 +94,94 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
             opened={show}
             onBackdropClick={onToggleOrderInfo}
             title="Order Info"
-            buttons={
-                order?.status === "pending" && (
-                    <>
-                        <DialogButton
-                            disabled={isProcessing}
-                            onClick={onDisApproveOrder}
-                            className=' k-color-brand-red'>
-                            {isProcessing ? <RiLoader5Fill className=' animate-spin w-5 h-5' /> : <span>Disapprove</span>}
-                        </DialogButton>
-                        <DialogButton
-                            disabled={isProcessing}
-                            onClick={onApproveOrder}
-                            className=' k-color-brand-green'>
-                            {isProcessing ? <RiLoader5Fill className=' animate-spin w-5 h-5' /> : <span>Approve</span>}
-                        </DialogButton>
-                    </>
-                )
-            }
+            buttons={order?.status === "pending" && (
+                <>
+                    <DialogButton
+                        disabled={isProcessing}
+                        onClick={onDisApproveOrder}
+                        className=' k-color-brand-red'>
+                        {isProcessing ? <RiLoader5Fill className=' animate-spin w-5 h-5' /> : <span>Disapprove</span>}
+                    </DialogButton>
+                    <DialogButton
+                        disabled={isProcessing}
+                        onClick={onApproveOrder}
+                        className=' k-color-brand-green'>
+                        {isProcessing ? <RiLoader5Fill className=' animate-spin w-5 h-5' /> : <span>Approve</span>}
+                    </DialogButton>
+                </>
+            )}
             content={
-                <div className='flex flex-col '>
-                    <List margin='my-0' nested>
+                <div className='flex flex-col'>
+                    <List
+                        margin='my-0'
+                        nested
+                        className="overflow-auto max-h-[50vh]">
+                        {order?.items.map(item => (
+                            <ListItem
+                                key={item.id}
+                                link
+                                media={
+                                    <Image
+                                        src={`/api/files?type=item&id=${item.item_id}`}
+                                        width={300}
+                                        height={300}
+                                        alt={item.item_id}
+                                        className=' mx-3 rounded-lg w-10 object-cover aspect-square' />
+                                }
+                                chevron={false}
+                                title={item.item_name}
+                                footer={
+                                    <div className="flex flex-col">
+                                        {item.size && <span>Size: {changeCase.sentenceCase(item.size ?? "")}</span>}
+                                        <span>Quantity: {item.quantity}</span>
+                                        <span>Total: ₱ {item.price * item.quantity}</span>
+                                    </div>
+                                } />
+                        ))}
+                        {order?.items.map(item => (
+                            <ListItem
+                                key={item.id}
+                                link
+                                media={
+                                    <Image
+                                        src={`/api/files?type=item&id=${item.item_id}`}
+                                        width={300}
+                                        height={300}
+                                        alt={item.item_id}
+                                        className=' mx-3 rounded-lg w-10 object-cover aspect-square' />
+                                }
+                                chevron={false}
+                                title={item.item_name}
+                                footer={
+                                    <div className="flex flex-col">
+                                        {item.size && <span>Size: {changeCase.sentenceCase(item.size ?? "")}</span>}
+                                        <span>Quantity: {item.quantity}</span>
+                                        <span>Total: ₱ {item.price * item.quantity}</span>
+                                    </div>
+                                } />
+                        ))}
+                        {order?.items.map(item => (
+                            <ListItem
+                                key={item.id}
+                                link
+                                media={
+                                    <Image
+                                        src={`/api/files?type=item&id=${item.item_id}`}
+                                        width={300}
+                                        height={300}
+                                        alt={item.item_id}
+                                        className=' mx-3 rounded-lg w-10 object-cover aspect-square' />
+                                }
+                                chevron={false}
+                                title={item.item_name}
+                                footer={
+                                    <div className="flex flex-col">
+                                        {item.size && <span>Size: {changeCase.sentenceCase(item.size ?? "")}</span>}
+                                        <span>Quantity: {item.quantity}</span>
+                                        <span>Total: ₱ {item.price * item.quantity}</span>
+                                    </div>
+                                } />
+                        ))}
                         {order?.items.map(item => (
                             <ListItem
                                 key={item.id}
