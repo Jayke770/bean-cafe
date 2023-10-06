@@ -151,6 +151,7 @@ export default function Charts() {
                     {open === "orders" && (
                         REPORT_TYPES.map(type => (
                             <ListItem
+                                key={`orders-${type}`}
                                 onClick={() => onSetReportType(type as any)}
                                 link
                                 title={changeCase.sentenceCase(type)}
@@ -161,6 +162,7 @@ export default function Charts() {
                     {open === "users" && (
                         REPORT_TYPES.map(type => (
                             <ListItem
+                                key={`users-${type}`}
                                 onClick={() => onSetReportType(type as any)}
                                 link
                                 title={changeCase.sentenceCase(type)}
