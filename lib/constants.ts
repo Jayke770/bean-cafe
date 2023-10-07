@@ -38,7 +38,7 @@ export const ORDER_STATUS: {
     refunded: {
         title: "Refunded",
         description: "Payment Successfully refunded.",
-        showLoader: true
+        showCheckMark: true
     },
     order_approve: {
         title: "Order Approved",
