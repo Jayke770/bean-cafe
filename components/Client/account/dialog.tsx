@@ -1,8 +1,44 @@
 import { Dialog, Button } from "konsta/react";
 import { FcGoogle } from "react-icons/fc";
 import { motion } from 'framer-motion'
-import { signIn } from 'next-auth/react'
+import { type SignInResponse, signIn } from 'next-auth/react'
+import { useForm } from 'react-hook-form'
+import toast from "react-hot-toast";
+import { useState } from "react";
+import { RiLoader5Fill } from "react-icons/ri";
 export default function AccountDialog() {
+    const { handleSubmit, register } = useForm()
+    const [isProcessing, setIsProcessing] = useState<boolean>(false)
+    const onSignUp = async (data: any) => {
+        if (!isProcessing) {
+            setIsProcessing(true)
+            toast.promise(((): Promise<any> => {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        const res = await signIn("credentials", {
+                            redirect: false,
+                            ...data,
+                            type: "signup",
+                            callbackUrl: "/home"
+                        })
+                        res?.ok ? resolve(res) : reject(res?.error)
+                    } catch (e: any) {
+                        reject(e.message)
+                    }
+                })
+            })(), {
+                loading: 'Processing order...',
+                success: (data: SignInResponse) => {
+                    setIsProcessing(false)
+                    return data?.error ?? "Please wait..."
+                },
+                error: e => {
+                    setIsProcessing(false)
+                    return e
+                }
+            })
+        }
+    }
     return (
         <motion.div
             initial={{ opacity: 0, y: -100 }}
@@ -24,53 +60,73 @@ export default function AccountDialog() {
                         </div>
                     </Button>
                     <hr className=' border-1 border-black dark:border-brand-primary my-3' />
-                    <div className='flex flex-col gap-2'>
-                        <label htmlFor="name" className="block text-sm font-medium">Name</label>
-                        <input
-                            type="text"
-                            id="name"
-                            className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
-                            placeholder="Jhon Doe"
-                            aria-describedby="name" />
-                    </div>
-                    <div className='flex flex-col gap-2'>
-                        <label htmlFor="input-label-with-helper-text" className="block text-sm font-medium">Email</label>
-                        <input
-                            type="email"
-                            id="input-label-with-helper-text"
-                            className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
-                            placeholder="your@email.com"
-                            aria-describedby="hs-input-helper-text" />
-                    </div>
-                    <div className='flex flex-col gap-2'>
-                        <label htmlFor="pass" className="block text-sm font-medium">Password</label>
-                        <input
-                            type="password"
-                            id="pass"
-                            className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
-                            placeholder="******"
-                            aria-describedby="pass" />
-                    </div>
-                    <div className='flex flex-col gap-2'>
-                        <label htmlFor="cpass" className="block text-sm font-medium">Confirm Password</label>
-                        <input
-                            type="password"
-                            id="cpass"
-                            className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
-                            placeholder="******"
-                            aria-describedby="cpass" />
-                    </div>
-                    <div className='flex flex-col gap-4 mt-3'>
-                        <Button>
-                            Register
-                        </Button>
-                        <div className='w-full flex items-center justify-center gap-1'>
-                            <span className=' font-medium'>Already have an Account?</span>
-                            <button
-                                type='button'
-                                className=' font-bold underline outline-none cursor-pointer'>Login</button>
+                    <form
+                        onSubmit={handleSubmit(onSignUp)}
+                        className=" flex flex-col gap-2">
+                        <div className="grid grid-cols-2 gap-2">
+                            <div className='flex flex-col gap-2'>
+                                <label htmlFor="name" className="block text-sm font-medium">Name</label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    {...register("name")}
+                                    className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                    placeholder="Jhon Doe"
+                                    aria-describedby="name" />
+                            </div>
+                            <div className='flex flex-col gap-2'>
+                                <label htmlFor="input-label-with-helper-text" className="block text-sm font-medium">Email</label>
+                                <input
+                                    type="email"
+                                    {...register("email")}
+                                    id="input-label-with-helper-text"
+                                    className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                    placeholder="your@email.com"
+                                    aria-describedby="hs-input-helper-text" />
+                            </div>
                         </div>
-                    </div>
+                        <div className='flex flex-col gap-2'>
+                            <label htmlFor="input-label-with-helper-text" className="block text-sm font-medium">Address</label>
+                            <input
+                                {...register("address")}
+                                id="address"
+                                className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                placeholder="Address"
+                                aria-describedby="hs-input-helper-text" />
+                        </div>
+                        <div className='flex flex-col gap-2'>
+                            <label htmlFor="pass" className="block text-sm font-medium">Password</label>
+                            <input
+                                type="password"
+                                id="pass"
+                                {...register("password")}
+                                className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                placeholder="******"
+                                aria-describedby="pass" />
+                        </div>
+                        <div className='flex flex-col gap-2'>
+                            <label htmlFor="cpass" className="block text-sm font-medium">Confirm Password</label>
+                            <input
+                                type="password"
+                                id="cpass"
+                                {...register("confirm_password")}
+                                className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                placeholder="******"
+                                aria-describedby="cpass" />
+                        </div>
+                        <div className='flex flex-col gap-4 mt-3'>
+                            <Button
+                                disabled={isProcessing}>
+                                Register
+                            </Button>
+                            <div className='w-full flex items-center justify-center gap-1'>
+                                <span className=' font-medium'>Already have an Account?</span>
+                                <button
+                                    type='button'
+                                    className=' font-bold underline outline-none cursor-pointer'>Login</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </Dialog>
         </motion.div>

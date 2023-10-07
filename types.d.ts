@@ -64,6 +64,7 @@ const UserSchema = z.object({
   role: UserRole,
   status: UserStatus,
   created: z.number(),
+  password: z.string().optional()
 });
 export type UserRole = z.infer<typeof UserRole>;
 export type UserModel = z.infer<typeof UserSchema>;
