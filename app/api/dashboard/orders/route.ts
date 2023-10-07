@@ -83,12 +83,13 @@ export async function POST(req: NextRequest) {
                             orderData.status = "denied"
                             orderData.isApproved = false
                             orderData.orderStatus.pop()
-                            orderData.orderStatus.push("disapprove")
+                            orderData.orderStatus.push("disapprove", "waiting_for_refund")
                             //if paypal send refund 
                             if (orderData.payment_method === "paypal") {
                                 const data = await paypal.paymentDetails(orderData?.payment_id ?? "")
                                 await paypal.refund(data.purchase_units[0].payments.captures[0].id)
                                 orderData.isRefunded = true
+                                orderData.orderStatus.push("refunded")
                             }
                             if (userData.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${orderData.orderId}`, body: orderNotification(orderData) })
                             await orderData.save()
