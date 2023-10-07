@@ -146,7 +146,7 @@ export default function Charts() {
                 onBackdropClick={() => onTogglePopOver(undefined)}
                 target={`#${open}-report`}
                 opened={!!open}
-                className=' k-color-brand-primary  '>
+                className=' k-color-brand-primary  . '>
                 <List margin='my-0' nested>
                     {open === "orders" && (
                         REPORT_TYPES.map(type => (
