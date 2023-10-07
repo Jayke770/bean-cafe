@@ -1,7 +1,6 @@
 "use client"
 import { useCallback, useState } from 'react'
 import {
-    Navbar,
     Button,
     Card,
     Icon,
@@ -10,14 +9,10 @@ import {
     List,
     ListItem,
     ListGroup,
-    Checkbox,
     Radio,
-    Preloader,
-    Tabbar,
-    TabbarLink,
     Badge
 } from 'konsta/react'
-import { motion, Variants, AnimatePresence } from 'framer-motion'
+import { motion, Variants } from 'framer-motion'
 import { useLocalstorageState } from 'rooks'
 import { IoPersonCircleSharp } from 'react-icons/io5'
 import Image from 'next/image'
@@ -27,10 +22,8 @@ import Items from '@/lib/User/items'
 import { CATEGORIES } from '@lib/constants'
 import { greeting, capitalize } from '@lib/utils'
 import { useSession } from 'next-auth/react'
-import Account from './account'
 import { RiShoppingCartLine } from 'react-icons/ri'
 import type { ApiResponse, Items as Item } from "@/types";
-import { useDailog, DialogInfo, DialogLoading, DialogSuccess } from '@components/dialog'
 import CartData from "@lib/User/cart"
 import * as changeCase from 'change-case'
 import ItemLoader from '@/components/Client/items/loader'
