@@ -35,6 +35,11 @@ export const ORDER_STATUS: {
         description: "Refund is pending.",
         showLoader: true
     },
+    refunded: {
+        title: "Refunded",
+        description: "Payment Successfully refunded.",
+        showCheckMark: true
+    },
     order_approve: {
         title: "Order Approved",
         description: "Order successfully approved.",

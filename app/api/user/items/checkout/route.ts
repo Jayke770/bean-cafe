@@ -168,7 +168,7 @@ export async function POST(req: NextRequest) {
                                 userID: session.user.id,
                                 total_payment: total_payment.toString(),
                                 payment_id: payment_order.id,
-                                name: parse_form.data,
+                                name: parse_form.data.name,
                                 orderStatus: ["order_placed", "waiting_payment"],
                                 message: parse_form.data.message,
                                 address: parse_form.data.address

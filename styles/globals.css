@@ -39,6 +39,10 @@
 .rc-steps-item-wait .rc-steps-item-description {
    @apply k-color-brand-primary text-md-light-on-surface/50 dark:text-md-dark-on-surface/50;
 }
-.rc-steps-item-wait .rc-steps-item-description {
+.rc-steps-item-wait .rc-steps-item-description, 
+.rc-steps-item-finish .rc-steps-item-description {
    @apply k-color-brand-primary text-md-light-on-surface/40 dark:text-md-dark-on-surface/40;
+}
+.rc-steps-item-finish .rc-steps-item-title {
+  @apply k-color-brand-primary text-md-light-on-surface/50 dark:text-md-dark-on-surface/50;
 }
