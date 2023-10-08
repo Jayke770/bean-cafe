@@ -74,7 +74,7 @@ export const AuthOptions: NextAuthOptions = {
           if (data?.type === "login") {
             const parse_login_form = LoginFom.safeParse(data)
             if (parse_login_form.success) {
-              const userData = await Users.findOne({ email: { $eq: parse_login_form.data.email } }, { name: 1, email: 1, image: 1 })
+              const userData = await Users.findOne({ email: { $eq: parse_login_form.data.email } }, { name: 1, email: 1, image: 1, password: 1 })
               if (userData) {
                 const isValidPassword = await bcrypt.compare(parse_login_form.data.password, userData?.password ?? "")
                 if (isValidPassword) {
@@ -88,7 +88,7 @@ export const AuthOptions: NextAuthOptions = {
                   throw new Error("Invalid Password")
                 }
               } else {
-                res = null
+                throw new Error("Account Not Found")
               }
             }
           }
