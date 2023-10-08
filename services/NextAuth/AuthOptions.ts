@@ -77,12 +77,16 @@ export const AuthOptions: NextAuthOptions = {
               const userData = await Users.findOne({ email: { $eq: parse_login_form.data.email } }, { name: 1, email: 1, image: 1 })
               if (userData) {
                 const isValidPassword = await bcrypt.compare(parse_login_form.data.password, userData?.password ?? "")
-                res = isValidPassword ? {
-                  id: userData._id.toString(),
-                  email: userData.email,
-                  image: userData.image,
-                  name: userData.name
-                } : null
+                if (isValidPassword) {
+                  res = {
+                    id: userData._id.toString(),
+                    email: userData.email,
+                    image: userData.image,
+                    name: userData.name
+                  }
+                } else {
+                  throw new Error("Invalid Password")
+                }
               } else {
                 res = null
               }
