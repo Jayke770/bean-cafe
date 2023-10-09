@@ -44,7 +44,7 @@ export default function Account() {
                                 </Button>
                             </NextLink>
                             <Button onClick={() => signOut({ callbackUrl: "/home", redirect: true })} clear rounded className="!px-2.5 k-color-brand-red !w-auto">
-                                <MdLogout className=" h-7 w-7" />
+                                Sign out
                             </Button>
                         </div>
                         <div className="flex flex-col pb-5 pt-3 justify-center w-full items-center h-full">

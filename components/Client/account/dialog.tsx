@@ -91,6 +91,17 @@ export default function AccountDialog() {
                                     </div>
                                 </div>
                                 <div className='flex flex-col gap-2'>
+                                    <label htmlFor="input-label-with-helper-text" className="block text-sm font-medium">Phone Number</label>
+                                    <input
+                                        {...register("phone_number")}
+                                        id="phone_number"
+                                        className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                        placeholder="Phone Number"
+                                        type="tel"
+                                        inputMode="tel"
+                                        aria-describedby="hs-input-helper-text" />
+                                </div>
+                                <div className='flex flex-col gap-2'>
                                     <label htmlFor="input-label-with-helper-text" className="block text-sm font-medium">Address</label>
                                     <input
                                         {...register("address")}
@@ -99,25 +110,27 @@ export default function AccountDialog() {
                                         placeholder="Address"
                                         aria-describedby="hs-input-helper-text" />
                                 </div>
-                                <div className='flex flex-col gap-2'>
-                                    <label htmlFor="pass" className="block text-sm font-medium">Password</label>
-                                    <input
-                                        type="password"
-                                        id="pass"
-                                        {...register("password")}
-                                        className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
-                                        placeholder="******"
-                                        aria-describedby="pass" />
-                                </div>
-                                <div className='flex flex-col gap-2'>
-                                    <label htmlFor="cpass" className="block text-sm font-medium">Confirm Password</label>
-                                    <input
-                                        type="password"
-                                        id="cpass"
-                                        {...register("confirm_password")}
-                                        className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
-                                        placeholder="******"
-                                        aria-describedby="cpass" />
+                                <div className=" grid grid-cols-2 gap-2">
+                                    <div className='flex flex-col gap-2'>
+                                        <label htmlFor="pass" className="block text-sm font-medium">Password</label>
+                                        <input
+                                            type="password"
+                                            id="pass"
+                                            {...register("password")}
+                                            className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                            placeholder="******"
+                                            aria-describedby="pass" />
+                                    </div>
+                                    <div className='flex flex-col gap-2'>
+                                        <label htmlFor="cpass" className="block text-sm font-medium">Confirm Password</label>
+                                        <input
+                                            type="password"
+                                            id="cpass"
+                                            {...register("confirm_password")}
+                                            className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                            placeholder="******"
+                                            aria-describedby="cpass" />
+                                    </div>
                                 </div>
                                 <div className='flex flex-col gap-4 mt-3'>
                                     <Button

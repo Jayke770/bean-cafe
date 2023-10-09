@@ -16,6 +16,7 @@ const SignUpFom = z.object({
   address: z.string().nonempty(),
   password: z.string().nonempty(),
   confirm_password: z.string().nonempty(),
+  phone_number: z.string().nonempty(),
   type: z.union([z.literal("signup"), z.literal("login")])
 }).passthrough()
 const LoginFom = z.object({
@@ -53,7 +54,8 @@ export const AuthOptions: NextAuthOptions = {
                     name: parse_signUp_form.data.name,
                     role: "user",
                     image: null,
-                    password: hashed_password
+                    password: hashed_password,
+                    phone_number: parse_signUp_form.data.phone_number
                   })
                   res = {
                     id: newUser._id.toString(),
