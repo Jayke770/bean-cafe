@@ -18,7 +18,8 @@ const Orders = new Schema<ord>({
     isRefunded: { type: Boolean, default: false },
     orderStatus: [],
     deliveryType: { type: String },
-    fee: { type: String }
+    fee: { type: String },
+    phone_number: { type: String }
 }, { timestamps: true });
 if (models["orders"] != null) {
     deleteModel("orders");
