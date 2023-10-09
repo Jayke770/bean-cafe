@@ -10,7 +10,8 @@ import {
     ListItem,
     ListGroup,
     Radio,
-    Badge
+    Badge,
+    Searchbar
 } from 'konsta/react'
 import { motion, Variants } from 'framer-motion'
 import { useLocalstorageState } from 'rooks'
@@ -153,16 +154,19 @@ export default function Home() {
                         </>
                     )}
                 </div>
-                <div className='flex'>
-                    <Link
-                        onClick={onToggleCart}
-                        navbar
-                        iconOnly
-                        className=' k-color-brand-primary'>
-                        <Icon badge={(cartData?.length ?? 0) > 0 ? cartData?.length : null}>
-                            <RiShoppingCartLine className=' w-7 h-7' />
-                        </Icon>
-                    </Link>
+                <div className='flex items-center'>
+                    <a>
+                        <Link
+                            component='div'
+                            onClick={onToggleCart}
+                            navbar
+                            iconOnly
+                            className=' k-color-brand-primary'>
+                            <Icon badge={(cartData?.length ?? 0) > 0 ? cartData?.length : null}>
+                                <RiShoppingCartLine className=' w-7 h-7' />
+                            </Icon>
+                        </Link>
+                    </a>
                     <NextLink passHref href={"/home/account"}>
                         <Link
                             component='div'
@@ -196,7 +200,12 @@ export default function Home() {
                     </Button>
                 ))}
             </section>
-
+            {/* Search */}
+            <div className=' transition-all md:fixed md:w-64 md:right-32 md:top-2 k-color-brand-primary w-full px-8 -py-4 -mx-2'>
+                <Searchbar
+                    disableButton
+                />
+            </div>
             {/* Items */}
             <motion.section
                 key={tab}
@@ -205,7 +214,7 @@ export default function Home() {
                 animate={"animate"}
                 exit={"exit"}
                 transition={{ ease: "easeInOut", duration: 0.5, delay: 0.2 }}
-                className='grid px-4 gap-2.5 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 mt-5'>
+                className='grid px-4 gap-2.5 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 mt-2'>
                 {items?.length <= 0 && <ItemEmpty key={"items-empty"} />}
                 {itemsLoading && <ItemLoader key={"items-loader"} />}
                 {items?.map(item => (
