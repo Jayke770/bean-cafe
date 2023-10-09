@@ -37,8 +37,9 @@ const CheckOutSchema = z.object({
     payment_method: z.union([
         z.literal("gcash"),
         z.literal("paypal"),
-        z.literal("cash"),
+        z.literal("cash_on_delivery"),
     ]),
+    phone_number: z.string(),
     address: z.string(),
     name: z.string(),
     message: z.string().optional(),
@@ -57,11 +58,12 @@ export async function POST(req: NextRequest) {
                 gcash_image: form_data.get("gcash_image"),
                 address: form_data.get("address"),
                 name: form_data.get("name"),
-                message: form_data.get("message")
+                message: form_data.get("message"),
+                phone_number: form_data.get("phone_number")
             })
             if (parse_form.success) {
                 await dbConnect()
-                if (parse_form.data.payment_method === "cash") {
+                if (parse_form.data.payment_method === "cash_on_delivery") {
                     const userData = await Users.findOne({ _id: { $eq: session.user.id } })
                         .populate({
                             path: "cart",
@@ -81,7 +83,8 @@ export async function POST(req: NextRequest) {
                             name: parse_form.data.name,
                             orderStatus: ["order_placed", "waiting_payment"],
                             message: parse_form.data.message,
-                            address: parse_form.data.address
+                            address: parse_form.data.address,
+                            phone_number: parse_form.data.phone_number
                         })
                         userData.orders.push(orderData._id)
                         await userData.save()
@@ -171,7 +174,8 @@ export async function POST(req: NextRequest) {
                                 name: parse_form.data.name,
                                 orderStatus: ["order_placed", "waiting_payment"],
                                 message: parse_form.data.message,
-                                address: parse_form.data.address
+                                address: parse_form.data.address,
+                                phone_number: parse_form.data.phone_number
                             })
                             userData.orders.push(orderData._id)
                             await userData.save()

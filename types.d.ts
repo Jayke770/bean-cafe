@@ -25,10 +25,10 @@ const UserOrderItem = z.object({
 const PaymentMethod = z.union([
   z.literal("gcash"),
   z.literal("paypal"),
-  z.literal("cash"),
+  z.literal("cash_on_delivery"),
 ]);
-export const PaymentMethod = PaymentMethod
 export type paymentMethod = z.infer<typeof PaymentMethod>
+export const PaymentMethod = PaymentMethod
 const UserOrder = z.object({
   id: z.string(),
   status: OrderStatusData,
@@ -145,7 +145,8 @@ const OrdersSchema = z.object({
   isRefunded: z.boolean(),
   orderStatus: z.array(z.string()),
   deliveryType: z.union([z.literal("pickup"), z.literal("deliver")]),
-  fee: z.string()
+  fee: z.string(),
+  phone_number: z.string()
 })
 export type Orders = z.infer<typeof OrdersSchema>
 export type ReportType = "users" | "orders"
