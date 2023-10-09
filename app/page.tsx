@@ -88,7 +88,7 @@ export default function Index() {
                     <h1 className='text-brand-secondary font-bold text-3xl px-8 text-center'>Discover our signature espresso</h1>
                     <p className='font-medium px-8 text-center text-lg text-brand-secondary '>{"We've compiled a wide selection of blends and beans to fill your cup"}</p>
                   </div>
-                  <div className='flex w-full md:w-[20%] mt-10 px-8'>
+                  <div className='flex w-full md:w-[30%] mt-10 px-8'>
                     <Link href={"/home"} className='w-full'>
                       <Button
                         component='div'

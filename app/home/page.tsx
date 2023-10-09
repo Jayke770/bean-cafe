@@ -201,7 +201,7 @@ export default function Home() {
                 ))}
             </section>
             {/* Search */}
-            <div className=' transition-all md:fixed md:w-64 md:right-32 md:top-2 k-color-brand-primary w-full px-8 -py-4 -mx-2'>
+            <div className=' transition-all md:fixed md:w-64 md:right-32 md:top-2 sticky top-2 k-color-brand-primary w-full px-8 -py-4 -mx-2'>
                 <Searchbar
                     disableButton
                 />
