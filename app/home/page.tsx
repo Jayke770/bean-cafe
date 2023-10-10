@@ -181,7 +181,7 @@ export default function Home() {
                 </div>
             </nav>
             {/* Category */}
-            <section className='w-full z-10 px-3 whitespace-nowrap snap-proximity gap-2 overflow-auto py-3'>
+            <section className='w-full  z-10 px-3 whitespace-nowrap snap-proximity gap-2 overflow-auto py-3'>
                 <Button
                     clear={tab !== "all"}
                     onClick={() => onChangeTab("all")}
