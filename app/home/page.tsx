@@ -245,34 +245,6 @@ export default function Home() {
                         </Card>
                     </motion.div>
                 ))}
-                {items?.map(item => (
-                    <motion.div
-                        onClick={() => onToggleItem(item)}
-                        key={item.item_id}
-                        whileTap={{ scale: 0.95 }}
-                        className=' cursor-pointer'>
-                        <Card
-                            margin='m-0'
-                            className='z-0 k-color-brand-secondary'>
-                            <div className='shadow-lg h-44 rounded-2xl overflow-hidden'>
-                                <Image
-                                    priority
-                                    src={`/api/files?type=item&id=${item.item_id}`}
-                                    alt={item?.name}
-                                    width={300}
-                                    height={300}
-                                    className=' aspect-square h-full w-full object-cover ' />
-                            </div>
-                            <div className='flex flex-col mt-3'>
-                                <span className='text-base lg:text-lg font-bold'>{item.name}</span>
-                                <div className='flex justify-between items-baseline'>
-                                    <span className=' text-brand-primary font-bold text-sm lg:text-base'>₱{item.sizes.length > 0 ? item.sizes[0]?.price : item.price}</span>
-                                    <Badge className=' k-color-brand-green'>{changeCase.capitalCase(item.category)}</Badge>
-                                </div>
-                            </div>
-                        </Card>
-                    </motion.div>
-                ))}
             </motion.section>
 
             {/* Cart */}

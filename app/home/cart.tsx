@@ -206,7 +206,7 @@ export default function Cart({
                                 className=' !w-auto !px-3.5 k-color-brand-primary'>
                                 <BsArrowLeft className=' h-6 w-6' />
                             </Button>
-                            <h2 className='font-bold text-lg text-brand-primary sticky bg-md-light-surface-1 dark:bg-md-dark-surface-1 z-20 top-0'>Deliver Info</h2>
+                            <h2 className='font-bold text-lg text-brand-primary sticky bg-md-light-surface-1 dark:bg-md-dark-surface-1 z-20 top-0'>Delivery Info</h2>
                         </div>
                         <div className='flex flex-col gap-2 px-4 py-2'>
                             <div className='flex flex-col gap-2'>
