@@ -109,7 +109,7 @@ export default function Cart({
     }
     const onToggleDeliveryInfo = () => setTab(e => ({ ...e, isShowDeliveryInfo: !e?.isShowDeliveryInfo }))
     const onTogglePaymentMethod = () => setTab(e => ({ ...e, isShowPaymentMethod: !e?.isShowPaymentMethod }))
-    const onSetDelivery = (type: any) => setselectedItemIncart(e => ({ ...e, delivery_service: type }))
+    const onSetDelivery = (type: any) => setselectedItemIncart(e => ({ ...e, delivery_service: type === e.delivery_service ? undefined : type }))
     return (
         <Actions
             opened={opened}
@@ -326,17 +326,19 @@ export default function Cart({
                                 <span>Delivery Service</span>
                             </div>
                             <div className='grid grid-cols-2 gap-2 mt-2'>
-                                <ListItem
-                                    link
-                                    onClick={() => onSetDelivery("pickup")}
-                                    chevron={false}
-                                    title="Pickup"
-                                    media={
-                                        <Checkbox
-                                            checked={selectedItemIncart?.delivery_service === "pickup"}
-                                            readOnly
-                                            className=' pointer-events-none' />
-                                    } />
+                                {selectedItemIncart?.payment_method !== "cash_on_delivery" && (
+                                    <ListItem
+                                        link
+                                        onClick={() => onSetDelivery("pickup")}
+                                        chevron={false}
+                                        title="Pickup"
+                                        media={
+                                            <Checkbox
+                                                checked={selectedItemIncart?.delivery_service === "pickup"}
+                                                readOnly
+                                                className=' pointer-events-none' />
+                                        } />
+                                )}
                                 <ListItem
                                     link
                                     onClick={() => onSetDelivery("deliver")}
