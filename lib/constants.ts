@@ -1,6 +1,7 @@
 export const SIZES = ["Small", "Medium", "Large", "Extra Large"];
 export const CATEGORIES = ["Coffee", "Milk Tea", "Burger", "Cakes"];
 export const REPORT_TYPES = ["daily", "monthly", "yearly"]
+export const DELIVERY_FEE = 50
 export const ORDER_STATUS: {
     [key: string]: {
         title: string,

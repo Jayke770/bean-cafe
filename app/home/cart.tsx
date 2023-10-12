@@ -12,7 +12,7 @@ import {
     Badge
 } from 'konsta/react'
 import * as changeCase from 'change-case'
-import type { ApiResponse, UserCart, paymentMethod } from "@/types";
+import type { ApiResponse, UserCart, paymentMethod, deliverType } from "@/types";
 import { useLocalstorageState } from 'rooks'
 import Image from 'next/image';
 import { BsArrowLeft, BsPaypal } from 'react-icons/bs'
@@ -28,7 +28,8 @@ import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form';
 interface selectItemInCart {
     items: UserCart[],
-    payment_method?: paymentMethod
+    payment_method?: paymentMethod,
+    delivery_service?: deliverType
 }
 interface Tab {
     isShowDeliveryInfo?: boolean,
@@ -71,6 +72,7 @@ export default function Cart({
                         Object.keys(data).map(key => formData.append(key, data[key]))
                         formData.append("items", JSON.stringify(selectedItemIncart.items))
                         formData.append("payment_method", selectedItemIncart?.payment_method)
+                        formData.append("delivery_service", selectedItemIncart?.delivery_service ?? "")
                         const req = await fetch("/api/user/items/checkout", {
                             method: 'post',
                             body: formData
@@ -107,6 +109,7 @@ export default function Cart({
     }
     const onToggleDeliveryInfo = () => setTab(e => ({ ...e, isShowDeliveryInfo: !e?.isShowDeliveryInfo }))
     const onTogglePaymentMethod = () => setTab(e => ({ ...e, isShowPaymentMethod: !e?.isShowPaymentMethod }))
+    const onSetDelivery = (type: any) => setselectedItemIncart(e => ({ ...e, delivery_service: type }))
     return (
         <Actions
             opened={opened}
@@ -166,9 +169,14 @@ export default function Cart({
                                             link />
                                         <ListItem
                                             onClick={onTogglePaymentMethod}
-                                            title='Payment Method'
+                                            title='Payment Method & Delivery'
                                             link
-                                            after={selectedItemIncart?.payment_method && <Badge>{changeCase.sentenceCase(selectedItemIncart?.payment_method)}</Badge>} />
+                                            subtitle={
+                                                <div className='mt-2 flex gap-2'>
+                                                    {selectedItemIncart?.payment_method && <Badge className=' k-color-brand-green '>{changeCase.sentenceCase(selectedItemIncart?.payment_method)}</Badge>}
+                                                    {selectedItemIncart?.delivery_service && <Badge className=' k-color-brand-red   '>{changeCase.sentenceCase(selectedItemIncart?.delivery_service)}</Badge>}
+                                                </div>
+                                            } />
                                     </ListGroup>
                                 </List>
                                 <div className=' absolute z-20 bottom-0 left-0 w-full bg-md-light-surface-1 dark:bg-md-dark-surface-1 translucent py-3 px-3.5 grid grid-cols-5'>
@@ -244,7 +252,7 @@ export default function Cart({
                             </div>
                         </div>
                     </motion.div>
-                    {/* Payment Method */}
+                    {/* Payment Method & Deliver */}
                     <motion.div
                         key={tab?.isShowPaymentMethod ? "payment-info" : 'payment-info-hidden'}
                         initial={{ opacity: 0 }}
@@ -310,6 +318,35 @@ export default function Cart({
                                                 className=' pointer-events-none' />
                                             <BiMoney className='h-5 w-5' />
                                         </div>
+                                    } />
+                            </div>
+                        </List>
+                        <List margin='my-0'>
+                            <div className=' px-3.5 mt-2'>
+                                <span>Delivery Service</span>
+                            </div>
+                            <div className='grid grid-cols-2 gap-2 mt-2'>
+                                <ListItem
+                                    link
+                                    onClick={() => onSetDelivery("pickup")}
+                                    chevron={false}
+                                    title="Pickup"
+                                    media={
+                                        <Checkbox
+                                            checked={selectedItemIncart?.delivery_service === "pickup"}
+                                            readOnly
+                                            className=' pointer-events-none' />
+                                    } />
+                                <ListItem
+                                    link
+                                    onClick={() => onSetDelivery("deliver")}
+                                    chevron={false}
+                                    title="Deliver"
+                                    media={
+                                        <Checkbox
+                                            checked={selectedItemIncart?.delivery_service === "deliver"}
+                                            readOnly
+                                            className=' pointer-events-none' />
                                     } />
                             </div>
                         </List>

@@ -1,3 +1,4 @@
+import 'react-phone-number-input/style.css'
 import { Dialog, Button } from "konsta/react";
 import { FcGoogle } from "react-icons/fc";
 import { motion } from 'framer-motion'
@@ -6,9 +7,11 @@ import { useForm } from 'react-hook-form'
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { RiLoader5Fill } from "react-icons/ri";
+import PhoneInput from 'react-phone-number-input/input'
 type CardType = "signup" | "login"
 export default function AccountDialog() {
     const { handleSubmit, register } = useForm()
+    const [phoneNumber, setPhoneNumber] = useState<string>()
     const [card, setCard] = useState<CardType>("signup")
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
     const onSubmit = async (data: any) => {
@@ -17,9 +20,10 @@ export default function AccountDialog() {
             toast.promise(((): Promise<any> => {
                 return new Promise(async (resolve, reject) => {
                     try {
+                        const formData = { ...data, phone_number: phoneNumber }
                         const res = await signIn("credentials", {
                             redirect: false,
-                            ...data,
+                            ...formData,
                             type: card,
                             callbackUrl: "/home"
                         })
@@ -92,14 +96,11 @@ export default function AccountDialog() {
                                 </div>
                                 <div className='flex flex-col gap-2'>
                                     <label htmlFor="input-label-with-helper-text" className="block text-sm font-medium">Phone Number</label>
-                                    <input
-                                        {...register("phone_number")}
-                                        id="phone_number"
+                                    <PhoneInput
+                                        onChange={e => setPhoneNumber(e?.toString() ?? "")}
                                         className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
                                         placeholder="Phone Number"
-                                        type="tel"
-                                        inputMode="tel"
-                                        aria-describedby="hs-input-helper-text" />
+                                        defaultCountry='PH' />
                                 </div>
                                 <div className='flex flex-col gap-2'>
                                     <label htmlFor="input-label-with-helper-text" className="block text-sm font-medium">Address</label>

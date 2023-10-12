@@ -13,7 +13,10 @@ import * as changeCase from 'change-case'
 import moment from 'moment-timezone';
 import { nanoid } from 'nanoid';
 import { orderNotification } from '@lib/utils'
-import Paypal from "@/lib/paypal";
+import Paypal from "@/services/paypal";
+import { DELIVERY_FEE } from "@lib/constants"
+import Twillio from '@/services/twilio'
+const twillio = new Twillio()
 const { PAYPAL_SECRET, PAYPAL_CLIENT_ID, NEXTAUTH_URL, PAYPAL_MODE, PAYPAL_CURRENCY_CODE } = process.env
 const paypal = new Paypal({
     client_secret: PAYPAL_SECRET as string,
@@ -43,7 +46,8 @@ const CheckOutSchema = z.object({
     address: z.string(),
     name: z.string(),
     message: z.string().optional(),
-    gcash_image: z.any().optional()
+    gcash_image: z.any().optional(),
+    delivery_service: z.union([z.literal("pickup"), z.literal("deliver")])
 })
 export async function POST(req: NextRequest) {
     const { formData } = req
@@ -59,7 +63,8 @@ export async function POST(req: NextRequest) {
                 address: form_data.get("address"),
                 name: form_data.get("name"),
                 message: form_data.get("message"),
-                phone_number: form_data.get("phone_number")
+                phone_number: form_data.get("phone_number"),
+                delivery_service: form_data.get("delivery_service")
             })
             if (parse_form.success) {
                 await dbConnect()
@@ -84,7 +89,9 @@ export async function POST(req: NextRequest) {
                             orderStatus: ["order_placed", "waiting_payment"],
                             message: parse_form.data.message,
                             address: parse_form.data.address,
-                            phone_number: parse_form.data.phone_number
+                            phone_number: parse_form.data.phone_number,
+                            fee: DELIVERY_FEE,
+                            deliveryType: parse_form.data.delivery_service
                         })
                         userData.orders.push(orderData._id)
                         await userData.save()
@@ -99,6 +106,7 @@ export async function POST(req: NextRequest) {
                         await Cart.updateMany({ _id: { $in: parse_form.data.items.map(item => item._id) } }, { $set: { status: "ordered" } })
                         //send notification
                         if (userData.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${orderData.orderId}`, body: orderNotification(orderData) })
+                        if (userData?.phone_number) await twillio.sendMessage({ message: orderNotification(orderData, DELIVERY_FEE, true), number: userData.phone_number })
                         res = {
                             status: true,
                             message: "Order Success"
@@ -137,11 +145,15 @@ export async function POST(req: NextRequest) {
                                     })),
                                     amount: {
                                         currency_code: PAYPAL_CURRENCY_CODE as string,
-                                        value: total_payment.toString(),
+                                        value: (total_payment + DELIVERY_FEE).toString(),
                                         breakdown: {
                                             item_total: {
                                                 currency_code: PAYPAL_CURRENCY_CODE as string,
                                                 value: total_payment.toString()
+                                            },
+                                            shipping: {
+                                                currency_code: PAYPAL_CURRENCY_CODE as string,
+                                                value: DELIVERY_FEE.toString()
                                             }
                                         }
                                     }
@@ -159,6 +171,7 @@ export async function POST(req: NextRequest) {
                                 }
                             }
                         })
+                        console.log(payment_order)
                         if (payment_order.status === "PAYER_ACTION_REQUIRED") {
                             const redirect_url = payment_order.links.find(x => x.rel === "payer-action")
                             //save to order collection
@@ -175,7 +188,9 @@ export async function POST(req: NextRequest) {
                                 orderStatus: ["order_placed", "waiting_payment"],
                                 message: parse_form.data.message,
                                 address: parse_form.data.address,
-                                phone_number: parse_form.data.phone_number
+                                phone_number: parse_form.data.phone_number,
+                                fee: DELIVERY_FEE,
+                                deliveryType: parse_form.data.delivery_service
                             })
                             userData.orders.push(orderData._id)
                             await userData.save()
@@ -189,7 +204,8 @@ export async function POST(req: NextRequest) {
                             //update cart 
                             await Cart.updateMany({ _id: { $in: parse_form.data.items.map(item => item._id) } }, { $set: { status: "ordered" } })
                             //send notification
-                            if (userData.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${orderData.orderId}`, body: orderNotification(orderData) })
+                            if (userData?.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${orderData.orderId}`, body: orderNotification(orderData) })
+                            if (userData?.phone_number) await twillio.sendMessage({ message: orderNotification(orderData, DELIVERY_FEE, true), number: userData.phone_number })
                             res = {
                                 status: true,
                                 message: "Order Success",

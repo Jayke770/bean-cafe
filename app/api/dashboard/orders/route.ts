@@ -8,7 +8,7 @@ import { z } from 'zod'
 import { fromZodError } from 'zod-validation-error'
 import { orderNotification } from '@lib/utils'
 import * as changeCase from 'change-case'
-import Paypal from '@/lib/paypal'
+import Paypal from '@/services/paypal'
 import Email from '@/services/email'
 import User from '@models/users'
 const { PAYPAL_SECRET, PAYPAL_CLIENT_ID, NEXTAUTH_URL } = process.env

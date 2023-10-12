@@ -123,6 +123,8 @@ export type ApiResponse = {
   redirect_url?: string
 };
 //orders 
+
+const DeliveryType = z.union([z.literal("pickup"), z.literal("deliver")])
 const OrdersSchema = z.object({
   orderId: z.string(),
   userID: z.string(),
@@ -144,10 +146,11 @@ const OrdersSchema = z.object({
   isApproved: z.boolean(),
   isRefunded: z.boolean(),
   orderStatus: z.array(z.string()),
-  deliveryType: z.union([z.literal("pickup"), z.literal("deliver")]),
+  deliveryType: DeliveryType,
   fee: z.string(),
   phone_number: z.string()
 })
+export type deliverType = z.infer<typeof DeliveryType>
 export type Orders = z.infer<typeof OrdersSchema>
 export type ReportType = "users" | "orders"
 export type ReportData = "daily" | "monthly" | "yearly"

@@ -33,6 +33,10 @@ interface CreateOrder {
                 item_total: {
                     currency_code: string,
                     value: string
+                },
+                shipping?: {
+                    currency_code: string,
+                    value: string
                 }
             }
         }
