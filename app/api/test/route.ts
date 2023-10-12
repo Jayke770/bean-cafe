@@ -9,8 +9,8 @@ const paypal = new Paypal({
     mode: "sandbox"
 })
 export async function GET() {
-    const data = await twillio.sendMessage({ message: "nodejs", number: "+639051697081" })
-    console.log(data)
+    // const data = await twillio.sendMessage({ message: "nodejs", number: "+639051697081" })
+    // console.log(data)
     // await paypal.authenticate()
     // const id = '7KL33539AA8766240'
     // const captured_payment = await paypal.paymentDetails(id)
