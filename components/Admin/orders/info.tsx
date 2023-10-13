@@ -1,5 +1,6 @@
 import type { ApiResponse, Orders } from "@/types";
 import {
+    Button,
     Dialog,
     DialogButton,
     List,
@@ -20,6 +21,7 @@ interface props {
 }
 export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: props) {
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
+    const [updateOrder, setUpdateOrder] = useState<string>()
     const onDisApproveOrder = () => {
         toast.promise(((): Promise<ApiResponse> => {
             setIsProcessing(true)
@@ -65,6 +67,40 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                             "content-type": "application/json"
                         },
                         body: JSON.stringify({ orderId: order?.orderId, type: "approve" })
+                    })
+                    if (req.ok) {
+                        const res: ApiResponse = await req.json()
+                        setIsProcessing(false)
+                        onToggleOrderInfo()
+                        res?.status ? resolve(res) : reject(res.message)
+                    } else {
+                        throw new Error(`${req.status} ${req.statusText}`)
+                    }
+                } catch (e: any) {
+                    setIsProcessing(false)
+                    reject(e.message)
+                }
+            })
+        })(), {
+            loading: 'Checking Order...',
+            success: (data: ApiResponse) => {
+                setIsProcessing(false)
+                return `${data.message}`
+            },
+            error: e => e,
+        })
+    }
+    const onUpdateOrder = () => {
+        toast.promise(((): Promise<ApiResponse> => {
+            setIsProcessing(true)
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const req = await fetch("/api/dashboard/orders", {
+                        method: 'post',
+                        headers: {
+                            "content-type": "application/json"
+                        },
+                        body: JSON.stringify({ orderId: order?.orderId, type: updateOrder })
                     })
                     if (req.ok) {
                         const res: ApiResponse = await req.json()
@@ -172,6 +208,23 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                             {emoji(order?.isPaid ? "✅" : "❌")}
                         </div>
                     </div>
+                    {order?.isApproved && order.isPaid && (
+                        <div className="flex flex-col gap-2 px-3.5 mt-4">
+                            <div className=" font-bold text-base">Update Order Status</div>
+                            <div className="flex flex-col gap-2">
+                                <select
+                                    onChange={e => setUpdateOrder(e.target.value)}
+                                    className="py-3 px-4 w-full lg:w-auto dark:bg-transparent dark:focus:bg-black dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                    <option value={"cancel"}>Cancel Order</option>
+                                    <option value={"out_for_delivery"}>Out for Delivery</option>
+                                    <option value={"delivered"}>Order Delivered</option>
+                                </select>
+                                <Button
+                                    disabled={!updateOrder}
+                                    onClick={onUpdateOrder}>Update Order</Button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             }>
 

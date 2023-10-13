@@ -38,6 +38,7 @@ export function Orders(status?: OrderStatus | "all"): {
         revalidateOnReconnect: true,
         refreshWhenHidden: true,
         refreshWhenOffline: true,
+        refreshInterval: 5000
     });
     return {
         orders: data,

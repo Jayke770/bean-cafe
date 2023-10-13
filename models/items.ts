@@ -10,6 +10,7 @@ const Items = new Schema<Items>({
   sizes: [],
   addons: [],
   price: { type: Number },
+  sold: { type: Number, default: 0 },
   stocks: { type: Number },
 }, { timestamps: true });
 if (models["items"] != null) {

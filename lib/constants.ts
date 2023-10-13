@@ -65,5 +65,10 @@ export const ORDER_STATUS: {
         title: "Order Delivered",
         description: "Order successfully delivered.",
         showCheckMark: true
+    },
+    cancelled: {
+        title: "Order Cancelled",
+        description: "Your order was cancelled.",
+        showXMark: true
     }
 }

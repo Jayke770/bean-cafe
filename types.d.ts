@@ -10,6 +10,7 @@ const OrderStatusData = z.union([
   z.literal("cancelled"),
   z.literal("processing"),
   z.literal("denied"),
+  z.literal("out for delivery")
 ]);
 export type OrderStatus = z.infer<typeof OrderStatusData>
 const UserOrderItem = z.object({
@@ -114,6 +115,7 @@ const ItemsChema = z.object({
   stocks: z.number().optional(),
   sizes: z.array(ItemSizes),
   addons: z.array(AddOnOption),
+  sold: z.number(),
   created: z.number(),
 });
 export type Items = z.infer<typeof ItemsChema>;
@@ -132,7 +134,7 @@ const OrdersSchema = z.object({
   payment_method: z.union([
     z.literal("gcash"),
     z.literal("paypal"),
-    z.literal("cash"),
+    z.literal("cash_on_delivery"),
   ]),
   status: OrderStatusData,
   message: z.string().optional(),

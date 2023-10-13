@@ -11,6 +11,10 @@ import * as changeCase from 'change-case'
 import Paypal from '@/services/paypal'
 import Email from '@/services/email'
 import User from '@models/users'
+import Twillio from '@/services/twilio'
+import { DELIVERY_FEE } from '@/lib/constants'
+import items from '@/models/items'
+const twillio = new Twillio()
 const { PAYPAL_SECRET, PAYPAL_CLIENT_ID, NEXTAUTH_URL } = process.env
 const paypal = new Paypal({
     client_secret: PAYPAL_SECRET as string,
@@ -51,7 +55,13 @@ export async function GET(req: NextRequest) {
     }
 }
 const formData = z.object({
-    type: z.union([z.literal("approve"), z.literal("disapprove")]),
+    type: z.union([
+        z.literal("approve"),
+        z.literal("disapprove"),
+        z.literal("cancel"),
+        z.literal("delivered"),
+        z.literal("out_for_delivery")
+    ]),
     orderId: z.string()
 })
 export async function POST(req: NextRequest) {
@@ -66,13 +76,26 @@ export async function POST(req: NextRequest) {
                 const orderData = await Orders.findOne({ orderId: { $eq: data.data.orderId } })
                 const userData = await User.findOne({ _id: { $eq: orderData?.userID } })
                 if (orderData && userData) {
+                    // if the order is pending only allow approve or disapprove
                     if (orderData.status === "pending") {
                         if (data.data.type === "approve") {
                             orderData.status = "processing"
                             orderData.isApproved = true
                             orderData.orderStatus.pop()
                             orderData.orderStatus.push("order_approve", "processing")
-                            if (userData.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${orderData.orderId}`, body: orderNotification(orderData) })
+                            if (userData?.email) {
+                                emailHandler.send({
+                                    receiver: userData.email,
+                                    subject: `Order ID ${orderData.orderId}`,
+                                    body: orderNotification(orderData)
+                                })
+                            }
+                            if (userData?.phone_number) {
+                                await twillio.sendMessage({
+                                    message: orderNotification(orderData, true),
+                                    number: userData.phone_number
+                                })
+                            }
                             await orderData.save()
                             res = {
                                 status: true,
@@ -83,7 +106,7 @@ export async function POST(req: NextRequest) {
                             orderData.status = "denied"
                             orderData.isApproved = false
                             orderData.orderStatus.pop()
-                            orderData.orderStatus.push("disapprove", "waiting_for_refund")
+                            orderData.payment_method === "cash_on_delivery" ? orderData.orderStatus.push("disapprove") : orderData.orderStatus.push("disapprove", "waiting_for_refund")
                             //if paypal send refund 
                             if (orderData.payment_method === "paypal") {
                                 const data = await paypal.paymentDetails(orderData?.payment_id ?? "")
@@ -91,7 +114,19 @@ export async function POST(req: NextRequest) {
                                 orderData.isRefunded = true
                                 orderData.orderStatus.push("refunded")
                             }
-                            if (userData.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${orderData.orderId}`, body: orderNotification(orderData) })
+                            if (userData.email) {
+                                emailHandler.send({
+                                    receiver: userData.email,
+                                    subject: `Order ID ${orderData.orderId}`,
+                                    body: orderNotification(orderData)
+                                })
+                            }
+                            if (userData?.phone_number) {
+                                await twillio.sendMessage({
+                                    message: orderNotification(orderData, true),
+                                    number: userData.phone_number
+                                })
+                            }
                             await orderData.save()
                             res = {
                                 status: true,
@@ -102,11 +137,96 @@ export async function POST(req: NextRequest) {
                             return NextResponse.json({}, { status: 401 })
                         }
                     } else {
-                        res = {
-                            status: false,
-                            message: `Order is ${changeCase.sentenceCase(orderData.status)}`
+                        if (data.data.type === "cancel") {
+                            orderData.status = "cancelled"
+                            orderData.orderStatus.push("cancelled")
+                            if (userData.email) {
+                                emailHandler.send({
+                                    receiver: userData.email,
+                                    subject: `Order ID ${orderData.orderId}`,
+                                    body: orderNotification(orderData)
+                                })
+                            }
+                            if (userData?.phone_number) {
+                                await twillio.sendMessage({
+                                    message: orderNotification(orderData, true),
+                                    number: userData.phone_number
+                                })
+                            }
+                            await orderData.save()
+                            if (orderData.payment_method === "paypal") {
+                                const data = await paypal.paymentDetails(orderData?.payment_id ?? "")
+                                await paypal.refund(data.purchase_units[0].payments.captures[0].id)
+                                orderData.isRefunded = true
+                                orderData.orderStatus.push("refunded")
+                            }
+                            res = {
+                                status: true,
+                                message: `Order ${changeCase.sentenceCase(orderData.status)}`
+                            }
+                            return NextResponse.json(res)
+                        } else if (data.data.type === "out_for_delivery") {
+                            orderData.status = "out for delivery"
+                            orderData.orderStatus.push("out_for_delivery")
+                            if (userData.email) {
+                                emailHandler.send({
+                                    receiver: userData.email,
+                                    subject: `Order ID ${orderData.orderId}`,
+                                    body: orderNotification(orderData)
+                                })
+                            }
+                            if (userData?.phone_number) {
+                                await twillio.sendMessage({
+                                    message: orderNotification(orderData, true),
+                                    number: userData.phone_number
+                                })
+                            }
+                            await orderData.save()
+                            res = {
+                                status: true,
+                                message: `Order ${changeCase.sentenceCase(orderData.status)}`
+                            }
+                            return NextResponse.json(res)
+                        } else if (data.data.type === "delivered") {
+                            orderData.status = "completed"
+                            orderData.orderStatus.push("delivered")
+                            if (userData.email) {
+                                emailHandler.send({
+                                    receiver: userData.email,
+                                    subject: `Order ID ${orderData.orderId}`,
+                                    body: orderNotification(orderData)
+                                })
+                            }
+                            if (userData?.phone_number) {
+                                await twillio.sendMessage({
+                                    message: orderNotification(orderData, true),
+                                    number: userData.phone_number
+                                })
+                            }
+                            await orderData.save()
+                            orderData.items.map(async item => {
+                                const ItemData = await items.findOne({ item_id: { $eq: item.item_id } })
+                                if (ItemData) {
+                                    ItemData.sold += item.quantity
+                                    if (item?.size) {
+                                        const ItemIndex = ItemData.sizes.findIndex(x => x.type === item.size)
+                                        if (ItemIndex >= 0) ItemData.sizes[ItemIndex].stocks -= item.quantity
+                                    }
+                                    await ItemData.save()
+                                }
+                            })
+                            res = {
+                                status: true,
+                                message: `Order ${changeCase.sentenceCase(orderData.status)}`
+                            }
+                            return NextResponse.json(res)
+                        } else {
+                            res = {
+                                status: false,
+                                message: `Order is ${changeCase.sentenceCase(orderData.status)}`
+                            }
+                            return NextResponse.json(res)
                         }
-                        return NextResponse.json(res)
                     }
                 } else {
                     res = {

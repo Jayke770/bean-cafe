@@ -14,8 +14,9 @@ export const greeting = (): string => {
   }
 };
 export const capitalize = (str: string) => str.length > 0 ? str.charAt(0).toUpperCase() + str.slice(1) : str
-export const orderNotification = (data: Orders, delivery_fee?: number, sms?: boolean): string => {
-  const total_payment = parseFloat(data.total_payment) + DELIVERY_FEE
+export const orderNotification = (data: Orders, sms?: boolean): string => {
+  const delivery_fee = parseFloat(data?.fee ?? "0")
+  const total_payment = parseFloat(data.total_payment) + delivery_fee
   let message = ""
   if (sms) {
     message += "Order Summary\n"
@@ -26,7 +27,7 @@ export const orderNotification = (data: Orders, delivery_fee?: number, sms?: boo
     message += `ID: ${data.orderId}\n`
     message += `Payment Method: ${changeCase.sentenceCase(data.payment_method)}\n`
     message += `Status: ${changeCase.sentenceCase(data.status)}\n`
-    message += `Delivery Fee: ₱${delivery_fee ?? 0}\n`
+    message += `Delivery Fee: ₱${delivery_fee}\n`
     message += `Total Payment: ₱${total_payment.toFixed(2)}\n`
     message += `Date: ${moment(data.created).format('MMMM Do YYYY, h:mm:ss a')}\n\n`
     message += `Check Order Here ${process.env.HOST}/order?id=${data.orderId}`
