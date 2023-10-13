@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
                         await Cart.updateMany({ _id: { $in: parse_form.data.items.map(item => item._id) } }, { $set: { status: "ordered" } })
                         //send notification
                         if (userData.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${orderData.orderId}`, body: orderNotification(orderData) })
-                        if (userData?.phone_number) await twillio.sendMessage({ message: orderNotification(orderData, DELIVERY_FEE, true), number: userData.phone_number })
+                        if (userData?.phone_number) await twillio.sendMessage({ message: orderNotification(orderData, true), number: userData.phone_number })
                         res = {
                             status: true,
                             message: "Order Success"
@@ -205,7 +205,7 @@ export async function POST(req: NextRequest) {
                             await Cart.updateMany({ _id: { $in: parse_form.data.items.map(item => item._id) } }, { $set: { status: "ordered" } })
                             //send notification
                             if (userData?.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${orderData.orderId}`, body: orderNotification(orderData) })
-                            if (userData?.phone_number) await twillio.sendMessage({ message: orderNotification(orderData, DELIVERY_FEE, true), number: userData.phone_number })
+                            if (userData?.phone_number) await twillio.sendMessage({ message: orderNotification(orderData, true), number: userData.phone_number })
                             res = {
                                 status: true,
                                 message: "Order Success",
