@@ -40,7 +40,7 @@ export default function AccountOrders(props: Props) {
                 onBackdropClick={props.onToggleOrders}>
                 <Card
                     margin='m-0'
-                    className=' rounded-b-none k-color-brand-primary max-h-[70vh] overflow-auto'>
+                    className=' rounded-b-none k-color-brand-primary'>
                     <AnimatePresence mode="wait">
                         {options?.selected_order_id ? (
                             !orderDataLoading ? (
@@ -50,7 +50,7 @@ export default function AccountOrders(props: Props) {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -200 }}
                                     transition={{ type: "spring", duration: 0.3, delay: 0 }}
-                                    className="w-full h-full">
+                                    className="w-full max-h-[70vh] overflow-auto">
                                     <div className=" w-full flex items-center justify-between ">
                                         <div className="flex items-cnter">
                                             <Button
@@ -116,7 +116,7 @@ export default function AccountOrders(props: Props) {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -200 }}
                                 transition={{ ease: "easeInOut", duration: 0.3, delay: 0 }}
-                                className="w-full h-full">
+                                className="w-full max-h-[70vh] overflow-auto">
                                 <div className=" w-full  flex justify-between items-baseline">
                                     <span className=' text-lg px-3.5 text-brand-primary font-bold'>Orders</span>
                                     <Button
