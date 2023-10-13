@@ -83,6 +83,7 @@ export async function POST(req: NextRequest) {
                             orderData.isApproved = true
                             orderData.orderStatus.pop()
                             orderData.orderStatus.push("order_approve", "processing")
+                            if (orderData.payment_method === "cash_on_delivery") orderData.isPaid = true
                             if (userData?.email) {
                                 emailHandler.send({
                                     receiver: userData.email,
