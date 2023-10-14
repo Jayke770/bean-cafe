@@ -8,6 +8,9 @@
     "lint": "next lint",
     "start": "next start"
   },
+  "browser": {
+    "fs": false
+  },
   "dependencies": {
     "@auth/mongodb-adapter": "^1.0.0",
     "@ducanh2912/next-pwa": "^9.4.0",
@@ -19,11 +22,14 @@
     "bcrypt": "^5.1.1",
     "change-case": "^4.1.2",
     "chart.js": "^4.3.3",
+    "chartjs-to-image": "^1.2.1",
     "eslint": "8.47.0",
     "eslint-config-next": "^13.5.3",
     "framer-motion": "^10.15.2",
     "fs-extra": "^11.1.1",
     "imgbb-uploader": "^1.5.1",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.7.0",
     "konsta": "^3.0.1",
     "mime": "^3.0.0",
     "moment-timezone": "^0.5.43",
@@ -62,7 +68,6 @@
     "@types/fs-extra": "^11.0.1",
     "@types/mime": "^3.0.1",
     "@types/nodemailer": "^6.4.10",
-    "@types/paypal-rest-sdk": "^1.7.7",
     "ts-node": "^10.9.1"
   }
 }

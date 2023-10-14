@@ -19,6 +19,9 @@ import * as changeCase from 'change-case'
 import moment from 'moment-timezone';
 import { useState } from 'react';
 import { REPORT_TYPES } from '@lib/constants'
+import { jsPDF, type CellConfig } from "jspdf"
+import autoTable from 'jspdf-autotable'
+import chartJsImage from 'chartjs-to-image'
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -33,6 +36,8 @@ interface ReportDataType {
     users: ReportData,
     orders: ReportData
 }
+const pdfDoc = new jsPDF();
+const chartImage = new chartJsImage()
 export default function Charts() {
     const [open, setOpen] = useState<"users" | "orders">()
     const [reportType, setReportType] = useLocalstorageState<ReportDataType>("report-type", { orders: "daily", users: "daily" })
@@ -43,6 +48,84 @@ export default function Charts() {
         if (open === "orders") setReportType(e => ({ ...e, orders: data }))
         if (open === "users") setReportType(e => ({ ...e, users: data }))
         onTogglePopOver()
+    }
+    const onDownloadOrdersReport = async () => {
+        pdfDoc.setFontSize(20)
+        pdfDoc.text(`Bean Cafe ${changeCase.sentenceCase(reportType.orders)} Order Reports`, 15, 10)
+        autoTable(pdfDoc, {
+            margin: {
+                top: 15
+            },
+            theme: "grid",
+            head: [["Date", "Orders"]],
+            body: ordersReport.map(report => ([report.date, report.orders]))
+        })
+        // chartImage.setConfig({
+        //     type: "bar",
+        //     data: {
+        //         labels: ordersReport?.map(x => {
+        //             let date = x.date
+        //             if (reportType?.orders === "daily") date = moment(x.date).format('MMM DD')
+        //             if (reportType?.orders === "monthly") date = moment(x.date).format('MMM')
+        //             if (reportType?.orders === "yearly") date = moment(x.date).format('YYYY')
+        //             return date
+        //         }),
+        //         datasets: [
+        //             {
+        //                 label: 'Orders',
+        //                 data: ordersReport?.map(x => (x.orders)),
+        //                 backgroundColor: "#cc9c68"
+        //             }
+        //         ]
+        //     }
+        // })
+        // const image = new Image()
+        // image.src = await chartImage.toDataUrl()
+        // image.crossOrigin = "";
+        // image.onload = function () {
+        //     pdfDoc.addImage(this as any, "JPEG", 20, 100, pdfDoc.internal.pageSize.width - 40, 100)
+        //     pdfDoc.save("test.pdf")
+        // }
+        pdfDoc.save("orders.pdf")
+    }
+    const onDownloadUsersReport = async () => {
+        pdfDoc.setFontSize(20)
+        pdfDoc.text(`Bean Cafe ${changeCase.sentenceCase(reportType.orders)} Users Reports`, 15, 10)
+        autoTable(pdfDoc, {
+            margin: {
+                top: 15
+            },
+            theme: "grid",
+            head: [["Date", "Users"]],
+            body: ordersReport.map(report => ([report.date, report.orders]))
+        })
+        // chartImage.setConfig({
+        //     type: "bar",
+        //     data: {
+        //         labels: ordersReport?.map(x => {
+        //             let date = x.date
+        //             if (reportType?.orders === "daily") date = moment(x.date).format('MMM DD')
+        //             if (reportType?.orders === "monthly") date = moment(x.date).format('MMM')
+        //             if (reportType?.orders === "yearly") date = moment(x.date).format('YYYY')
+        //             return date
+        //         }),
+        //         datasets: [
+        //             {
+        //                 label: 'Orders',
+        //                 data: ordersReport?.map(x => (x.orders)),
+        //                 backgroundColor: "#cc9c68"
+        //             }
+        //         ]
+        //     }
+        // })
+        // const image = new Image()
+        // image.src = await chartImage.toDataUrl()
+        // image.crossOrigin = "";
+        // image.onload = function () {
+        //     pdfDoc.addImage(this as any, "JPEG", 20, 100, pdfDoc.internal.pageSize.width - 40, 100)
+        //     pdfDoc.save("test.pdf")
+        // }
+        pdfDoc.save("users.pdf")
     }
     return (
         <>
@@ -92,6 +175,18 @@ export default function Charts() {
                                         ]
                                     }} />
                             </div>
+                            <div className='grid grid-cols-2 gap-2 px-3 mt-2'>
+                                <Button
+                                    raised
+                                    tonal
+                                    radioGroup=''
+                                    small>View Full Reports</Button>
+                                <Button
+                                    onClick={onDownloadOrdersReport}
+                                    small
+                                    tonal
+                                    className=' k-color-brand-green '>Download</Button>
+                            </div>
                         </div>
                     </Card>
                     <Card
@@ -137,6 +232,18 @@ export default function Charts() {
                                             }
                                         ]
                                     }} />
+                            </div>
+                            <div className='grid grid-cols-2 gap-2 px-3 mt-2'>
+                                <Button
+                                    tonal
+                                    raised
+                                    small>View Full Reports</Button>
+                                <Button
+                                    onClick={onDownloadUsersReport}
+                                    small
+                                    raised
+                                    tonal
+                                    className=' k-color-brand-green '>Download</Button>
                             </div>
                         </div>
                     </Card>
