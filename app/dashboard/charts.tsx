@@ -97,7 +97,7 @@ export default function Charts() {
             },
             theme: "grid",
             head: [["Date", "Users"]],
-            body: ordersReport.map(report => ([report.date, report.orders]))
+            body: usersReport.map(report => ([report.date, report.users]))
         })
         // chartImage.setConfig({
         //     type: "bar",
@@ -149,7 +149,7 @@ export default function Charts() {
                                     <FaSort />
                                 </Button>
                             </div>
-                            <div className='w-full h-40'>
+                            <div className='w-full h-full'>
                                 <Bar
                                     options={{
                                         plugins: {
@@ -206,7 +206,7 @@ export default function Charts() {
                                     <FaSort />
                                 </Button>
                             </div>
-                            <div className='w-full h-40'>
+                            <div className='w-full h-full'>
                                 <Bar
                                     options={{
                                         responsive: true,
