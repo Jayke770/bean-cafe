@@ -149,7 +149,7 @@ export default function Charts() {
                                     <FaSort />
                                 </Button>
                             </div>
-                            <div className='w-full h-full min-h[12rem]'>
+                            <div className='w-full h-full min-h-[12rem]'>
                                 <Bar
                                     options={{
                                         plugins: {
@@ -206,7 +206,7 @@ export default function Charts() {
                                     <FaSort />
                                 </Button>
                             </div>
-                            <div className='w-full h-full  min-h[12rem]'>
+                            <div className='w-full h-full min-h-[12rem]'>
                                 <Bar
                                     options={{
                                         responsive: true,
