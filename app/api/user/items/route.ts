@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Items from "@/models/items";
 import dbConnect from "@/models/dbConnect";
 export const revalidate = 60;
+export const dynamic = 'force-dynamic'
 export async function GET(req: NextRequest) {
   try {
     const category = (req.nextUrl.searchParams.get("category") as any) ?? "all";
