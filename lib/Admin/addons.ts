@@ -4,13 +4,13 @@ const fetcher = (url: any) => fetch(url).then((res) => res.json());
 interface Addon extends AddOns {
   _id: string;
 }
-export default function AddOns(skip?: string | number): {
+export default function AddOns(type?: string, skip?: string | number): {
   addons: Addon[];
   addonsLoading: boolean;
   addonsError: boolean;
 } {
   const { data, error, isLoading } = useSWR(
-    `/api/dashboard/items/addon?skip=${skip ?? 0}`,
+    type ? `/api/dashboard/items/addon?type=${type}&skip=${skip ?? 0}` : null,
     fetcher,
     {
       shouldRetryOnError: true,

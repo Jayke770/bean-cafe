@@ -3,6 +3,7 @@ import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { nanoid } from "nanoid";
 import dbConnect from "@/models/dbConnect";
+import addons from "@/models/addons";
 import items from "@/models/items";
 import moment from "moment";
 import { getServerSession } from "next-auth";
@@ -35,7 +36,8 @@ export async function POST(req: NextRequest) {
     };
     const parse_form = ItemForm.safeParse(data);
     if (parse_form.success) {
-      const addons: any[] = JSON.parse(parse_form.data.addons);
+      const selected_addons: string[] = JSON.parse(parse_form.data.addons);
+      const addonsData = await addons.find({ id: { $in: selected_addons } }, { _id: 1 })
       const sizes: any[] = JSON.parse(parse_form.data.sizes);
       const ItemId = nanoid(12).toUpperCase();
       const imageFile = parse_form.data.image as Blob | null;
@@ -46,7 +48,7 @@ export async function POST(req: NextRequest) {
         await dbConnect();
         await items.create({
           item_id: ItemId,
-          addons: addons,
+          addons: addonsData,
           created: parseInt(moment().format("x")),
           description: parse_form.data.description,
           image: uploaded_image.url,

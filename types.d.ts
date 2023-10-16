@@ -49,7 +49,8 @@ const UserCartData = z.object({
   price: z.number(),
   category: z.string(),
   created: z.number(),
-  status: CartStatus
+  status: CartStatus,
+  addon: AddOnSchema
 })
 export type UserCart = z.infer<typeof UserCartData>
 const UserSchema = z.object({
@@ -69,11 +70,6 @@ const UserSchema = z.object({
 });
 export type UserRole = z.infer<typeof UserRole>;
 export type UserModel = z.infer<typeof UserSchema>;
-const Categories = z.union([
-  z.literal("coffee"),
-  z.literal("burger"),
-  z.literal("cakes"),
-]);
 //add ons
 const AddOnOption = z.object({
   name: z.string(),
@@ -87,7 +83,7 @@ const AddOnSchema = z.object({
   image: z.string(),
   price: z.number(),
   stocks: z.number(),
-  category: Categories,
+  category: z.string(),
   created: z.number().optional(),
   id: z.string()
 });
@@ -114,7 +110,7 @@ const ItemsChema = z.object({
   price: z.number().optional(),
   stocks: z.number().optional(),
   sizes: z.array(ItemSizes),
-  addons: z.array(AddOnOption),
+  addons: z.array(AddOnSchema),
   sold: z.number(),
   created: z.number(),
 });
@@ -156,3 +152,9 @@ export type deliverType = z.infer<typeof DeliveryType>
 export type Orders = z.infer<typeof OrdersSchema>
 export type ReportType = "users" | "orders"
 export type ReportData = "daily" | "monthly" | "yearly"
+
+const Categories = z.object({
+  type: z.string(),
+  created: z.number()
+})
+export type CategoriesType = z.infer<typeof Categories>

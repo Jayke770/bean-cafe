@@ -8,7 +8,7 @@ const Items = new Schema<Items>({
   category: { type: String },
   created: { type: Number },
   sizes: [],
-  addons: [],
+  addons: [{ type: Schema.Types.ObjectId, ref: "addons" }],
   price: { type: Number },
   sold: { type: Number, default: 0 },
   stocks: { type: Number },

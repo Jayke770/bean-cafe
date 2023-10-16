@@ -7,13 +7,18 @@ export async function GET(req: NextRequest) {
     const category = (req.nextUrl.searchParams.get("category") as any) ?? "all";
     const skip = parseInt(req.nextUrl.searchParams.get("skip") ?? "0");
     await dbConnect();
-    const data = await Items.find(
-      category === "all" ? {} : {
-        category: { $eq: category },
-      },
-      { addons: 0, __v: 0, _id: 0 }).skip(skip)
+    let data: any[] = []
+    if (category === "best-seller") {
+      data = await Items.find({ sold: { $gte: 1 } })
+    } else {
+      data = await Items.find(
+        category === "all" ? {} : {
+          category: { $eq: category },
+        }, { __v: 0, _id: 0 }).populate({ path: "addons" }).skip(skip)
+    }
     return NextResponse.json(data);
   } catch (e) {
+    console.log(e)
     return NextResponse.json({}, { status: 500 });
   }
 }

@@ -1,5 +1,5 @@
 "use client"
-import { Button, Fab, Card, Preloader } from 'konsta/react'
+import { Button, Fab, Card } from 'konsta/react'
 import { BsThreeDots } from 'react-icons/bs'
 import { MdAdd } from 'react-icons/md';
 import { useCallback, useState } from 'react';
@@ -18,10 +18,10 @@ export default function Orders({ session }: { session?: Session }) {
         <>
             <Fab
                 onClick={onToggleNewItem}
-                text="New Item/Add On"
+
                 icon={<MdAdd />}
                 className=' fixed bottom-5 z-20 right-4 k-color-brand-primary' />
-            <AddItemOrAddon addons={addons} opened={openNewItem} onToggleNewItem={onToggleNewItem} />
+            <AddItemOrAddon opened={openNewItem} onToggleNewItem={onToggleNewItem} />
             <div className='p-4'>
                 <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-2'>
                     <Card

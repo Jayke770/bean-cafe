@@ -20,7 +20,6 @@ import Image from 'next/image'
 import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai'
 import { RiLoader5Fill } from 'react-icons/ri'
 import Items from '@/lib/User/items'
-import { CATEGORIES } from '@lib/constants'
 import { greeting, capitalize } from '@lib/utils'
 import { useSession } from 'next-auth/react'
 import { RiShoppingCartLine } from 'react-icons/ri'
@@ -32,6 +31,7 @@ import Cart from './cart'
 import toast from 'react-hot-toast';
 import { ItemEmpty } from '@components/empty'
 import NextLink from 'next/link'
+import Categories from '@/lib/categories'
 const mainvariants: Variants = {
     initial: {
         opacity: 0
@@ -46,19 +46,20 @@ const mainvariants: Variants = {
 interface ViewItem {
     data?: Item,
     selected_size?: Item['sizes'][0],
+    addon?: string,
     quantity: number,
     opened?: boolean,
     adding_to_cart?: boolean,
     isProcessing?: boolean
 }
 export default function Home() {
+    const { categories } = Categories()
     const { cartData, mutate: updateCartData } = CartData()
     const { data: session, status } = useSession()
     const [tab, setTab] = useLocalstorageState<string>("home-tab", "All")
     const { items, itemsLoading } = Items(tab.toLowerCase(), 0)
     const onChangeTab = useCallback((data: string) => setTab(data), [setTab])
     const [viewCart, setViewCart] = useState<boolean>(false)
-    const [viewAccount, setViewAccount] = useState<boolean>(false)
     const [viewItem, setViewItem] = useState<ViewItem>({ quantity: 0 })
     const onToggleCart = useCallback(() => setViewCart(e => !e), [setViewCart])
     const onToggleItem = useCallback((data?: Item) => {
@@ -94,6 +95,7 @@ export default function Home() {
         }
     }
     const onAddtoCart = () => {
+        console.log(viewItem)
         if (!viewItem?.isProcessing) {
             setViewItem(e => ({ ...e, isProcessing: true }))
             toast.promise(((): Promise<ApiResponse> => {
@@ -105,6 +107,7 @@ export default function Home() {
                                 "content-type": "application/json"
                             },
                             body: JSON.stringify({
+                                addon: viewItem.addon,
                                 item_id: viewItem.data?.item_id,
                                 quantity: viewItem.quantity,
                                 selected_size: viewItem.selected_size?.type
@@ -132,6 +135,7 @@ export default function Home() {
             })
         }
     }
+    const onSelectAddon = (id?: string) => setViewItem(e => ({ ...e, addon: e.addon === id ? undefined : id }))
     return (
         <motion.div
             variants={mainvariants}
@@ -189,14 +193,21 @@ export default function Home() {
                     rounded>
                     All
                 </Button>
-                {CATEGORIES.map(category => (
+                <Button
+                    clear={tab !== "best-sellers"}
+                    onClick={() => onChangeTab("best-sellers")}
+                    className='!w-auto k-color-brand-green inline-flex ml-2 first:ml-0'
+                    rounded>
+                    Best Sellers
+                </Button>
+                {categories?.map(category => (
                     <Button
-                        key={category}
-                        clear={category !== tab}
-                        onClick={() => onChangeTab(category as any)}
+                        key={category.type}
+                        clear={category.type !== tab}
+                        onClick={() => onChangeTab(category.type)}
                         className='!w-auto k-color-brand-green inline-flex ml-2 first:ml-0'
                         rounded>
-                        {category}
+                        {category.type}
                     </Button>
                 ))}
             </section>
@@ -229,7 +240,7 @@ export default function Home() {
                             <div className='shadow-lg h-44 rounded-2xl overflow-hidden'>
                                 <Image
                                     priority
-                                    src={`/api/files?type=item&id=${item.item_id}`}
+                                    src={item.image}
                                     alt={item?.name}
                                     width={300}
                                     height={300}
@@ -254,7 +265,6 @@ export default function Home() {
                 onToggleCart={onToggleCart}
                 cartData={cartData}
                 session={session} />
-
 
             {/* View Item */}
             <Actions
@@ -289,6 +299,25 @@ export default function Home() {
                                                 link
                                                 chevron={false}
                                                 media={<Radio readOnly className=' pointer-events-none' checked={viewItem?.selected_size?.type === size.type} />} />
+                                        ))}
+                                    </div>
+                                </ListGroup>
+                            </List>
+                        )}
+                        {(viewItem?.data?.addons.length ?? 0) > 0 && (
+                            <List margin='my-0' className='mt-5'>
+                                <ListGroup>
+                                    <span className=' px-3'>Select Addon</span>
+                                    <div className='grid grid-cols-2 gap-2'>
+                                        {viewItem?.data?.addons?.map(addon => (
+                                            <ListItem
+                                                key={addon.id}
+                                                onClick={() => onSelectAddon(addon.id)}
+                                                title={changeCase.sentenceCase(addon.name)}
+                                                subtitle={`₱${addon?.price}`}
+                                                link
+                                                chevron={false}
+                                                media={<Radio readOnly className=' pointer-events-none' checked={viewItem?.addon === addon.id} />} />
                                         ))}
                                     </div>
                                 </ListGroup>

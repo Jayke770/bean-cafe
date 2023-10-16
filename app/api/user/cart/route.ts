@@ -10,8 +10,11 @@ import Cart from '@models/cart'
 import moment from "moment-timezone";
 import { nanoid } from "nanoid";
 import dbConnect from "@/models/dbConnect";
+import addons from "@/models/addons";
+import carts from '@/models/cart'
 const schema = z.object({
     item_id: z.string(),
+    addon: z.string(),
     quantity: z.number().gt(0, "Invalid Quantity"),
     selected_size: z.string().optional()
 })
@@ -35,7 +38,6 @@ export async function POST(req: NextRequest) {
                             size: { $eq: data.selected_size },
                             status: { $ne: "ordered" }
                         })
-                        console.log(itemInCart)
                         if (itemInCart) {
                             itemInCart.quantity += data.quantity
                             await itemInCart.save()
@@ -53,20 +55,28 @@ export async function POST(req: NextRequest) {
                                     return NextResponse.json(res)
                                 }
                             }
-                            const newCartItem = await Cart.create({
-                                user_id: userData._id,
-                                created: parseFloat(moment().format("x")),
-                                cart_id: nanoid().toUpperCase(),
-                                item_id: itemData.item_id,
-                                quantity: data.quantity,
-                                category: itemData.category,
-                                size: data.selected_size,
-                                item_name: itemData.name,
-                                price: price,
-                                status: "not-ordered"
-                            })
-                            userData.cart.push(newCartItem._id)
-                            await userData.save()
+                            const addonData = await addons.findOne({ id: { $eq: data.addon } })
+                            if (addonData) {
+                                const newCartItem = await Cart.create({
+                                    user_id: userData._id,
+                                    created: parseFloat(moment().format("x")),
+                                    cart_id: nanoid().toUpperCase(),
+                                    item_id: itemData.item_id,
+                                    quantity: data.quantity,
+                                    category: itemData.category,
+                                    size: data.selected_size,
+                                    item_name: itemData.name,
+                                    price: price,
+                                    status: "not-ordered",
+                                    addon: addonData?._id
+                                })
+                                userData.cart.push(newCartItem._id)
+                                await userData.save()
+                            } else {
+                                res.message = "Invalid Addon"
+                                res.status = false
+                                return NextResponse.json(res)
+                            }
                         }
                         res.message = "Successfully added to cart!"
                         res.status = true
@@ -97,13 +107,11 @@ export async function GET(req: NextRequest) {
     try {
         if (session) {
             await dbConnect()
-            const cart_data = await User.findOne({ _id: { $eq: session.user.id } }, { cart: 1 })
+            const cart_data = await carts.find({ user_id: { $eq: session.user.id }, status: { $ne: "ordered" } })
                 .populate({
-                    path: "cart",
-                    match: { status: { $ne: "ordered" } },
-                    select: { __v: 0 }
+                    path: "addon"
                 })
-            return NextResponse.json(cart_data?.cart)
+            return NextResponse.json(cart_data)
         } else {
             return NextResponse.json(null, { status: 401 });
         }

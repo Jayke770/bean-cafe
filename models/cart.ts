@@ -4,6 +4,7 @@ const Cart = new Schema<UserCart>({
     category: { type: String },
     created: { type: Number },
     user_id: { type: Schema.Types.ObjectId },
+    addon: { type: Schema.Types.ObjectId, ref: "addons" },
     cart_id: { type: String },
     item_id: { type: String },
     item_name: { type: String },
