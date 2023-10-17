@@ -1,8 +1,8 @@
-import { Orders as ord } from "@/types";
+import { Orders as ord, UserCart } from "@/types";
 import { Schema, models, deleteModel, model } from "mongoose";
 const Orders = new Schema<ord>({
     orderId: { type: String },
-    items: [],
+    items: [{ type: Schema.Types.ObjectId, ref: "cart" }],
     message: { type: String },
     created: { type: Number },
     payment_method: { type: String },

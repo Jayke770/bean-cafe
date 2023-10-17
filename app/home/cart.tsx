@@ -9,7 +9,8 @@ import {
     Radio,
     Button,
     ListInput,
-    Badge
+    Badge,
+    Chip
 } from 'konsta/react'
 import * as changeCase from 'change-case'
 import type { ApiResponse, UserCart, paymentMethod, deliverType } from "@/types";
@@ -26,6 +27,7 @@ import { RiLoader5Fill } from 'react-icons/ri';
 import type { Session } from 'next-auth';
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form';
+import { DELIVERY_FEE } from '@lib/constants'
 interface selectItemInCart {
     items: UserCart[],
     payment_method?: paymentMethod,
@@ -148,6 +150,7 @@ export default function Cart({
                                                     </div>
                                                 }
                                                 after={`₱${(item.price * item.quantity).toLocaleString()}`}
+                                                footer={item?.addon && `Addon: ${item.addon.name}`}
                                                 media={
                                                     <div className='flex items-center gap-4 pl-3'>
                                                         <Checkbox checked={!!selectedItemIncart?.items?.find(x => x.cart_id === item.cart_id)} readOnly className=' pointer-events-none' />
@@ -177,17 +180,22 @@ export default function Cart({
                                                     {selectedItemIncart?.delivery_service && <Badge className=' k-color-brand-red   '>{changeCase.sentenceCase(selectedItemIncart?.delivery_service)}</Badge>}
                                                 </div>
                                             } />
+                                        <div className=' grid grid-cols-2 gap-2'>
+                                            {selectedItemIncart?.delivery_service === "deliver" && (
+                                                <ListItem
+                                                    title='Delivery Fee'
+                                                    subtitle={<span>₱{DELIVERY_FEE}</span>} />
+                                            )}
+                                            {selectedItemIncart?.items.length > 0 && (
+                                                <ListItem
+                                                    title="Total"
+                                                    subtitle={<span>₱{selectedItemIncart?.items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toLocaleString()}</span>} />
+                                            )}
+                                        </div>
                                     </ListGroup>
                                 </List>
-                                <div className=' absolute z-20 bottom-0 left-0 w-full bg-md-light-surface-1 dark:bg-md-dark-surface-1 translucent py-3 px-3.5 grid grid-cols-5'>
-                                    <div className=' col-span-2 flex justify-start items-center'>
-                                        <div className='flex items-baseline gap-1'>
-                                            <span className=' font-medium text-lg'>Total: </span>
-                                            <span className='font-base'>₱{selectedItemIncart?.items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toLocaleString()}</span>
-                                        </div>
-                                    </div>
+                                <div className=' absolute z-20 bottom-0 left-0 w-full bg-md-light-surface-1 dark:bg-md-dark-surface-1 translucent py-3 px-7'>
                                     <Button
-                                        className=' col-span-3'
                                         disabled={selectedItemIncart?.items.length <= 0 || !selectedItemIncart?.payment_method || isProcessing}>Check Out</Button>
                                 </div>
                             </>

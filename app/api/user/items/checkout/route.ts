@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
                         //save to order collection
                         const orderData = await Orders.create({
                             created: parseFloat(moment().format("x")),
-                            items: parse_form.data.items,
+                            items: parse_form.data.items.map(item => (item._id)),
                             orderId: nanoid().toUpperCase(),
                             status: "pending",
                             payment_method: parse_form.data.payment_method,
