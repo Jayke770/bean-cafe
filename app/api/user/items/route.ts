@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Items from "@/models/items";
+import addons from "@/models/addons";
 import dbConnect from "@/models/dbConnect";
 export const revalidate = 60;
 export const dynamic = 'force-dynamic'
@@ -10,16 +11,15 @@ export async function GET(req: NextRequest) {
     await dbConnect();
     let data: any[] = []
     if (category === "best-seller") {
-      data = await Items.find({ sold: { $gte: 1 } })
+      data = await Items.find({ sold: { $gte: 1 } }).populate({ path: "addons", model: addons }).skip(skip)
     } else {
       data = await Items.find(
         category === "all" ? {} : {
           category: { $eq: category },
-        }, { __v: 0, _id: 0 }).populate({ path: "addons" }).skip(skip)
+        }, { __v: 0, _id: 0 }).populate({ path: "addons", model: addons }).skip(skip)
     }
     return NextResponse.json(data);
   } catch (e: any) {
-    console.log(e)
     return NextResponse.json({ message: e.message }, { status: 500 });
   }
 }
