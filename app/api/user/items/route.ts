@@ -18,8 +18,8 @@ export async function GET(req: NextRequest) {
         }, { __v: 0, _id: 0 }).populate({ path: "addons" }).skip(skip)
     }
     return NextResponse.json(data);
-  } catch (e) {
+  } catch (e: any) {
     console.log(e)
-    return NextResponse.json({}, { status: 500 });
+    return NextResponse.json({ message: e.message }, { status: 500 });
   }
 }

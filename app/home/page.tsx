@@ -258,12 +258,12 @@ export default function Home() {
             </motion.section>
 
             {/* Cart */}
-            {/* <Cart
+            <Cart
                 key={'cart'}
                 opened={viewCart}
                 onToggleCart={onToggleCart}
                 cartData={cartData}
-                session={session} /> */}
+                session={session} />
 
             {/* View Item */}
             <Actions
