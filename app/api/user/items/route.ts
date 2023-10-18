@@ -20,6 +20,6 @@ export async function GET(req: NextRequest) {
     }
     return NextResponse.json(data);
   } catch (e: any) {
-    return NextResponse.json({ message: e.message }, { status: 500 });
+    return NextResponse.json({}, { status: 500 });
   }
 }
