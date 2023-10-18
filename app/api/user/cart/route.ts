@@ -113,9 +113,9 @@ export async function GET(req: NextRequest) {
                 })
             return NextResponse.json(cart_data)
         } else {
-            return NextResponse.json(null, { status: 401 });
+            return NextResponse.json({}, { status: 401 });
         }
     } catch (e) {
-        return NextResponse.json(null, { status: 500 });
+        return NextResponse.json({}, { status: 500 });
     }
 }
