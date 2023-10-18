@@ -189,7 +189,7 @@ export default function Cart({
                                             {selectedItemIncart?.items.length > 0 && (
                                                 <ListItem
                                                     title="Total"
-                                                    subtitle={<span>₱{selectedItemIncart?.items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toLocaleString()}</span>} />
+                                                    subtitle={<span>₱{selectedItemIncart?.items?.reduce((sum, item) => sum + (item.price * item.quantity), 0).toLocaleString()}</span>} />
                                             )}
                                         </div>
                                     </ListGroup>
@@ -205,7 +205,7 @@ export default function Cart({
                             </div>
                         )}
                     </motion.div>
-                    {/* Deliver info */}
+                    {/* Delivery info */}
                     <motion.div
                         key={tab?.isShowDeliveryInfo ? "delivery-info" : "delivery-info-hidden"}
                         initial={{ opacity: 0 }}

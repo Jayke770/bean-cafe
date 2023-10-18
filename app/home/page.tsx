@@ -95,7 +95,6 @@ export default function Home() {
         }
     }
     const onAddtoCart = () => {
-        console.log(viewItem)
         if (!viewItem?.isProcessing) {
             setViewItem(e => ({ ...e, isProcessing: true }))
             toast.promise(((): Promise<ApiResponse> => {
