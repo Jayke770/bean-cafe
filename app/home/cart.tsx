@@ -180,16 +180,16 @@ export default function Cart({
                                                     {selectedItemIncart?.delivery_service && <Badge className=' k-color-brand-red   '>{changeCase.sentenceCase(selectedItemIncart?.delivery_service)}</Badge>}
                                                 </div>
                                             } />
-                                        <div className=' grid grid-cols-2 gap-2'>
+                                        <div className=''>
                                             {selectedItemIncart?.delivery_service === "deliver" && (
                                                 <ListItem
                                                     title='Delivery Fee'
-                                                    subtitle={<span>₱{DELIVERY_FEE}</span>} />
+                                                    after={<span>₱{DELIVERY_FEE}</span>} />
                                             )}
                                             {selectedItemIncart?.items.length > 0 && (
                                                 <ListItem
                                                     title="Total"
-                                                    subtitle={<span>₱{selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + item.addon.price), 0).toLocaleString()}</span>} />
+                                                    after={<span>₱{selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + item.addon.price), 0).toLocaleString()}</span>} />
                                             )}
                                         </div>
                                     </ListGroup>
