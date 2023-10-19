@@ -149,7 +149,7 @@ export default function Cart({
                                                         <span>{`Quantity: ${item.quantity}`}</span>
                                                     </div>
                                                 }
-                                                after={`₱${(item.price * item.quantity).toLocaleString()}`}
+                                                after={`₱${((item.price * item.quantity) + item.addon.price).toLocaleString()}`}
                                                 footer={item?.addon && `Addon: ${item.addon.name}`}
                                                 media={
                                                     <div className='flex items-center gap-4 pl-3'>
@@ -189,7 +189,7 @@ export default function Cart({
                                             {selectedItemIncart?.items.length > 0 && (
                                                 <ListItem
                                                     title="Total"
-                                                    subtitle={<span>₱{selectedItemIncart?.items?.reduce((sum, item) => sum + (item.price * item.quantity), 0).toLocaleString()}</span>} />
+                                                    subtitle={<span>₱{selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + item.addon.price), 0).toLocaleString()}</span>} />
                                             )}
                                         </div>
                                     </ListGroup>
