@@ -20,7 +20,6 @@ export async function GET(req: NextRequest) {
       }
     }
     await dbConnect();
-    console.log(JSON.stringify(search_query))
     let data: any[] = []
     if (category === "best-seller") {
       data = search ? await Items.find({ sold: { $gte: 1 }, ...search_query }).limit(10).populate({ path: "addons", model: addons }).skip(skip) : await Items.find({ sold: { $gte: 1 } }).limit(10).populate({ path: "addons", model: addons }).skip(skip)
