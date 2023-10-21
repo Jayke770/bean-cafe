@@ -6,7 +6,9 @@ export default function Items({ category, search, skip }: { category?: string, s
   itemsLoading: boolean;
   itemsError: boolean;
 } {
-  const { data, error, isLoading } = useSWR(`/api/user/items?category=${category ?? "all"}&skip=${skip ?? 0}&search=${search}`,
+  let endpoint = `/api/user/items?category=${category ?? "all"}&skip=${skip ?? 0}`
+  if (search) endpoint += `&search=${search}`
+  const { data, error, isLoading } = useSWR(endpoint,
     fetcher,
     {
       shouldRetryOnError: true,
