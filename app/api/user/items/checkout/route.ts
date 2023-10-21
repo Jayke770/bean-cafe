@@ -35,19 +35,21 @@ const UserCartData = z.object({
     category: z.string(),
     created: z.number()
 })
+const DeliveryService = z.union([z.literal("pickup"), z.literal("deliver")])
+const PaymentMethod = z.union([
+    z.literal("gcash"),
+    z.literal("paypal"),
+    z.literal("cash_on_delivery"),
+])
 const CheckOutSchema = z.object({
     items: z.array(UserCartData),
-    payment_method: z.union([
-        z.literal("gcash"),
-        z.literal("paypal"),
-        z.literal("cash_on_delivery"),
-    ]),
+    payment_method: PaymentMethod,
     phone_number: z.string(),
-    address: z.string(),
-    name: z.string(),
+    address: z.string().optional(),
+    name: z.string().optional(),
     message: z.string().optional(),
     gcash_image: z.any().optional(),
-    delivery_service: z.union([z.literal("pickup"), z.literal("deliver")])
+    delivery_service: DeliveryService
 })
 export async function POST(req: NextRequest) {
     const { formData } = req

@@ -28,10 +28,13 @@ import type { Session } from 'next-auth';
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form';
 import { DELIVERY_FEE } from '@lib/constants'
+import PhoneInput from 'react-phone-number-input/input'
+import { formatPhoneNumber, formatPhoneNumberIntl } from 'react-phone-number-input'
 interface selectItemInCart {
     items: UserCart[],
     payment_method?: paymentMethod,
-    delivery_service?: deliverType
+    delivery_service?: deliverType,
+    phone_number?: string
 }
 interface Tab {
     isShowDeliveryInfo?: boolean,
@@ -75,6 +78,7 @@ export default function Cart({
                         formData.append("items", JSON.stringify(selectedItemIncart.items))
                         formData.append("payment_method", selectedItemIncart?.payment_method)
                         formData.append("delivery_service", selectedItemIncart?.delivery_service ?? "")
+                        formData.append("phone_number", selectedItemIncart?.phone_number ?? "")
                         const req = await fetch("/api/user/items/checkout", {
                             method: 'post',
                             body: formData
@@ -149,7 +153,7 @@ export default function Cart({
                                                         <span>{`Quantity: ${item.quantity}`}</span>
                                                     </div>
                                                 }
-                                                after={`₱${((item.price * item.quantity) + item.addon.price).toLocaleString()}`}
+                                                after={`₱${((item.price * item.quantity) + (item?.addon?.price ?? 0)).toLocaleString()}`}
                                                 footer={item?.addon && `Addon: ${item.addon.name}`}
                                                 media={
                                                     <div className='flex items-center gap-4 pl-3'>
@@ -165,10 +169,41 @@ export default function Cart({
                                                 } />
                                         ))}
                                     </ListGroup>
+                                    <ListGroup>
+                                        <div className=' px-3.5 mt-2'>
+                                            <span>Delivery Service</span>
+                                        </div>
+                                        <div className='grid grid-cols-2 gap-2 mt-2'>
+                                            {selectedItemIncart?.payment_method !== "cash_on_delivery" && (
+                                                <ListItem
+                                                    link
+                                                    onClick={() => onSetDelivery("pickup")}
+                                                    chevron={false}
+                                                    title="Pickup"
+                                                    media={
+                                                        <Checkbox
+                                                            checked={selectedItemIncart?.delivery_service === "pickup"}
+                                                            readOnly
+                                                            className=' pointer-events-none' />
+                                                    } />
+                                            )}
+                                            <ListItem
+                                                link
+                                                onClick={() => onSetDelivery("deliver")}
+                                                chevron={false}
+                                                title="Deliver"
+                                                media={
+                                                    <Checkbox
+                                                        checked={selectedItemIncart?.delivery_service === "deliver"}
+                                                        readOnly
+                                                        className=' pointer-events-none' />
+                                                } />
+                                        </div>
+                                    </ListGroup>
                                     <ListGroup className='mt-2'>
                                         <ListItem
                                             onClick={onToggleDeliveryInfo}
-                                            title='Delivery Information'
+                                            title='Additional Information'
                                             link />
                                         <ListItem
                                             onClick={onTogglePaymentMethod}
@@ -189,7 +224,7 @@ export default function Cart({
                                             {selectedItemIncart?.items.length > 0 && (
                                                 <ListItem
                                                     title="Total"
-                                                    after={<span>₱{selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + item.addon.price), 0).toLocaleString()}</span>} />
+                                                    after={<span>₱{selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0).toLocaleString()}</span>} />
                                             )}
                                         </div>
                                     </ListGroup>
@@ -222,7 +257,7 @@ export default function Cart({
                                 className=' !w-auto !px-3.5 k-color-brand-primary'>
                                 <BsArrowLeft className=' h-6 w-6' />
                             </Button>
-                            <h2 className='font-bold text-lg text-brand-primary sticky bg-md-light-surface-1 dark:bg-md-dark-surface-1 z-20 top-0'>Delivery Info</h2>
+                            <h2 className='font-bold text-lg text-brand-primary sticky bg-md-light-surface-1 dark:bg-md-dark-surface-1 z-20 top-0'>Additional Information</h2>
                         </div>
                         <div className='flex flex-col gap-2 px-4 py-2'>
                             <div className='flex flex-col gap-2'>
@@ -243,13 +278,13 @@ export default function Cart({
                             </div>
                             <div className='flex flex-col gap-2'>
                                 <label htmlFor="phone_number" className="block text-sm font-medium">Phone Number</label>
-                                <input
-                                    type='tel'
-                                    inputMode='tel'
-                                    {...register("phone_number")}
-                                    defaultValue={session?.user?.phone_number as string}
+                                <PhoneInput
+                                    value={formatPhoneNumberIntl(selectedItemIncart?.phone_number as any)}
                                     className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
-                                    placeholder="Phone Number" />
+                                    placeholder="Phone Number"
+                                    defaultCountry='PH'
+                                    international={true}
+                                    onChange={data => setselectedItemIncart(e => ({ ...e, phone_number: data?.toString() }))} />
                             </div>
                             <div className='flex flex-col gap-2'>
                                 <label htmlFor="message" className="block text-sm font-medium">Message <span className='text-xs opacity-50'>(Optional)</span></label>
@@ -329,37 +364,6 @@ export default function Cart({
                                     } />
                             </div>
                         </List>
-                        <List margin='my-0'>
-                            <div className=' px-3.5 mt-2'>
-                                <span>Delivery Service</span>
-                            </div>
-                            <div className='grid grid-cols-2 gap-2 mt-2'>
-                                {selectedItemIncart?.payment_method !== "cash_on_delivery" && (
-                                    <ListItem
-                                        link
-                                        onClick={() => onSetDelivery("pickup")}
-                                        chevron={false}
-                                        title="Pickup"
-                                        media={
-                                            <Checkbox
-                                                checked={selectedItemIncart?.delivery_service === "pickup"}
-                                                readOnly
-                                                className=' pointer-events-none' />
-                                        } />
-                                )}
-                                <ListItem
-                                    link
-                                    onClick={() => onSetDelivery("deliver")}
-                                    chevron={false}
-                                    title="Deliver"
-                                    media={
-                                        <Checkbox
-                                            checked={selectedItemIncart?.delivery_service === "deliver"}
-                                            readOnly
-                                            className=' pointer-events-none' />
-                                    } />
-                            </div>
-                        </List>
                         {selectedItemIncart?.payment_method === "gcash" && (
                             <div className='mx-3 mt-2 flex flex-col gap-2'>
                                 <span className='text-base'>Gcash Proof of Transaction</span>
@@ -372,6 +376,6 @@ export default function Cart({
                     </motion.div>
                 </form>
             </Card>
-        </Actions>
+        </Actions >
     )
 }

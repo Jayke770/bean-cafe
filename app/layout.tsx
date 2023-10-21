@@ -1,4 +1,5 @@
 import "@/styles/globals.css"
+import 'react-phone-number-input/style.css'
 import 'react-loading-skeleton/dist/skeleton.css'
 import LayoutMain from "@/app/KonstaProvider"
 import NextAuthSessionProvider from "./NextAuthProvider"

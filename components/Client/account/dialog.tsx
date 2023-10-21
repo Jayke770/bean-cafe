@@ -1,4 +1,3 @@
-import 'react-phone-number-input/style.css'
 import { Dialog, Button } from "konsta/react";
 import { FcGoogle } from "react-icons/fc";
 import { motion } from 'framer-motion'

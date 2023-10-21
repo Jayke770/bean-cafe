@@ -50,7 +50,7 @@ const UserCartData = z.object({
   category: z.string(),
   created: z.number(),
   status: CartStatus,
-  addon: AddOnSchema
+  addon: AddOnSchema.optional()
 })
 export type UserCart = z.infer<typeof UserCartData>
 const UserSchema = z.object({

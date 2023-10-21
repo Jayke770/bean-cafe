@@ -14,7 +14,7 @@ import {
     Searchbar
 } from 'konsta/react'
 import { motion, Variants } from 'framer-motion'
-import { useLocalstorageState } from 'rooks'
+import { useLocalstorageState, useDebounce } from 'rooks'
 import { IoPersonCircleSharp } from 'react-icons/io5'
 import Image from 'next/image'
 import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai'
@@ -57,7 +57,8 @@ export default function Home() {
     const { cartData, mutate: updateCartData } = CartData()
     const { data: session, status } = useSession()
     const [tab, setTab] = useLocalstorageState<string>("home-tab", "All")
-    const { items, itemsLoading } = Items(tab.toLowerCase(), 0)
+    const [searchItem, setSearchItem] = useState<string>()
+    const { items, itemsLoading } = Items({ category: tab.toLowerCase(), search: searchItem })
     const onChangeTab = useCallback((data: string) => setTab(data), [setTab])
     const [viewCart, setViewCart] = useState<boolean>(false)
     const [viewItem, setViewItem] = useState<ViewItem>({ quantity: 0 })
@@ -135,6 +136,7 @@ export default function Home() {
         }
     }
     const onSelectAddon = (id?: string) => setViewItem(e => ({ ...e, addon: e.addon === id ? undefined : id }))
+    const onSearchItem = useDebounce((e: React.ChangeEvent<HTMLInputElement>) => setSearchItem(() => e.target.value), 500)
     return (
         <motion.div
             variants={mainvariants}
@@ -213,8 +215,8 @@ export default function Home() {
             {/* Search */}
             <div className=' transition-all md:fixed md:w-64 md:right-32 md:top-2 sticky top-1 k-color-brand-primary w-full px-8 -py-4 -mx-2'>
                 <Searchbar
-                    disableButton
-                />
+                    disableButton={true}
+                    onChange={onSearchItem} />
             </div>
             {/* Items */}
             <motion.section
@@ -287,7 +289,7 @@ export default function Home() {
                         {(viewItem?.data?.sizes?.length ?? 0) > 0 && (
                             <List margin='my-0' className='mt-5'>
                                 <ListGroup>
-                                    <span className=' px-3'>Select Size</span>
+                                    <span className=' px-3'>Size</span>
                                     <div className='grid grid-cols-2 gap-2'>
                                         {viewItem?.data?.sizes?.map(size => (
                                             <ListItem
@@ -306,7 +308,7 @@ export default function Home() {
                         {(viewItem?.data?.addons.length ?? 0) > 0 && (
                             <List margin='my-0' className='mt-5'>
                                 <ListGroup>
-                                    <span className=' px-3'>Select Addon</span>
+                                    <span className=' px-3'>Addon</span>
                                     <div className='grid grid-cols-2 gap-2'>
                                         {viewItem?.data?.addons?.map(addon => (
                                             <ListItem

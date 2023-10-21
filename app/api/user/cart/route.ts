@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from 'zod'
-import { ApiResponse, UserCart } from "@/types";
+import { ApiResponse } from "@/types";
 import { getServerSession } from "next-auth";
 import { AuthOptions } from '@services/NextAuth/AuthOptions'
 import { fromZodError } from "zod-validation-error";
@@ -14,7 +14,7 @@ import addons from "@/models/addons";
 import carts from '@/models/cart'
 const schema = z.object({
     item_id: z.string(),
-    addon: z.string(),
+    addon: z.string().optional(),
     quantity: z.number().gt(0, "Invalid Quantity"),
     selected_size: z.string().optional()
 })
@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
                             size: { $eq: data.selected_size },
                             status: { $ne: "ordered" }
                         })
+                        console.log(itemInCart)
                         if (itemInCart) {
                             itemInCart.quantity += data.quantity
                             await itemInCart.save()
@@ -55,27 +56,26 @@ export async function POST(req: NextRequest) {
                                     return NextResponse.json(res)
                                 }
                             }
-                            const addonData = await addons.findOne({ id: { $eq: data.addon } })
-                            if (addonData) {
-                                const newCartItem = await Cart.create({
-                                    user_id: userData._id,
-                                    created: parseFloat(moment().format("x")),
-                                    cart_id: nanoid().toUpperCase(),
-                                    item_id: itemData.item_id,
-                                    quantity: data.quantity,
-                                    category: itemData.category,
-                                    size: data.selected_size,
-                                    item_name: itemData.name,
-                                    price: price,
-                                    status: "not-ordered",
-                                    addon: addonData?._id
-                                })
-                                userData.cart.push(newCartItem._id)
-                                await userData.save()
-                            } else {
-                                res.message = "Invalid Addon"
-                                res.status = false
-                                return NextResponse.json(res)
+                            const newCartItem = await Cart.create({
+                                user_id: userData._id,
+                                created: parseFloat(moment().format("x")),
+                                cart_id: nanoid().toUpperCase(),
+                                item_id: itemData.item_id,
+                                quantity: data.quantity,
+                                category: itemData.category,
+                                size: data.selected_size,
+                                item_name: itemData.name,
+                                price: price,
+                                status: "not-ordered"
+                            })
+                            userData.cart.push(newCartItem._id)
+                            await userData.save()
+                            if (validatedData.data?.addon) {
+                                const addonData = await addons.findOne({ id: { $eq: data.addon } })
+                                if (addonData) {
+                                    newCartItem.addon = addonData?._id as any
+                                    await newCartItem.save()
+                                }
                             }
                         }
                         res.message = "Successfully added to cart!"

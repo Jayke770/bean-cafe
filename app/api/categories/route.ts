@@ -5,7 +5,7 @@ export async function GET() {
     try {
         const data = await categories.find({}, { type: 1, created: 1 })
         return NextResponse.json(data)
-    } catch (e) {
-        return NextResponse.json({}, { status: 500 });
+    } catch (e: any) {
+        return NextResponse.json([], { status: 500, statusText: e.message });
     }
 }
