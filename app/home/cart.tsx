@@ -153,7 +153,7 @@ export default function Cart({
                                                         <span>{`Quantity: ${item.quantity}`}</span>
                                                     </div>
                                                 }
-                                                after={`₱${((item.price * item.quantity) + (item?.addon?.price ?? 0)).toLocaleString()}`}
+                                                after={`₱${(item.price * item.quantity)} ${item?.addon ? `+ ${item?.addon?.price}` : ''}`}
                                                 footer={item?.addon && `Addon: ${item.addon.name}`}
                                                 media={
                                                     <div className='flex items-center gap-4 pl-3'>
@@ -215,17 +215,15 @@ export default function Cart({
                                                     {selectedItemIncart?.delivery_service && <Badge className=' k-color-brand-red   '>{changeCase.sentenceCase(selectedItemIncart?.delivery_service)}</Badge>}
                                                 </div>
                                             } />
-                                        <div className=''>
+                                        <div className='grid grid-cols-2 gap-2'>
                                             {selectedItemIncart?.delivery_service === "deliver" && (
                                                 <ListItem
                                                     title='Delivery Fee'
                                                     after={<span>₱{DELIVERY_FEE}</span>} />
                                             )}
-                                            {selectedItemIncart?.items.length > 0 && (
-                                                <ListItem
-                                                    title="Total"
-                                                    after={<span>₱{selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0).toLocaleString()}</span>} />
-                                            )}
+                                            <ListItem
+                                                title="Total"
+                                                after={<span>₱{selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0) + (selectedItemIncart?.delivery_service === "deliver" ? DELIVERY_FEE : 0)}</span>} />
                                         </div>
                                     </ListGroup>
                                 </List>

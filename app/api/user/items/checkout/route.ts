@@ -6,7 +6,7 @@ import dbConnect from '@/models/dbConnect';
 import Users from '@/models/users';
 import Orders from '@/models/orders';
 import Cart from '@models/cart'
-import { ApiResponse } from '@/types';
+import { ApiResponse, CreateOrder } from '@/types';
 import Email from '@/services/email';
 import { fromZodError } from 'zod-validation-error';
 import * as changeCase from 'change-case'
@@ -74,7 +74,8 @@ export async function POST(req: NextRequest) {
                     const userData = await Users.findOne({ _id: { $eq: session.user.id } })
                         .populate({
                             path: "cart",
-                            match: { _id: { $in: parse_form.data.items.map(item => item._id) }, status: { $ne: "ordered" } }
+                            match: { _id: { $in: parse_form.data.items.map(item => item._id) }, status: { $ne: "ordered" } },
+                            populate: { path: "addon" }
                         })
                     if (userData) {
                         const total_payment = parse_form.data.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
@@ -95,7 +96,7 @@ export async function POST(req: NextRequest) {
                             fee: DELIVERY_FEE,
                             deliveryType: parse_form.data.delivery_service
                         })
-                        userData.orders.push(orderData._id)
+                        userData.orders.push(orderData.id)
                         await userData.save()
                         //remove item in user cart 
                         await Users.updateOne({
@@ -125,29 +126,43 @@ export async function POST(req: NextRequest) {
                     const userData = await Users.findOne({ _id: { $eq: session.user.id } })
                         .populate({
                             path: "cart",
-                            match: { _id: { $in: parse_form.data.items.map(item => item._id) }, status: { $ne: "ordered" } }
+                            match: { _id: { $in: parse_form.data.items.map(item => item._id) }, status: { $ne: "ordered" } },
+                            populate: { path: "addon" }
                         })
                     if (userData) {
-                        const total_payment = parse_form.data.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-                        //authenticate paypal 
-                        await paypal.authenticate()
-                        //create payment order 
-                        const payment_order = await paypal.createPayment({
+                        const total_payment = userData.cart?.reduce((sum, item) => sum + (item.price * item.quantity) + (item?.addon?.price ?? 0), 0)
+                        let purchase_items: CreateOrder['purchase_units'][0]['items'] = []
+                        userData.cart.map(item => {
+                            purchase_items?.push({
+                                name: item.item_name,
+                                quantity: item.quantity.toString(),
+                                description: item.item_name,
+                                unit_amount: {
+                                    currency_code: PAYPAL_CURRENCY_CODE as string,
+                                    value: item.price.toString()
+                                }
+                            })
+                            if (item.addon) {
+                                purchase_items?.push({
+                                    name: item.addon.name,
+                                    quantity: "1",
+                                    description: "",
+                                    unit_amount: {
+                                        currency_code: PAYPAL_CURRENCY_CODE as string,
+                                        value: item.addon.price.toString()
+                                    }
+                                })
+                            }
+                        })
+                        console.log(total_payment, parse_form.data.delivery_service === "deliver" ? DELIVERY_FEE : 0)
+                        const createPaypalOrder: CreateOrder = {
                             intent: "CAPTURE",
                             purchase_units: [
                                 {
-                                    items: parse_form.data.items.map(item => ({
-                                        name: item.item_name,
-                                        quantity: item.quantity.toString(),
-                                        description: item.item_name,
-                                        unit_amount: {
-                                            currency_code: PAYPAL_CURRENCY_CODE as string,
-                                            value: item.price.toString()
-                                        }
-                                    })),
+                                    items: purchase_items,
                                     amount: {
                                         currency_code: PAYPAL_CURRENCY_CODE as string,
-                                        value: (total_payment + DELIVERY_FEE).toString(),
+                                        value: (total_payment + (parse_form.data.delivery_service === "deliver" ? DELIVERY_FEE : 0)).toString(),
                                         breakdown: {
                                             item_total: {
                                                 currency_code: PAYPAL_CURRENCY_CODE as string,
@@ -155,7 +170,7 @@ export async function POST(req: NextRequest) {
                                             },
                                             shipping: {
                                                 currency_code: PAYPAL_CURRENCY_CODE as string,
-                                                value: DELIVERY_FEE.toString()
+                                                value: parse_form.data.delivery_service === "deliver" ? DELIVERY_FEE.toString() : "0"
                                             }
                                         }
                                     }
@@ -172,7 +187,12 @@ export async function POST(req: NextRequest) {
                                     }
                                 }
                             }
-                        })
+                        }
+                        console.log(createPaypalOrder.purchase_units[0].amount)
+                        //authenticate paypal 
+                        await paypal.authenticate()
+                        //create payment order 
+                        const payment_order = await paypal.createPayment(createPaypalOrder)
                         console.log(payment_order)
                         if (payment_order.status === "PAYER_ACTION_REQUIRED") {
                             const redirect_url = payment_order.links.find(x => x.rel === "payer-action")
@@ -194,7 +214,7 @@ export async function POST(req: NextRequest) {
                                 fee: DELIVERY_FEE,
                                 deliveryType: parse_form.data.delivery_service
                             })
-                            userData.orders.push(orderData._id)
+                            userData.orders.push(orderData.id)
                             await userData.save()
                             //remove item in user cart 
                             await Users.updateOne({
