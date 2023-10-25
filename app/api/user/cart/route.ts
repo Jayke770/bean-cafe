@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
                                 price: price,
                                 status: "not-ordered"
                             })
-                            userData.cart.push(newCartItem._id)
+                            userData.cart.push(newCartItem.id)
                             await userData.save()
                             if (validatedData.data?.addon) {
                                 const addonData = await addons.findOne({ id: { $eq: data.addon } })
