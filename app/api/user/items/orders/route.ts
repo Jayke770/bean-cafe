@@ -70,7 +70,6 @@ export async function POST(req: NextRequest) {
                 const orderData = await Orders.findOne({ orderId: { $eq: parse_form.data.id }, userID: { $eq: session.user.id } })
                 const userData = await User.findOne({ _id: { $eq: orderData?.userID } })
                 if (orderData && userData) {
-                    const notification = await orderNotification(orderData.orderId)
                     orderData.status = "cancelled"
                     if (orderData.payment_method === "paypal" && orderData.isPaid) {
                         await paypal.authenticate()
@@ -79,6 +78,8 @@ export async function POST(req: NextRequest) {
                         orderData.isRefunded = true
                         orderData.orderStatus.push("refunded")
                     }
+                    await orderData.save()
+                    const notification = await orderNotification(orderData.orderId)
                     if (userData.email) {
                         emailHandler.send({
                             receiver: userData.email,
@@ -92,7 +93,6 @@ export async function POST(req: NextRequest) {
                             number: userData.phone_number
                         })
                     }
-                    await orderData.save()
                     res = {
                         status: true,
                         message: "Order Successfully Cancelled"

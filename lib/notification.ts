@@ -38,21 +38,20 @@ export const orderNotification = async (orderId: string): Promise<{ email: strin
     }
     return { email: email_message, sms: sms_message }
 }
-export const orderPaid = async (orderId: string, sms?: boolean): Promise<string> => {
-    let message = ""
-    const data = await Orders.findOne({ orderId: { $eq: orderId } })
+export const orderPaid = async (orderId: string): Promise<{ email: string, sms: string }> => {
+    let sms_message = "", email_message = ""
+    const data = await Orders.findOne({ orderId: { $eq: orderId } }).populate({ path: "items", model: Cart })
     if (data) {
-        if (sms) {
-            message += "Order Payment\n\n"
-            message += `ID: ${data?.orderId}\n`
-            message += `Payment Method: ${changeCase.sentenceCase(data.payment_method)}\n`
-            message += `Total Payment: ₱${data.total_payment}`
-        } else {
-            message += "<b>Order Payment</b></br>"
-            message += `<b>ID:</b> ${data?.orderId}</br>`
-            message += `<b>Payment Method:</b> ${changeCase.sentenceCase(data.payment_method)}</br>`
-            message += `<b>Total Payment:</b> ₱${data.total_payment}`
-        }
+        sms_message += "Order Payment\n\n"
+        sms_message += `ID: ${data?.orderId}\n`
+        sms_message += `Payment Method: ${changeCase.sentenceCase(data.payment_method)}\n`
+        sms_message += `Total Payment: ₱${data.total_payment}`
+
+        email_message += "<b>Order Payment</b></br>"
+        email_message += `<b>ID:</b> ${data?.orderId}</br>`
+        email_message += `<b>Payment Method:</b> ${changeCase.sentenceCase(data.payment_method)}</br>`
+        email_message += `<b>Total Payment:</b> ₱${data.total_payment}`
+
     }
-    return message
+    return { email: email_message, sms: sms_message }
 }

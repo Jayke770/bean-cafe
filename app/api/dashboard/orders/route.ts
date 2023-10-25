@@ -15,11 +15,11 @@ import Twillio from '@/services/twilio'
 import { DELIVERY_FEE } from '@/lib/constants'
 import items from '@/models/items'
 const twillio = new Twillio()
-const { PAYPAL_SECRET, PAYPAL_CLIENT_ID, NEXTAUTH_URL } = process.env
+const { PAYPAL_SECRET, PAYPAL_CLIENT_ID, NEXTAUTH_URL, PAYPAL_MODE } = process.env
 const paypal = new Paypal({
     client_secret: PAYPAL_SECRET as string,
     client_id: PAYPAL_CLIENT_ID as string,
-    mode: "sandbox"
+    mode: PAYPAL_MODE as any
 })
 const emailHandler = new Email("Bean Cafe")
 export async function GET(req: NextRequest) {
@@ -76,7 +76,6 @@ export async function POST(req: NextRequest) {
                 const orderData = await Orders.findOne({ orderId: { $eq: data.data.orderId } })
                 const userData = await User.findOne({ _id: { $eq: orderData?.userID } })
                 if (orderData && userData) {
-                    const notification = await orderNotification(orderData.orderId)
                     // if the order is pending only allow approve or disapprove
                     if (orderData.status === "pending") {
                         if (data.data.type === "approve") {
@@ -85,6 +84,8 @@ export async function POST(req: NextRequest) {
                             orderData.orderStatus.pop()
                             orderData.orderStatus.push("order_approve", "processing")
                             if (orderData.payment_method === "cash_on_delivery") orderData.isPaid = true
+                            await orderData.save()
+                            const notification = await orderNotification(orderData.orderId)
                             if (userData?.email) {
                                 emailHandler.send({
                                     receiver: userData.email,
@@ -98,7 +99,6 @@ export async function POST(req: NextRequest) {
                                     number: userData.phone_number
                                 })
                             }
-                            await orderData.save()
                             res = {
                                 status: true,
                                 message: `Order ${changeCase.sentenceCase(data.data.type)}`
@@ -116,6 +116,8 @@ export async function POST(req: NextRequest) {
                                 orderData.isRefunded = true
                                 orderData.orderStatus.push("refunded")
                             }
+                            await orderData.save()
+                            const notification = await orderNotification(orderData.orderId)
                             if (userData.email) {
                                 emailHandler.send({
                                     receiver: userData.email,
@@ -129,7 +131,6 @@ export async function POST(req: NextRequest) {
                                     number: userData.phone_number
                                 })
                             }
-                            await orderData.save()
                             res = {
                                 status: true,
                                 message: `Order ${changeCase.sentenceCase(data.data.type)}`
@@ -142,6 +143,14 @@ export async function POST(req: NextRequest) {
                         if (data.data.type === "cancel") {
                             orderData.status = "cancelled"
                             orderData.orderStatus.push("cancelled")
+                            if (orderData.payment_method === "paypal") {
+                                const data = await paypal.paymentDetails(orderData?.payment_id ?? "")
+                                await paypal.refund(data.purchase_units[0].payments.captures[0].id)
+                                orderData.isRefunded = true
+                                orderData.orderStatus.push("refunded")
+                            }
+                            await orderData.save()
+                            const notification = await orderNotification(orderData.orderId)
                             if (userData.email) {
                                 emailHandler.send({
                                     receiver: userData.email,
@@ -154,13 +163,6 @@ export async function POST(req: NextRequest) {
                                     message: notification.sms,
                                     number: userData.phone_number
                                 })
-                            }
-                            await orderData.save()
-                            if (orderData.payment_method === "paypal") {
-                                const data = await paypal.paymentDetails(orderData?.payment_id ?? "")
-                                await paypal.refund(data.purchase_units[0].payments.captures[0].id)
-                                orderData.isRefunded = true
-                                orderData.orderStatus.push("refunded")
                             }
                             res = {
                                 status: true,
@@ -170,6 +172,8 @@ export async function POST(req: NextRequest) {
                         } else if (data.data.type === "out_for_delivery") {
                             orderData.status = "out for delivery"
                             orderData.orderStatus.push("out_for_delivery")
+                            await orderData.save()
+                            const notification = await orderNotification(orderData.orderId)
                             if (userData.email) {
                                 emailHandler.send({
                                     receiver: userData.email,
@@ -183,7 +187,6 @@ export async function POST(req: NextRequest) {
                                     number: userData.phone_number
                                 })
                             }
-                            await orderData.save()
                             res = {
                                 status: true,
                                 message: `Order ${changeCase.sentenceCase(orderData.status)}`
@@ -192,20 +195,6 @@ export async function POST(req: NextRequest) {
                         } else if (data.data.type === "delivered") {
                             orderData.status = "completed"
                             orderData.orderStatus.push("delivered")
-                            if (userData.email) {
-                                emailHandler.send({
-                                    receiver: userData.email,
-                                    subject: `Order ID ${orderData.orderId}`,
-                                    body: notification.email
-                                })
-                            }
-                            if (userData?.phone_number) {
-                                await twillio.sendMessage({
-                                    message: notification.sms,
-                                    number: userData.phone_number
-                                })
-                            }
-                            await orderData.save()
                             orderData.items.map(async item => {
                                 const ItemData = await items.findOne({ item_id: { $eq: item.item_id } })
                                 if (ItemData) {
@@ -217,6 +206,21 @@ export async function POST(req: NextRequest) {
                                     await ItemData.save()
                                 }
                             })
+                            await orderData.save()
+                            const notification = await orderNotification(orderData.orderId)
+                            if (userData.email) {
+                                emailHandler.send({
+                                    receiver: userData.email,
+                                    subject: `Order ID ${orderData.orderId}`,
+                                    body: notification.email
+                                })
+                            }
+                            if (userData?.phone_number) {
+                                await twillio.sendMessage({
+                                    message: notification.sms,
+                                    number: userData.phone_number
+                                })
+                            }
                             res = {
                                 status: true,
                                 message: `Order ${changeCase.sentenceCase(orderData.status)}`
