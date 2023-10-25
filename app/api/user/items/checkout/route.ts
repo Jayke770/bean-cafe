@@ -12,7 +12,7 @@ import { fromZodError } from 'zod-validation-error';
 import * as changeCase from 'change-case'
 import moment from 'moment-timezone';
 import { nanoid } from 'nanoid';
-import { orderNotification } from '@lib/utils'
+import { orderNotification } from '@lib/notification'
 import Paypal from "@/services/paypal";
 import { DELIVERY_FEE } from "@lib/constants"
 import Twillio from '@/services/twilio'
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
                     if (userData) {
                         const total_payment = parse_form.data.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
                         //save to order collection
-                        const orderData = await Orders.create({
+                        const new_orderData = await Orders.create({
                             created: parseFloat(moment().format("x")),
                             items: parse_form.data.items.map(item => (item._id)),
                             orderId: nanoid().toUpperCase(),
@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
                             fee: DELIVERY_FEE,
                             deliveryType: parse_form.data.delivery_service
                         })
-                        userData.orders.push(orderData.id)
+                        userData.orders.push(new_orderData.id)
                         await userData.save()
                         //remove item in user cart 
                         await Users.updateOne({
@@ -108,8 +108,9 @@ export async function POST(req: NextRequest) {
                         //update cart 
                         await Cart.updateMany({ _id: { $in: parse_form.data.items.map(item => item._id) } }, { $set: { status: "ordered" } })
                         //send notification
-                        if (userData.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${orderData.orderId}`, body: orderNotification(orderData) })
-                        if (userData?.phone_number) await twillio.sendMessage({ message: orderNotification(orderData, true), number: userData.phone_number })
+                        const notification = await orderNotification(new_orderData.orderId)
+                        if (userData.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${new_orderData?.orderId}`, body: notification.email })
+                        if (userData?.phone_number) await twillio.sendMessage({ message: notification.sms, number: userData.phone_number })
                         res = {
                             status: true,
                             message: "Order Success"
@@ -154,7 +155,6 @@ export async function POST(req: NextRequest) {
                                 })
                             }
                         })
-                        console.log(total_payment, parse_form.data.delivery_service === "deliver" ? DELIVERY_FEE : 0)
                         const createPaypalOrder: CreateOrder = {
                             intent: "CAPTURE",
                             purchase_units: [
@@ -188,16 +188,14 @@ export async function POST(req: NextRequest) {
                                 }
                             }
                         }
-                        console.log(createPaypalOrder.purchase_units[0].amount)
                         //authenticate paypal 
                         await paypal.authenticate()
                         //create payment order 
                         const payment_order = await paypal.createPayment(createPaypalOrder)
-                        console.log(payment_order)
                         if (payment_order.status === "PAYER_ACTION_REQUIRED") {
                             const redirect_url = payment_order.links.find(x => x.rel === "payer-action")
                             //save to order collection
-                            const orderData = await Orders.create({
+                            const new_orderData = await Orders.create({
                                 created: parseFloat(moment().format("x")),
                                 items: parse_form.data.items,
                                 orderId: nanoid().toUpperCase(),
@@ -214,7 +212,7 @@ export async function POST(req: NextRequest) {
                                 fee: DELIVERY_FEE,
                                 deliveryType: parse_form.data.delivery_service
                             })
-                            userData.orders.push(orderData.id)
+                            userData.orders.push(new_orderData.id)
                             await userData.save()
                             //remove item in user cart 
                             await Users.updateOne({
@@ -226,8 +224,9 @@ export async function POST(req: NextRequest) {
                             //update cart 
                             await Cart.updateMany({ _id: { $in: parse_form.data.items.map(item => item._id) } }, { $set: { status: "ordered" } })
                             //send notification
-                            if (userData?.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${orderData.orderId}`, body: orderNotification(orderData) })
-                            if (userData?.phone_number) await twillio.sendMessage({ message: orderNotification(orderData, true), number: userData.phone_number })
+                            const notification = await orderNotification(new_orderData.orderId)
+                            if (userData?.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${new_orderData?.orderId}`, body: notification.email })
+                            if (userData?.phone_number) await twillio.sendMessage({ message: notification.sms, number: userData.phone_number })
                             res = {
                                 status: true,
                                 message: "Order Success",

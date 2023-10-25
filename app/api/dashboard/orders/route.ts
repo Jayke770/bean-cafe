@@ -6,7 +6,7 @@ import Orders from '@/models/orders'
 import { ApiResponse, OrderStatus } from '@/types'
 import { z } from 'zod'
 import { fromZodError } from 'zod-validation-error'
-import { orderNotification } from '@lib/utils'
+import { orderNotification } from '@lib/notification'
 import * as changeCase from 'change-case'
 import Paypal from '@/services/paypal'
 import Email from '@/services/email'
@@ -76,6 +76,7 @@ export async function POST(req: NextRequest) {
                 const orderData = await Orders.findOne({ orderId: { $eq: data.data.orderId } })
                 const userData = await User.findOne({ _id: { $eq: orderData?.userID } })
                 if (orderData && userData) {
+                    const notification = await orderNotification(orderData.orderId)
                     // if the order is pending only allow approve or disapprove
                     if (orderData.status === "pending") {
                         if (data.data.type === "approve") {
@@ -88,12 +89,12 @@ export async function POST(req: NextRequest) {
                                 emailHandler.send({
                                     receiver: userData.email,
                                     subject: `Order ID ${orderData.orderId}`,
-                                    body: orderNotification(orderData)
+                                    body: notification.email
                                 })
                             }
                             if (userData?.phone_number) {
                                 await twillio.sendMessage({
-                                    message: orderNotification(orderData, true),
+                                    message: notification.sms,
                                     number: userData.phone_number
                                 })
                             }
@@ -119,12 +120,12 @@ export async function POST(req: NextRequest) {
                                 emailHandler.send({
                                     receiver: userData.email,
                                     subject: `Order ID ${orderData.orderId}`,
-                                    body: orderNotification(orderData)
+                                    body: notification.email
                                 })
                             }
                             if (userData?.phone_number) {
                                 await twillio.sendMessage({
-                                    message: orderNotification(orderData, true),
+                                    message: notification.sms,
                                     number: userData.phone_number
                                 })
                             }
@@ -145,12 +146,12 @@ export async function POST(req: NextRequest) {
                                 emailHandler.send({
                                     receiver: userData.email,
                                     subject: `Order ID ${orderData.orderId}`,
-                                    body: orderNotification(orderData)
+                                    body: notification.email
                                 })
                             }
                             if (userData?.phone_number) {
                                 await twillio.sendMessage({
-                                    message: orderNotification(orderData, true),
+                                    message: notification.sms,
                                     number: userData.phone_number
                                 })
                             }
@@ -173,12 +174,12 @@ export async function POST(req: NextRequest) {
                                 emailHandler.send({
                                     receiver: userData.email,
                                     subject: `Order ID ${orderData.orderId}`,
-                                    body: orderNotification(orderData)
+                                    body: notification.email
                                 })
                             }
                             if (userData?.phone_number) {
                                 await twillio.sendMessage({
-                                    message: orderNotification(orderData, true),
+                                    message: notification.sms,
                                     number: userData.phone_number
                                 })
                             }
@@ -195,12 +196,12 @@ export async function POST(req: NextRequest) {
                                 emailHandler.send({
                                     receiver: userData.email,
                                     subject: `Order ID ${orderData.orderId}`,
-                                    body: orderNotification(orderData)
+                                    body: notification.email
                                 })
                             }
                             if (userData?.phone_number) {
                                 await twillio.sendMessage({
-                                    message: orderNotification(orderData, true),
+                                    message: notification.sms,
                                     number: userData.phone_number
                                 })
                             }

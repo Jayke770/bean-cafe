@@ -1,6 +1,6 @@
 "use client"
 import { Actions, Badge, Button, Card, List, ListGroup, ListItem, Popover, Radio } from "konsta/react";
-import { OrderStatus, Orders } from '@/types'
+import { ApiResponse, OrderStatus, Orders } from '@/types'
 import * as changeCase from 'change-case'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FaSort } from 'react-icons/fa'
@@ -12,6 +12,7 @@ import { Coffee } from "@components/loader"
 import Image from 'next/image'
 import OrderStatusBadge from "@/components/orderStatus";
 import NextLink from 'next/link'
+import Swal from "@/lib/swal";
 interface Props {
     show?: boolean,
     orders?: Orders[],
@@ -26,13 +27,59 @@ interface Options {
 const ORDER_STATUSES = ["pending", "processing", "completed", "cancelled", "denied"]
 export default function AccountOrders(props: Props) {
     const [options, setOptions] = useState<Options>()
-    const { orderData, orderDataLoading } = OrderInfo(options?.selected_order_id)
+    const { orderData, orderDataLoading, mutate: updateOrderInfo } = OrderInfo(options?.selected_order_id)
     const onToggleSort = () => setOptions(e => ({ ...e, openSort: !e?.openSort }))
     const onSetOrderType = (data?: any) => {
         props.onSetOrderType(data)
         onToggleSort()
     }
     const onSetOrderId = (id?: string) => setOptions(e => ({ ...e, selected_order_id: id }))
+    const onCancel = () => {
+        Swal.fire({
+            icon: "warning",
+            titleText: "Cancel Order",
+            text: 'Are you sure to cancel this order?',
+            showCancelButton: true,
+            confirmButtonText: "Cancel Order"
+        }).then(a => {
+            if (a.isConfirmed) {
+                Swal.fire({
+                    icon: "info",
+                    titleText: "Cancelling Order",
+                    text: "Please wait...",
+                    showConfirmButton: false,
+                    willOpen: async () => {
+                        try {
+                            Swal.showLoading()
+                            const req = await fetch("/api/user/items/orders", {
+                                method: "post",
+                                headers: {
+                                    "content-type": "application/json"
+                                },
+                                body: JSON.stringify({ id: options?.selected_order_id })
+                            })
+                            if (req?.ok) {
+                                const res: ApiResponse = await req.json()
+                                updateOrderInfo()
+                                Swal.fire({
+                                    icon: res?.status ? "success" : "info",
+                                    titleText: res?.message
+                                })
+                            } else {
+                                throw new Error(`${req.status} ${req.statusText}`)
+                            }
+                        } catch (e: any) {
+                            Swal.fire({
+                                icon: "error",
+                                titleText: "Connection Error",
+                                text: e.message
+                            })
+                        }
+                    }
+                })
+            }
+        })
+    }
     return (
         <>
             <Actions
@@ -91,6 +138,7 @@ export default function AccountOrders(props: Props) {
                                     </List>
                                     <div className="flex gap-2 px-3.5 mt-3">
                                         <Button
+                                            onClick={onCancel}
                                             disabled={orderData?.status !== "pending"}
                                             small
                                             className=" k-color-brand-red">Cancel Order</Button>

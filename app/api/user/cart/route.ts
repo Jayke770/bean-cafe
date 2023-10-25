@@ -109,7 +109,8 @@ export async function GET(req: NextRequest) {
             await dbConnect()
             const cart_data = await carts.find({ user_id: { $eq: session.user.id }, status: { $ne: "ordered" } })
                 .populate({
-                    path: "addon"
+                    path: "addon",
+                    model: addons
                 })
             return NextResponse.json(cart_data)
         } else {

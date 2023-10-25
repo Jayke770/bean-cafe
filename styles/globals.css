@@ -46,3 +46,47 @@
 .rc-steps-item-finish .rc-steps-item-title {
   @apply k-color-brand-primary text-md-light-on-surface/50 dark:text-md-dark-on-surface/50;
 }
+.ms-200 {
+  --animate-duration: 200ms;
+}
+
+.ms-300 {
+  --animate-duration: 300ms;
+}
+
+.ms-400 {
+  --animate-duration: 400ms;
+}
+
+.ms-500 {
+  --animate-duration: 500ms;
+}
+
+.ms-600 {
+  --animate-duration: 600ms
+}
+
+.ms-700 {
+  --animate-duration: 700ms
+}
+
+.ms-800 {
+  --animate-duration: 800ms
+}
+
+.ms-900 {
+  --animate-duration: 900ms
+}
+
+.ms-slow {
+  --animate-duration: 2000ms
+}
+/* Sweetalert */
+.swal2-popup,
+.swal2-popup.swal2-toast {
+  @apply dark:bg-md-dark-surface-1 dark:text-neutral-300 overflow-hidden;
+}
+
+.swal2-container {
+  @apply md:!p-2;
+}
