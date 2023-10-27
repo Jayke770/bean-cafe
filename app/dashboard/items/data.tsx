@@ -101,12 +101,12 @@ export default function Orders({ session }: { session?: Session }) {
                                                     src={item?.image}
                                                     width={300}
                                                     height={300}
-                                                    alt={item.item_id}
+                                                    alt={item?.name}
                                                     className='w-20 rounded-lg object-cover aspect-square' />
                                             </TableCell>
                                             <TableCell>{item.item_id}</TableCell>
-                                            <TableCell>{item.name}</TableCell>
-                                            <TableCell>{changeCase.sentenceCase(item.category ?? "")}</TableCell>
+                                            <TableCell className=' whitespace-nowrap'>{item.name}</TableCell>
+                                            <TableCell className=' whitespace-nowrap'>{changeCase.sentenceCase(item.category ?? "")}</TableCell>
                                             <TableCell>₱{item.price?.toLocaleString()}</TableCell>
                                             <TableCell>{item.sold}</TableCell>
                                         </TableRow>

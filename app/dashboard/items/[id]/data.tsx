@@ -17,13 +17,15 @@ export default function ItemData() {
                 className="h-full">
                 <Card
                     margin="m-0"
-                    header={item?.name}
                     className="h-full w-full lg:w-96 k-color-brand-primary">
+                    <div className="mb-4">
+                        <h1 className="text-2xl font-bold">{item?.name}</h1>
+                    </div>
                     <div className='shadow-lg h-44 rounded-2xl overflow-hidden'>
                         <Image
-                            loading="lazy"
-                            src={item?.image}
-                            alt={item?.name}
+                            priority
+                            src={item?.image ?? "/logo.png"}
+                            alt={item?.name ?? "loading"}
                             width={300}
                             height={300}
                             className=' aspect-square h-full w-full object-cover ' />

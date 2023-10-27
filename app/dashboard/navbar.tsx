@@ -17,7 +17,7 @@ export default function DashboardNavbar() {
     const onBack = () => router.back()
     const onNavigate = (path: string) => {
         router.push(path)
-        onTogglePanel()
+        setTimeout(() => onTogglePanel(), 500)
     }
     return (
         <>
