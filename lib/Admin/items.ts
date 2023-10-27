@@ -1,10 +1,10 @@
 import useSWR from "swr";
-import { Items } from "@/types";
+import { Items as IItems } from "@/types";
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
-interface Item extends Items {
+interface Item extends IItems {
   _id: string;
 }
-export default function Items(skip?: string | number): {
+export function Items(skip?: string | number): {
   items: Item[];
   itemsLoading: boolean;
   itemsError: boolean;
@@ -25,5 +25,28 @@ export default function Items(skip?: string | number): {
     items: data,
     itemsLoading: isLoading,
     itemsError: error,
+  };
+}
+export function ItemInfo(id?: string): {
+  item: Item;
+  itemLoading: boolean;
+  itemError: boolean;
+} {
+  const { data, error, isLoading } = useSWR(
+    id ? `/api/dashboard/items?id=${id}` : null,
+    fetcher,
+    {
+      shouldRetryOnError: true,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+      refreshWhenHidden: true,
+      refreshWhenOffline: true,
+    }
+  );
+  return {
+    item: data,
+    itemLoading: isLoading,
+    itemError: error,
   };
 }

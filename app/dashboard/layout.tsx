@@ -1,4 +1,4 @@
-import { Metadata } from 'next'
+import { type Metadata } from 'next'
 import DashboardNavbar from './navbar'
 export const metadata: Metadata = {
     title: "Bean Cafe - Admin Dashboard",

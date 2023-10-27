@@ -85,7 +85,8 @@ export async function GET(req: NextRequest) {
     if (session) {
       await dbConnect();
       const skip = parseInt(req.nextUrl.searchParams.get("skip") ?? "0");
-      const data = await items.find({}, { __v: 0 }).skip(skip).limit(20);
+      const id = req.nextUrl.searchParams.get("id")
+      const data = id ? await items.findOne({ item_id: { $eq: id } }, { __v: 0 }).populate({ path: "addons", model: addons }).skip(skip) : await items.find({}, { __v: 0 }).populate({ path: "addons", model: addons }).skip(skip)
       return NextResponse.json(data);
     } else {
       return NextResponse.json({}, { status: 401 });

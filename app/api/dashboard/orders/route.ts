@@ -3,6 +3,8 @@ import { getServerSession } from 'next-auth'
 import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/models/dbConnect'
 import Orders from '@/models/orders'
+import Cart from '@/models/cart'
+import Addons from '@/models/addons'
 import { ApiResponse, OrderStatus } from '@/types'
 import { z } from 'zod'
 import { fromZodError } from 'zod-validation-error'
@@ -30,7 +32,9 @@ export async function GET(req: NextRequest) {
         if (session) {
             await dbConnect()
             if (type === "orders") {
-                const data = await Orders.find(status === "all" ? {} : { status: { $eq: status } }).sort({ _id: "desc" })
+                const data = await Orders.find(status === "all" ? {} : { status: { $eq: status } })
+                    .populate({ path: "items", model: Cart, populate: { path: "addon", model: Addons } })
+                    .sort({ _id: "desc" })
                 return NextResponse.json(data)
             } else if (type === "stats") {
                 const orders = await Orders.find({}, { status: 1 })

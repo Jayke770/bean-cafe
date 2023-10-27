@@ -207,12 +207,11 @@ export default function Cart({
                                             link />
                                         <ListItem
                                             onClick={onTogglePaymentMethod}
-                                            title='Payment Method & Delivery'
+                                            title='Payment Method'
                                             link
                                             subtitle={
                                                 <div className='mt-2 flex gap-2'>
                                                     {selectedItemIncart?.payment_method && <Badge className=' k-color-brand-green '>{changeCase.sentenceCase(selectedItemIncart?.payment_method)}</Badge>}
-                                                    {selectedItemIncart?.delivery_service && <Badge className=' k-color-brand-red   '>{changeCase.sentenceCase(selectedItemIncart?.delivery_service)}</Badge>}
                                                 </div>
                                             } />
                                         <div className='grid grid-cols-2 gap-2'>
