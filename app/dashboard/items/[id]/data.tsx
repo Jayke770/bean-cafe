@@ -1,9 +1,10 @@
 "use client"
-import { Card } from "konsta/react";
+import { Badge, Card, Segmented, SegmentedButton } from "konsta/react";
 import { motion } from 'framer-motion'
 import { ItemInfo } from '@lib/Admin/items'
 import { useParams } from 'next/navigation'
 import Image from 'next/image'
+import * as changeCase from 'change-case'
 export default function ItemData() {
     const params = useParams()
     const { item } = ItemInfo(params.id as string)
@@ -17,18 +18,55 @@ export default function ItemData() {
                 className="h-full">
                 <Card
                     margin="m-0"
-                    className="h-full w-full lg:w-96 k-color-brand-primary">
-                    <div className="mb-4">
-                        <h1 className="text-2xl font-bold">{item?.name}</h1>
-                    </div>
-                    <div className='shadow-lg h-44 rounded-2xl overflow-hidden'>
-                        <Image
-                            priority
-                            src={item?.image ?? "/logo.png"}
-                            alt={item?.name ?? "loading"}
-                            width={300}
-                            height={300}
-                            className=' aspect-square h-full w-full object-cover ' />
+                    className="h-full w-full lg:w-96 k-color-brand-primary"
+                    contentWrap={false}>
+                    <div className=" h-full overflow-auto p-4">
+                        <div className="mb-4 flex justify-between">
+                            <h1 className="text-2xl font-bold">{item?.name}</h1>
+                            <div className="block">
+                                <Badge className=" k-color-brand-green" >{item?.sold} Sold</Badge>
+                            </div>
+                        </div>
+                        <div className='shadow-lg  bg-brand-white/60 h-48 rounded-2xl overflow-hidden'>
+                            <Image
+                                priority
+                                src={item?.image ?? "/logo.png"}
+                                alt={item?.name ?? "loading"}
+                                width={300}
+                                height={300}
+                                className=' aspect-square h-full w-full object-contain ' />
+                        </div>
+                        <div className="flex flex-col gap-5 mt-5">
+                            <div className="flex flex-col">
+                                <span className="text-xl font-semibold">Description</span>
+                                <div className=" break-words text-sm font-thin ">{item?.description}</div>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <span className="text-xl font-semibold">Price List</span>
+                                {item?.price ? (
+                                    <div className="flex justify-between">
+                                        <span>Regular</span>
+                                        <span className=" font-light">₱{item?.price?.toLocaleString()}</span>
+                                    </div>
+                                ) : (
+                                    item?.sizes?.map(size => (
+                                        <div className="flex justify-between">
+                                            <span>{changeCase.sentenceCase(size?.type ?? "")}</span>
+                                            <span className=" font-light">₱{size?.price?.toLocaleString()}</span>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <span className="text-xl font-semibold">Addons</span>
+                                {item?.addons?.map(addon => (
+                                    <div className="flex justify-between">
+                                        <span>{addon?.name}</span>
+                                        <span className=" font-light">₱{addon?.price}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </Card>
             </motion.div>
@@ -41,7 +79,9 @@ export default function ItemData() {
                 <Card
                     margin="m-0"
                     className="h-full w-full k-color-brand-primary">
-
+                    <div className="flex w-full">
+                        <span className="text-xl font-bold">Update Item</span>
+                    </div>
                 </Card>
             </motion.div>
         </div>

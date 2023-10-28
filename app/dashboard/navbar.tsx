@@ -52,11 +52,11 @@ export default function DashboardNavbar() {
                                 {theme === "dark" ? <BsFillSunFill className="h-6 w-6" /> : <BsMoonStars className="h-6 w-6" />}
                             </motion.span>
                         </Link>
-                        <Link navbar iconOnly>
+                        {/* <Link navbar iconOnly>
                             <Icon badge="">
                                 <HiOutlineBell className='h-6 w-6' />
                             </Icon>
-                        </Link>
+                        </Link> */}
                         <Link onClick={onTogglePanel} navbar iconOnly>
                             <Icon>
                                 <HiOutlineBars3BottomRight className='h-6 w-6' />
