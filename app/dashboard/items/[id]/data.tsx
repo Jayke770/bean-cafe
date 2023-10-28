@@ -50,7 +50,7 @@ export default function ItemData() {
                                     </div>
                                 ) : (
                                     item?.sizes?.map(size => (
-                                        <div className="flex justify-between">
+                                        <div key={size.id} className="flex justify-between">
                                             <span>{changeCase.sentenceCase(size?.type ?? "")}</span>
                                             <span className=" font-light">₱{size?.price?.toLocaleString()}</span>
                                         </div>
@@ -60,7 +60,7 @@ export default function ItemData() {
                             <div className="flex flex-col gap-2">
                                 <span className="text-xl font-semibold">Addons</span>
                                 {item?.addons?.map(addon => (
-                                    <div className="flex justify-between">
+                                    <div key={addon.id} className="flex justify-between">
                                         <span>{addon?.name}</span>
                                         <span className=" font-light">₱{addon?.price}</span>
                                     </div>
