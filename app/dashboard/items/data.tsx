@@ -10,6 +10,7 @@ import Image from 'next/image';
 import { type Session } from "next-auth";
 import * as changeCase from 'change-case'
 import { useRouter } from 'next/navigation'
+import Skeleton from 'react-loading-skeleton';
 export default function Orders({ session }: { session?: Session }) {
     const router = useRouter()
     const { addons } = Addons()
@@ -80,15 +81,62 @@ export default function Orders({ session }: { session?: Session }) {
                             <Table>
                                 <TableHead>
                                     <TableRow header>
-                                        <TableCell header>Icon</TableCell>
-                                        <TableCell header>ID</TableCell>
-                                        <TableCell header>Name</TableCell>
-                                        <TableCell header>Category</TableCell>
-                                        <TableCell header>Price</TableCell>
-                                        <TableCell header>Sold</TableCell>
+                                        {itemsLoading ? (
+                                            <>
+                                                <TableCell header>
+                                                    <Skeleton />
+                                                </TableCell>
+                                                <TableCell header>
+                                                    <Skeleton />
+                                                </TableCell>
+                                                <TableCell header>
+                                                    <Skeleton />
+                                                </TableCell>
+                                                <TableCell header>
+                                                    <Skeleton />
+                                                </TableCell>
+                                                <TableCell header>
+                                                    <Skeleton />
+                                                </TableCell>
+                                                <TableCell header>
+                                                    <Skeleton />
+                                                </TableCell>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <TableCell header>Icon</TableCell>
+                                                <TableCell header>ID</TableCell>
+                                                <TableCell header>Name</TableCell>
+                                                <TableCell header>Category</TableCell>
+                                                <TableCell header>Price</TableCell>
+                                                <TableCell header>Sold</TableCell>
+                                            </>
+                                        )}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
+                                    {itemsLoading && Array.from({ length: 10 }).map((_, i) => (
+                                        <TableRow key={i}>
+                                            <TableCell>
+                                                <Skeleton />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Skeleton />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Skeleton />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Skeleton />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Skeleton />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Skeleton />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
                                     {items?.map(item => (
                                         <TableRow
                                             key={item.item_id}

@@ -5,6 +5,7 @@ import { ItemInfo } from '@lib/Admin/items'
 import { useParams } from 'next/navigation'
 import Image from 'next/image'
 import * as changeCase from 'change-case'
+import Skeleton from 'react-loading-skeleton';
 export default function ItemData() {
     const params = useParams()
     const { item } = ItemInfo(params.id as string)
@@ -22,9 +23,9 @@ export default function ItemData() {
                     contentWrap={false}>
                     <div className=" h-full overflow-auto p-4">
                         <div className="mb-4 flex justify-between">
-                            <h1 className="text-2xl font-bold">{item?.name}</h1>
+                            {item ? <h1 className="text-2xl font-bold">{item?.name}</h1> : <Skeleton width={"5rem"} />}
                             <div className="block">
-                                <Badge className=" k-color-brand-green" >{item?.sold} Sold</Badge>
+                                {item ? <Badge className=" k-color-brand-green" >{item?.sold} Sold</Badge> : <Skeleton width={"2rem"} />}
                             </div>
                         </div>
                         <div className='shadow-lg  bg-brand-white/60 h-48 rounded-2xl overflow-hidden'>
@@ -38,11 +39,11 @@ export default function ItemData() {
                         </div>
                         <div className="flex flex-col gap-5 mt-5">
                             <div className="flex flex-col">
-                                <span className="text-xl font-semibold">Description</span>
-                                <div className=" break-words text-sm font-thin ">{item?.description}</div>
+                                {item ? <span className="text-xl font-semibold">Description</span> : <Skeleton width={"5rem"} height={"1.5rem"} />}
+                                {item ? <div className=" break-words text-sm font-thin ">{item?.description}</div> : <Skeleton width={"5rem"} />}
                             </div>
                             <div className="flex flex-col gap-2">
-                                <span className="text-xl font-semibold">Price List</span>
+                                {item ? <span className="text-xl font-semibold">Price List</span> : <Skeleton width={"5rem"} height={"1.5rem"} />}
                                 {item?.price ? (
                                     <div className="flex justify-between">
                                         <span>Regular</span>
@@ -58,7 +59,7 @@ export default function ItemData() {
                                 )}
                             </div>
                             <div className="flex flex-col gap-2">
-                                <span className="text-xl font-semibold">Addons</span>
+                                {item ? <span className="text-xl font-semibold">Addons</span> : <Skeleton width={"5rem"} />}
                                 {item?.addons?.map(addon => (
                                     <div key={addon.id} className="flex justify-between">
                                         <span>{addon?.name}</span>
