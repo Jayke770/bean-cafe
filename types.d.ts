@@ -113,6 +113,7 @@ const ItemsChema = z.object({
   addons: z.array(AddOnSchema),
   sold: z.number(),
   created: z.number(),
+  isBestSeller: z.boolean()
 });
 export type Items = z.infer<typeof ItemsChema>;
 export type ApiResponse = {

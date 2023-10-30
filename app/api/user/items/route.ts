@@ -21,8 +21,19 @@ export async function GET(req: NextRequest) {
     }
     await dbConnect();
     let data: any[] = []
-    if (category === "best-seller") {
-      data = search ? await Items.find({ sold: { $gte: 1 }, ...search_query }).limit(10).populate({ path: "addons", model: addons }).skip(skip) : await Items.find({ sold: { $gte: 1 } }).limit(10).populate({ path: "addons", model: addons }).skip(skip)
+    if (category === "best-sellers") {
+      data = search ? await Items.find({
+        $or: [
+          { sold: { $gte: 1 } },
+          { isBestSeller: true }
+        ],
+        ...search_query,
+      }).populate({ path: "addons", model: addons }).skip(skip) : await Items.find({
+        $or: [
+          { sold: { $gte: 1 } },
+          { isBestSeller: true }
+        ]
+      }).populate({ path: "addons", model: addons }).skip(skip)
     } else {
       data = search ? await Items.find(category === "all" ? { ...search_query } : { category: { $eq: category }, ...search_query }, { __v: 0, _id: 0 }).populate({ path: "addons", model: addons }).skip(skip) : await Items.find(category === "all" ? {} : { category: { $eq: category } }, { __v: 0, _id: 0 }).populate({ path: "addons", model: addons }).skip(skip)
     }

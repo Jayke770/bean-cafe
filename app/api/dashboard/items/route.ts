@@ -21,62 +21,67 @@ const ItemForm = z.object({
 });
 export const revalidate = 60;
 export async function POST(req: NextRequest) {
+  const session = await getServerSession(AuthOptions);
   const { formData } = req;
   try {
-    const form = await formData();
-    const data: z.infer<typeof ItemForm> = {
-      image: form.get("image") as any,
-      sizes: form.get("sizes") as any,
-      addons: form.get("addons") as any,
-      name: form.get("name") as any,
-      description: form.get("description") as string,
-      category: form.get("category") as any,
-      stocks: parseFloat((form.get("stocks") as any) ?? "0"),
-      price: parseFloat((form.get("price") as any) ?? "0"),
-    };
-    const parse_form = ItemForm.safeParse(data);
-    if (parse_form.success) {
-      const selected_addons: string[] = JSON.parse(parse_form.data.addons);
-      const addonsData = await addons.find({ id: { $in: selected_addons } }, { _id: 1 })
-      const sizes: any[] = JSON.parse(parse_form.data.sizes);
-      const ItemId = nanoid(12).toUpperCase();
-      const imageFile = parse_form.data.image as Blob | null;
-      if ((imageFile?.size ?? 0) > 0) {
-        //save file
-        const buffer_image = Buffer.from((await imageFile?.arrayBuffer()) as any);
-        const uploaded_image = await ImgbbUpload(buffer_image.toString("base64"))
-        await dbConnect();
-        await items.create({
-          item_id: ItemId,
-          addons: addonsData,
-          created: parseInt(moment().format("x")),
-          description: parse_form.data.description,
-          image: uploaded_image.url,
-          name: parse_form.data.name,
-          category: parse_form.data.category,
-          sizes: sizes,
-          price: parse_form.data.price,
-          stocks: parse_form.data.stocks,
-        });
-        return NextResponse.json({
-          status: true,
-          message: "Successfully Saved!",
-        });
+    if (session) {
+      const form = await formData();
+      const data: z.infer<typeof ItemForm> = {
+        image: form.get("image") as any,
+        sizes: form.get("sizes") as any,
+        addons: form.get("addons") as any,
+        name: form.get("name") as any,
+        description: form.get("description") as string,
+        category: form.get("category") as any,
+        stocks: parseFloat((form.get("stocks") as any) ?? "0"),
+        price: parseFloat((form.get("price") as any) ?? "0"),
+      };
+      const parse_form = ItemForm.safeParse(data);
+      if (parse_form.success) {
+        const selected_addons: string[] = JSON.parse(parse_form.data.addons);
+        const addonsData = await addons.find({ id: { $in: selected_addons } }, { _id: 1 })
+        const sizes: any[] = JSON.parse(parse_form.data.sizes);
+        const ItemId = nanoid(12).toUpperCase();
+        const imageFile = parse_form.data.image as Blob | null;
+        if ((imageFile?.size ?? 0) > 0) {
+          //save file
+          const buffer_image = Buffer.from((await imageFile?.arrayBuffer()) as any);
+          const uploaded_image = await ImgbbUpload(buffer_image.toString("base64"))
+          await dbConnect();
+          await items.create({
+            item_id: ItemId,
+            addons: addonsData,
+            created: parseInt(moment().format("x")),
+            description: parse_form.data.description,
+            image: uploaded_image.url,
+            name: parse_form.data.name,
+            category: parse_form.data.category,
+            sizes: sizes,
+            price: parse_form.data.price,
+            stocks: parse_form.data.stocks,
+          });
+          return NextResponse.json({
+            status: true,
+            message: "Successfully Saved!",
+          });
+        } else {
+          return NextResponse.json({
+            status: false,
+            message: "Invalid Item Image!",
+          });
+        }
       } else {
+        const error = fromZodError(parse_form.error, { prefix: null }).message;
         return NextResponse.json({
           status: false,
-          message: "Invalid Item Image!",
+          message: fromZodError(parse_form.error).message,
         });
       }
     } else {
-      const error = fromZodError(parse_form.error, { prefix: null }).message;
-      return NextResponse.json({
-        status: false,
-        message: fromZodError(parse_form.error).message,
-      });
+      return NextResponse.json(null, { status: 401 });
     }
   } catch (e: any) {
-    return NextResponse.json({ status: false, message: e.message });
+    return NextResponse.json(null, { status: 500 });
   }
 }
 export async function GET(req: NextRequest) {

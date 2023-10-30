@@ -12,6 +12,7 @@ const Items = new Schema<Items>({
   price: { type: Number },
   sold: { type: Number, default: 0 },
   stocks: { type: Number },
+  isBestSeller: { type: Boolean, default: false }
 }, { timestamps: true });
 if (models["items"] != null) {
   deleteModel("items");

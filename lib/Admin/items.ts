@@ -31,8 +31,9 @@ export function ItemInfo(id?: string): {
   item: Item;
   itemLoading: boolean;
   itemError: boolean;
+  mutate: () => void
 } {
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     id ? `/api/dashboard/items?id=${id}` : null,
     fetcher,
     {
@@ -45,6 +46,7 @@ export function ItemInfo(id?: string): {
     }
   );
   return {
+    mutate,
     item: data,
     itemLoading: isLoading,
     itemError: error,
