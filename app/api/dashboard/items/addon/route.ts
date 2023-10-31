@@ -70,7 +70,8 @@ export async function GET(req: NextRequest) {
       await dbConnect();
       const skip = parseInt(req.nextUrl.searchParams.get("skip") ?? "0");
       const type = req.nextUrl.searchParams.get("type");
-      const data = await Addons.find({ category: { $eq: type } }, { __v: 0 }).skip(skip).limit(20);
+      const search = req.nextUrl.searchParams.get("search")
+      const data = search ? await Addons.find({ category: { $eq: type }, name: { $regex: search, $options: "i" } }, { __v: 0 }).skip(skip) : await Addons.find({ category: { $eq: type } }, { __v: 0 }).skip(skip)
       return NextResponse.json(data);
     } else {
       return NextResponse.json({}, { status: 401 });

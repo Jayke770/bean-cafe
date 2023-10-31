@@ -24,24 +24,29 @@ export async function POST(req: NextRequest) {
                 const userData = await users.findOne({ _id: { $eq: session.user.id } })
                 if (userData) {
                     //check if the number is not in used 
-                    const email_or_phone_number_found = await users.findOne({
-                        $or: [
-                            { email: { $eq: parse_data.data.email } },
-                            { phone_number: { $eq: parse_data.data.phone_number } }
-                        ]
-                    })
-                    if (email_or_phone_number_found) {
-                        return NextResponse.json({
-                            ...res, status: false, message: "Invalid Email or Phone Number"
+                    if (parse_data.data.email || parse_data.data.phone_number) {
+                        const email_or_phone_number_found = await users.findOne({
+                            $or: [
+                                { email: { $eq: parse_data.data.email } },
+                                { phone_number: { $eq: parse_data.data.phone_number } }
+                            ]
                         })
+                        if (email_or_phone_number_found) {
+                            res = { ...res, status: false, message: "Invalid Email or Phone Number" }
+                        } else {
+                            userData.name = parse_data.data.name
+                            userData.address = parse_data.data.address
+                            userData.phone_number = parse_data.data.phone_number
+                            userData.email = parse_data.data.email
+                            res = { ...res, status: true, message: "Successfully Updated" }
+                        }
                     } else {
                         userData.name = parse_data.data.name
                         userData.address = parse_data.data.address
-                        userData.phone_number = parse_data.data.phone_number
-                        userData.email = parse_data.data.email
-                        await userData.save()
-                        return NextResponse.json({ ...res, status: true, message: "Successfully Updated" })
+                        res = { ...res, status: true, message: "Successfully Updated" }
                     }
+                    await userData.save()
+                    return NextResponse.json(res)
                 } else {
                     return NextResponse.json({ ...res, message: "User Not Found" })
                 }
