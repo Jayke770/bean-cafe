@@ -313,6 +313,7 @@ export default function ItemData() {
                         subnavbar={
                             <Searchbar
                                 disableButton
+                                onDisable={() => setOptions(old => ({ ...old, searchAddon: undefined }))}
                                 onInput={onSearchAddon} />
                         } />
                     <List margin="my-0">
