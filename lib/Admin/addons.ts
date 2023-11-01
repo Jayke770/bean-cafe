@@ -8,8 +8,9 @@ export default function AddOns(type?: string, search?: string, skip?: string | n
   addons: Addon[];
   addonsLoading: boolean;
   addonsError: boolean;
+  mutate: () => void
 } {
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     type ? `/api/dashboard/items/addon?type=${type}&skip=${skip ?? 0}${search ? `&search=${search}` : ''}` : null,
     fetcher,
     {
@@ -22,6 +23,7 @@ export default function AddOns(type?: string, search?: string, skip?: string | n
     }
   );
   return {
+    mutate,
     addons: data,
     addonsLoading: isLoading,
     addonsError: error,

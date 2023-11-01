@@ -79,6 +79,7 @@ const AddOnOption = z.object({
   created: z.number(),
 });
 const AddOnSchema = z.object({
+  _id: z.any(),
   name: z.string(),
   image: z.string(),
   price: z.number(),
@@ -102,6 +103,7 @@ const ItemSizes = z.object({
   type: CoffeesizeSchema,
 });
 const ItemsChema = z.object({
+  _id: z.any(),
   item_id: z.string(),
   name: z.string(),
   category: z.string(),

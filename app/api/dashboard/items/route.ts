@@ -22,10 +22,9 @@ const ItemForm = z.object({
 export const revalidate = 60;
 export async function POST(req: NextRequest) {
   const session = await getServerSession(AuthOptions);
-  const { formData } = req;
   try {
     if (session) {
-      const form = await formData();
+      const form = await req.formData();
       const data: z.infer<typeof ItemForm> = {
         image: form.get("image") as any,
         sizes: form.get("sizes") as any,

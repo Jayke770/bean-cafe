@@ -15,15 +15,16 @@ import Addons from '@lib/Admin/addons'
 type UpdateItemTab = "addon" | "sizes" | "others"
 interface Options {
     isUpdatingBestSeller?: boolean,
+    isUpdatingAddon?: boolean,
     openAddons?: boolean,
-    searchAddon?: string
+    searchAddon?: string,
 }
 export default function ItemData() {
     const params = useParams()
     const [options, setOptions] = useState<Options>()
     const [updateTab, setUpdateTab] = useLocalstorageState<UpdateItemTab>("update-item-tab", "addon")
     const { item, itemLoading, mutate: UpdateItem } = ItemInfo(params.id as string)
-    const { addons, addonsLoading } = Addons(item?.category, options?.searchAddon)
+    const { addons, addonsLoading, mutate: UpdateAddon } = Addons(item?.category, options?.searchAddon)
     const onSetUpdateTab = (tab: UpdateItemTab) => setUpdateTab(e => tab)
     const onSetBestSeller = () => {
         toast.promise(((): Promise<ApiResponse> => {
@@ -58,6 +59,38 @@ export default function ItemData() {
     }
     const onToggleAddons = () => setOptions(e => ({ ...e, openAddons: !e?.openAddons }))
     const onSearchAddon = useDebounce((e: any) => setOptions(old => ({ ...old, searchAddon: e.target.value })), 500)
+    const onUpdateAddon = (id: string) => {
+        toast.promise(((): Promise<ApiResponse> => {
+            setOptions(e => ({ ...e, isUpdatingAddon: true }))
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const req = await fetch("/api/dashboard/items/update-addon", {
+                        method: 'post',
+                        headers: {
+                            "content-type": "application/json"
+                        },
+                        body: JSON.stringify({ addon_id: id, item_id: item?.item_id })
+                    })
+                    if (req.ok) {
+                        const res: ApiResponse = await req.json()
+                        UpdateItem()
+                        UpdateAddon()
+                        setOptions(e => ({ ...e, isUpdatingAddon: false }))
+                        res?.status ? resolve(res) : reject(res.message)
+                    } else {
+                        throw new Error(`${req.status} ${req.statusText}`)
+                    }
+                } catch (e: any) {
+                    setOptions(e => ({ ...e, isUpdatingAddon: false }))
+                    reject(e.message)
+                }
+            })
+        })(), {
+            loading: 'Updating Addon...',
+            success: (data: ApiResponse) => `${data.message}`,
+            error: e => e,
+        })
+    }
     return (
         <>
             <div className="flex flex-col lg:flex-row transition-all gap-2 p-4 lg:h-[calc(100vh-64px)]">
@@ -283,7 +316,7 @@ export default function ItemData() {
                             <List margin="my-4">
                                 <ListItem
                                     media={
-                                        options?.isUpdatingBestSeller ? <Preloader className=" h-4 w-4" /> : (
+                                        options?.isUpdatingBestSeller ? <Preloader size=" h-4 w-4" /> : (
                                             <Checkbox
                                                 checked={item?.isBestSeller}
                                                 onChange={onSetBestSeller} />
@@ -309,15 +342,16 @@ export default function ItemData() {
                                     <HiMiniXMark className="h-6 w-6 text-brand-red " />
                                 </Icon>
                             </Link>
-                        }
-                        subnavbar={
+                        } />
+                    <List margin="my-0">
+                        <div className="px-5 my-1">
                             <Searchbar
                                 disableButton
                                 onDisable={() => setOptions(old => ({ ...old, searchAddon: undefined }))}
                                 onInput={onSearchAddon} />
-                        } />
-                    <List margin="my-0">
-                        {addonsLoading ? (
+                        </div>
+                        {/* Loading */}
+                        {addonsLoading && (
                             Array.from({ length: 5 }).map((_, i) => (
                                 <ListItem
                                     key={i}
@@ -331,28 +365,57 @@ export default function ItemData() {
                                         <Skeleton height={"2.5rem"} width={"2.5rem"} borderRadius={"25%"} />
                                     } />
                             ))
-                        ) : (
-                            addons?.map(addon => (
-                                <ListItem
-                                    key={addon.id}
-                                    title={addon?.name}
-                                    link
-                                    chevron={false}
-                                    after={
-                                        <Checkbox
-                                            readOnly
-                                            className=" pointer-events-none" />
-                                    }
-                                    media={
-                                        <Image
-                                            src={addon.image}
-                                            width={300}
-                                            height={300}
-                                            alt={addon.name}
-                                            className="h-10 w-10 aspect-square rounded-xl object-cover" />
-                                    } />
-                            ))
                         )}
+                        {/* Selected Addon */}
+                        <div className="px-3.5">
+                            <span>Selected Addon</span>
+                        </div>
+                        {item?.addons?.map(addon => (
+                            <ListItem
+                                key={addon.id}
+                                title={addon?.name}
+                                chevron={false}
+                                after={
+                                    options?.isUpdatingAddon ? <Preloader size="h-4 w-4" /> : (
+                                        <Checkbox
+                                            onChange={() => onUpdateAddon(addon.id)}
+                                            checked={!!item?.addons?.find(y => y.id === addon.id)} />
+                                    )
+                                }
+                                media={
+                                    <Image
+                                        src={addon.image}
+                                        width={300}
+                                        height={300}
+                                        alt={addon.name}
+                                        className="h-10 w-10 aspect-square rounded-xl object-cover" />
+                                } />
+                        ))}
+                        {/* Available addon */}
+                        <div className="px-3.5">
+                            <span>Available Addon</span>
+                        </div>
+                        {addons?.filter(x => !item?.addons?.find(y => y.id === x.id)).map(addon => (
+                            <ListItem
+                                key={addon.id}
+                                title={addon?.name}
+                                chevron={false}
+                                after={
+                                    options?.isUpdatingAddon ? <Preloader size="h-4 w-4" /> : (
+                                        <Checkbox
+                                            onChange={() => onUpdateAddon(addon.id)}
+                                            checked={!!item?.addons?.find(y => y.id === addon.id)} />
+                                    )
+                                }
+                                media={
+                                    <Image
+                                        src={addon.image}
+                                        width={300}
+                                        height={300}
+                                        alt={addon.name}
+                                        className="h-10 w-10 aspect-square rounded-xl object-cover" />
+                                } />
+                        ))}
                     </List>
                 </Page>
             </Popup>
