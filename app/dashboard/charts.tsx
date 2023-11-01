@@ -86,6 +86,7 @@ export default function Charts() {
         //     pdfDoc.addImage(this as any, "JPEG", 20, 100, pdfDoc.internal.pageSize.width - 40, 100)
         //     pdfDoc.save("test.pdf")
         // }
+        pdfDoc.autoPrint({ variant: "non-conform" })
         pdfDoc.save("orders.pdf")
     }
     const onDownloadUsersReport = async () => {
@@ -125,6 +126,7 @@ export default function Charts() {
         //     pdfDoc.addImage(this as any, "JPEG", 20, 100, pdfDoc.internal.pageSize.width - 40, 100)
         //     pdfDoc.save("test.pdf")
         // }
+        pdfDoc.autoPrint({ variant: "non-conform" })
         pdfDoc.save("users.pdf")
     }
     return (

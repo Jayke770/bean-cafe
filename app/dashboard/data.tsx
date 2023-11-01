@@ -29,8 +29,8 @@ export default function DashBoard({ session }: { session?: Session }) {
             </Panel>
             <div className="transition-all flex flex-col gap-4 mt-4 pb-10-safe">
                 <Cards />
-                <Orders />
                 <Charts />
+                <Orders />
             </div>
         </>
     )

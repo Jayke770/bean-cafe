@@ -31,7 +31,7 @@ export default function OrdersData({ session }: { session?: Session }) {
                             <CountUp
                                 className="font-bold text-xl"
                                 end={orderstats?.completed} />
-                            <span className="text-sm">Completed Orders</span>
+                            <span className="text-sm">Completed</span>
                         </div>
                         <BsCheckCircleFill className=" h-8 w-8 text-teal-500" />
                     </div>
@@ -44,7 +44,7 @@ export default function OrdersData({ session }: { session?: Session }) {
                             <CountUp
                                 className="font-bold text-xl"
                                 end={orderstats?.completed} />
-                            <span className="text-sm">Processing Orders</span>
+                            <span className="text-sm">Processing</span>
                         </div>
                         <PiCookingPotFill className=" h-8 w-8 text-yellow-500" />
                     </div>
@@ -57,7 +57,7 @@ export default function OrdersData({ session }: { session?: Session }) {
                             <CountUp
                                 className="font-bold text-xl"
                                 end={orderstats?.pending} />
-                            <span className="text-sm">Pending Orders</span>
+                            <span className="text-sm">Pending</span>
                         </div>
                         <MdOutlinePendingActions className=" h-8 w-8 text-amber-500" />
                     </div>
@@ -70,7 +70,7 @@ export default function OrdersData({ session }: { session?: Session }) {
                             <CountUp
                                 className="font-bold text-xl"
                                 end={orderstats?.cancelled} />
-                            <span className="text-sm">Cancelled Orders</span>
+                            <span className="text-sm">Cancelled</span>
                         </div>
                         <GiCancel className=" h-8 w-8 text-red-500" />
                     </div>
@@ -83,7 +83,7 @@ export default function OrdersData({ session }: { session?: Session }) {
                             <CountUp
                                 className="font-bold text-xl"
                                 end={orderstats?.denied} />
-                            <span className="text-sm">Denied Orders</span>
+                            <span className="text-sm">Denied</span>
                         </div>
                         <BsFillCartXFill className=" h-8 w-8 text-pink-500" />
                     </div>

@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
             await paypal.authenticate()
             const data = formData.safeParse(await req.json())
             if (data?.success) {
-                const orderData = await Orders.findOne({ orderId: { $eq: data.data.orderId } })
+                const orderData = await Orders.findOne({ orderId: { $eq: data.data.orderId } }).populate({ path: "items", model: Cart, populate: { path: "addon", model: Addons } })
                 const userData = await User.findOne({ _id: { $eq: orderData?.userID } })
                 if (orderData && userData) {
                     // if the order is pending only allow approve or disapprove
@@ -199,7 +199,7 @@ export async function POST(req: NextRequest) {
                         } else if (data.data.type === "delivered") {
                             orderData.status = "completed"
                             orderData.orderStatus.push("delivered")
-                            orderData.items.map(async item => {
+                            for (const item of orderData.items) {
                                 const ItemData = await items.findOne({ item_id: { $eq: item.item_id } })
                                 if (ItemData) {
                                     ItemData.sold += item.quantity
@@ -209,7 +209,7 @@ export async function POST(req: NextRequest) {
                                     }
                                     await ItemData.save()
                                 }
-                            })
+                            }
                             await orderData.save()
                             const notification = await orderNotification(orderData.orderId)
                             if (userData.email) {

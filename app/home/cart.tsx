@@ -116,6 +116,7 @@ export default function Cart({
     const onToggleDeliveryInfo = () => setTab(e => ({ ...e, isShowDeliveryInfo: !e?.isShowDeliveryInfo }))
     const onTogglePaymentMethod = () => setTab(e => ({ ...e, isShowPaymentMethod: !e?.isShowPaymentMethod }))
     const onSetDelivery = (type: any) => setselectedItemIncart(e => ({ ...e, delivery_service: type === e.delivery_service ? undefined : type }))
+    console.log(selectedItemIncart)
     return (
         <Actions
             opened={opened}
@@ -143,21 +144,22 @@ export default function Cart({
                                         {cartData?.map(item => (
                                             <ListItem
                                                 key={item.cart_id}
-                                                onClick={() => onSelectItemInCart(item)}
                                                 title={item.item_name}
                                                 chevron={false}
-                                                link
                                                 subtitle={
                                                     <div className='flex flex-col text-xs'>
                                                         {item?.size && <span>Size: {changeCase.sentenceCase(item.size)}</span>}
                                                         <span>{`Quantity: ${item.quantity}`}</span>
                                                     </div>
                                                 }
-                                                after={`₱${(item.price * item.quantity)} ${item?.addon ? `+ ${item?.addon?.price}` : ''}`}
-                                                footer={item?.addon && `Addon: ${item.addon.name}`}
+                                                after={`₱${(item.price * item.quantity)}`}
+                                                footer={item?.addon && `Addon: ${item.addon.name} - ₱ ${item.addon.price}`}
                                                 media={
                                                     <div className='flex items-center gap-4 pl-3'>
-                                                        <Checkbox checked={!!selectedItemIncart?.items?.find(x => x.cart_id === item.cart_id)} readOnly className=' pointer-events-none' />
+                                                        <Checkbox
+                                                            onChange={() => onSelectItemInCart(item)}
+                                                            checked={!!selectedItemIncart?.items?.find(x => x.cart_id === item.cart_id)}
+                                                            readOnly />
                                                         <Image
                                                             src={`/api/files?type=item&id=${item.item_id}`}
                                                             alt="test"
