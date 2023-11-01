@@ -343,13 +343,14 @@ export default function ItemData() {
                                 </Icon>
                             </Link>
                         } />
+                    <div className="flex relative px-4 my-1 w-full">
+                        <Searchbar
+                            disableButton
+                            onDisable={() => setOptions(old => ({ ...old, searchAddon: undefined }))}
+                            onInput={onSearchAddon} />
+                    </div>
                     <List margin="my-0">
-                        <div className="px-5 my-1">
-                            <Searchbar
-                                disableButton
-                                onDisable={() => setOptions(old => ({ ...old, searchAddon: undefined }))}
-                                onInput={onSearchAddon} />
-                        </div>
+
                         {/* Loading */}
                         {addonsLoading && (
                             Array.from({ length: 5 }).map((_, i) => (
