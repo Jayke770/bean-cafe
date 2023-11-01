@@ -14,6 +14,8 @@ import emoji from "react-easy-emoji";
 import toast from 'react-hot-toast';
 import { useState } from "react";
 import { RiLoader5Fill } from "react-icons/ri";
+import { FiExternalLink } from 'react-icons/fi'
+import NextLink from 'next/link'
 interface props {
     show?: boolean,
     order?: Orders,
@@ -129,7 +131,20 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
             className=' k-color-brand-primary w-full md:w-160'
             opened={show}
             onBackdropClick={onToggleOrderInfo}
-            title="Order Info"
+            title={
+                <div className="flex justify-between w-full">
+                    <span>Order Info</span>
+                    <NextLink href={`/dashboard/orders/${order?.orderId}`}>
+                        <Button
+                            className="!px-2"
+                            rounded
+                            small
+                            clear>
+                            <FiExternalLink className=" h-5 w-5" />
+                        </Button>
+                    </NextLink>
+                </div>
+            }
             buttons={order?.status === "pending" && (
                 <>
                     <DialogButton

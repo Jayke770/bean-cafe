@@ -7,7 +7,7 @@ const Orders = new Schema<ord>({
     created: { type: Number },
     payment_method: { type: String },
     status: { type: String },
-    userID: { type: String },
+    userID: { type: Schema.Types.ObjectId, ref: "users" },
     total_payment: { type: String },
     payment_id: { type: String },
     name: { type: String },

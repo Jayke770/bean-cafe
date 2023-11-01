@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import type { OrderStatus, Orders } from '@/types'
+import type { OrderStatus, Orders, UserModel } from '@/types'
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 interface Stats {
     completed: number,
@@ -44,5 +44,28 @@ export function Orders(status?: OrderStatus | "all"): {
         orders: data,
         ordersLoading: isLoading,
         ordersError: error,
+    };
+}
+interface OrderInfo extends Orders {
+    userID: UserModel
+}
+export function OrderData(id?: string): {
+    orderData?: OrderInfo;
+    orderDataLoading: boolean;
+    orderDataError: boolean;
+} {
+    const { data, error, isLoading } = useSWR(id ? `/api/dashboard/orders?type=orders&id=${id}` : null, fetcher, {
+        shouldRetryOnError: true,
+        revalidateOnMount: true,
+        revalidateOnFocus: true,
+        revalidateOnReconnect: true,
+        refreshWhenHidden: true,
+        refreshWhenOffline: true,
+        refreshInterval: 5000
+    });
+    return {
+        orderData: data,
+        orderDataLoading: isLoading,
+        orderDataError: error,
     };
 }

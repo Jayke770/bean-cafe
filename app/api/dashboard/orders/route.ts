@@ -5,6 +5,7 @@ import dbConnect from '@/models/dbConnect'
 import Orders from '@/models/orders'
 import Cart from '@/models/cart'
 import Addons from '@/models/addons'
+import users from '@models/users'
 import { ApiResponse, OrderStatus } from '@/types'
 import { z } from 'zod'
 import { fromZodError } from 'zod-validation-error'
@@ -27,14 +28,30 @@ const emailHandler = new Email("Bean Cafe")
 export async function GET(req: NextRequest) {
     const session = await getServerSession(AuthOptions)
     const type: "orders" | "stats" = req.nextUrl.searchParams.get("type") as any
+    const orderId = req.nextUrl.searchParams.get("id")
     const status: OrderStatus | undefined | null | "all" = req.nextUrl.searchParams.get("status") as any
     try {
         if (session) {
             await dbConnect()
             if (type === "orders") {
-                const data = await Orders.find(status === "all" ? {} : { status: { $eq: status } })
-                    .populate({ path: "items", model: Cart, populate: { path: "addon", model: Addons } })
-                    .sort({ _id: "desc" })
+                let data: any
+                if (orderId) {
+                    data = await Orders.findOne({ orderId: { $eq: orderId } })
+                        .populate({ path: "userID", model: users, select: "-orders -password -cart" })
+                        .populate({
+                            path: "items", model: Cart,
+                            populate: { path: "addon", model: Addons }
+                        })
+                        .sort({ _id: "desc" })
+                } else {
+                    data = await Orders.find(status === "all" ? {} : { status: { $eq: status } })
+                        .populate({ path: "userID", model: users, select: "-orders -password -cart" })
+                        .populate({
+                            path: "items", model: Cart,
+                            populate: { path: "addon", model: Addons }
+                        })
+                        .sort({ _id: "desc" })
+                }
                 return NextResponse.json(data)
             } else if (type === "stats") {
                 const orders = await Orders.find({}, { status: 1 })

@@ -124,11 +124,10 @@ export type ApiResponse = {
   redirect_url?: string
 };
 //orders 
-
 const DeliveryType = z.union([z.literal("pickup"), z.literal("deliver")])
 const OrdersSchema = z.object({
   orderId: z.string(),
-  userID: z.string(),
+  userID: z.any(),
   items: z.array(UserOrderItem),
   payment_method: z.union([
     z.literal("gcash"),
