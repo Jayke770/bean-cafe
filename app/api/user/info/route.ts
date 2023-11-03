@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
                     //check if the number is not in used 
                     if (parse_data.data.email || parse_data.data.phone_number) {
                         const email_or_phone_number_found = await users.findOne({
+                            _id: { $ne: session.user.id },
                             $or: [
                                 { email: { $eq: parse_data.data.email } },
                                 { phone_number: { $eq: parse_data.data.phone_number } }
