@@ -268,7 +268,8 @@ export default function Home() {
                 opened={viewCart}
                 onToggleCart={onToggleCart}
                 cartData={cartData}
-                session={session} />
+                session={session}
+                updateCartData={updateCartData} />
 
             {/* View Item */}
             <Actions

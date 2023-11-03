@@ -120,3 +120,31 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({}, { status: 500 });
     }
 }
+const DeleteCartItemSchema = z.object({
+    id: z.string().nonempty()
+})
+export async function DELETE(req: NextRequest) {
+    const session = await getServerSession(AuthOptions)
+    let res: ApiResponse = { status: false }
+    try {
+        if (session) {
+            await dbConnect()
+            const parse_data = DeleteCartItemSchema.safeParse(await req.json())
+            if (parse_data.success) {
+                const cartData = await Cart.findOne({ cart_id: { $eq: parse_data.data.id } })
+                if (cartData) {
+                    await cartData.deleteOne()
+                    return NextResponse.json({ ...res, status: true, message: "Cart Item Deleted" });
+                } else {
+                    return NextResponse.json({ ...res, message: "Cart Item Not Found" });
+                }
+            } else {
+                return NextResponse.json({ ...res, message: fromZodError(parse_data?.error, { prefix: null }).message });
+            }
+        } else {
+            return NextResponse.json({}, { status: 401 });
+        }
+    } catch (e) {
+        return NextResponse.json({}, { status: 500 });
+    }
+}
