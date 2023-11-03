@@ -11,13 +11,13 @@ import { type Session } from "next-auth";
 import * as changeCase from 'change-case'
 import { useRouter } from 'next/navigation'
 import Skeleton from 'react-loading-skeleton';
+import Link from 'next/link';
 export default function Orders({ session }: { session?: Session }) {
     const router = useRouter()
     const { addons } = Addons()
     const { items, itemsLoading } = Items()
     const [openNewItem, setOpenNewItem] = useState<boolean>()
     const onToggleNewItem = useCallback(() => setOpenNewItem(e => !e), [setOpenNewItem])
-    const onViewItem = (id: string) => router.push(`/dashboard/items/${id}`)
     return (
         <>
             <Fab
@@ -33,7 +33,7 @@ export default function Orders({ session }: { session?: Session }) {
                         <div className="flex justify-between w-full items-center">
                             <div className="flex flex-col">
                                 <span className="font-bold text-xl">{items?.length ?? 0}</span>
-                                <span className="text-sm">Total Items</span>
+                                <span className="text-sm">Items</span>
                             </div>
                             <BiFoodMenu className=" h-8 w-8" />
                         </div>
@@ -44,7 +44,7 @@ export default function Orders({ session }: { session?: Session }) {
                         <div className="flex justify-between w-full items-center">
                             <div className="flex flex-col">
                                 <span className="font-bold text-xl">{addons?.length ?? 0}</span>
-                                <span className="text-sm">Total Add Ons</span>
+                                <span className="text-sm">Add Ons</span>
                             </div>
                             <BiSolidMessageSquareAdd className=" h-8 w-8" />
                         </div>
@@ -142,8 +142,7 @@ export default function Orders({ session }: { session?: Session }) {
                                             key={item.item_id}
                                             style={{
                                                 cursor: "pointer"
-                                            }}
-                                            onClick={() => onViewItem(item.item_id)}>
+                                            }}>
                                             <TableCell className='w-20'>
                                                 <Image
                                                     src={item?.image}
@@ -157,6 +156,9 @@ export default function Orders({ session }: { session?: Session }) {
                                             <TableCell className=' whitespace-nowrap'>{changeCase.sentenceCase(item.category ?? "")}</TableCell>
                                             <TableCell>₱{item.price?.toLocaleString()}</TableCell>
                                             <TableCell>{item.sold}</TableCell>
+                                            <Link
+                                                className="absolute w-full h-full inset-0 opacity-0 "
+                                                href={`/dashboard/items/${item.item_id}`}>User Info</Link>
                                         </TableRow>
                                     ))}
                                 </TableBody>

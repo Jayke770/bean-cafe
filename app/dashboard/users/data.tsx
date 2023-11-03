@@ -4,11 +4,11 @@ import moment from "moment-timezone"
 import { type Session } from "next-auth";
 import UserInfo from '@admin_components/Users/info'
 import { useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 export default function UsersPage({ session }: { session?: Session }) {
+    const router = useRouter()
     const { users, usersLoading } = Users()
-    const [viewUser, setViewUser] = useState<string>()
-    const onViewUser = useCallback((id?: string) => setViewUser(e => id), [])
-    console.log(viewUser)
     return (
         <>
             <div className="p-4">
@@ -50,13 +50,15 @@ export default function UsersPage({ session }: { session?: Session }) {
                                     <tbody className="divide-y divide-brand-primary/20 dark:divide-brand-secondary">
                                         {users?.map(user => (
                                             <tr
-                                                onClick={() => onViewUser(user._id)}
                                                 key={user._id}
                                                 id={`user-${user._id}`}
                                                 className=" cursor-pointer relative">
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{user.name}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{user.email}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{moment(user.created).fromNow()}</td>
+                                                <Link
+                                                    className="absolute w-full h-full inset-0 opacity-0 "
+                                                    href={`/dashboard/users/${user._id}`}>User Info</Link>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -66,10 +68,6 @@ export default function UsersPage({ session }: { session?: Session }) {
                     </div>
                 </div>
             </div>
-            <UserInfo
-                opened={!!viewUser}
-                user_id={viewUser}
-                onToggleUserInfo={() => onViewUser()} />
         </>
     )
 }

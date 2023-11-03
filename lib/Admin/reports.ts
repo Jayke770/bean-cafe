@@ -9,6 +9,10 @@ interface OrdersReport {
     orders: number,
     date: string
 }
+interface RevenueReport {
+    date: string,
+    revenue: number
+}
 export function UsersReport(report_data: ReportData): {
     usersReport: UsersReport[];
     usersReportLoading: boolean;
@@ -45,5 +49,24 @@ export function OrdersReport(report_data: ReportData): {
         ordersReport: data,
         ordersReportLoading: isLoading,
         ordersReportError: error,
+    };
+}
+export function RevenueReport(report_data: ReportData): {
+    revenueReport: RevenueReport[];
+    revenueReportLoading: boolean;
+    revenueReportError: boolean;
+} {
+    const { data, error, isLoading } = useSWR(`/api/dashboard/reports?type=revenue&data=${report_data ?? "daily"}`, fetcher, {
+        shouldRetryOnError: true,
+        revalidateOnMount: true,
+        revalidateOnFocus: true,
+        revalidateOnReconnect: true,
+        refreshWhenHidden: true,
+        refreshWhenOffline: true,
+    });
+    return {
+        revenueReport: data,
+        revenueReportLoading: isLoading,
+        revenueReportError: error,
     };
 }

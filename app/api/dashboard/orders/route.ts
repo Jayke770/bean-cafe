@@ -37,11 +37,11 @@ export async function GET(req: NextRequest) {
                 let data: any
                 if (orderId) {
                     data = await Orders.findOne({ orderId: { $eq: orderId } })
-                        .populate({ path: "userID", model: users, select: "-orders -password -cart" })
                         .populate({
                             path: "items", model: Cart,
                             populate: { path: "addon", model: Addons }
                         })
+                        .populate({ path: "userID", model: users, select: "-orders -password -cart" })
                         .sort({ _id: "desc" })
                 } else {
                     data = await Orders.find(status === "all" ? {} : { status: { $eq: status } })

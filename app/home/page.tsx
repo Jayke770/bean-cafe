@@ -11,7 +11,8 @@ import {
     ListGroup,
     Radio,
     Badge,
-    Searchbar
+    Searchbar,
+    Preloader
 } from 'konsta/react'
 import { motion, Variants } from 'framer-motion'
 import { useLocalstorageState, useDebounce } from 'rooks'
@@ -53,7 +54,7 @@ interface ViewItem {
     isProcessing?: boolean
 }
 export default function Home() {
-    const { categories } = Categories()
+    const { categories, categoriesLoading } = Categories()
     const { cartData, mutate: updateCartData } = CartData()
     const { data: session, status } = useSession()
     const [tab, setTab] = useLocalstorageState<string>("home-tab", "All")
@@ -201,16 +202,18 @@ export default function Home() {
                     rounded>
                     Best Sellers
                 </Button>
-                {categories?.map(category => (
-                    <Button
-                        key={category.type}
-                        clear={category.type !== tab}
-                        onClick={() => onChangeTab(category.type)}
-                        className='!w-auto k-color-brand-green inline-flex ml-2 first:ml-0'
-                        rounded>
-                        {category.type}
-                    </Button>
-                ))}
+                {categoriesLoading ? <Preloader size='h-5 w-5' className=' self-center k-color-brand-green' /> : (
+                    categories?.map(category => (
+                        <Button
+                            key={category.type}
+                            clear={category.type !== tab}
+                            onClick={() => onChangeTab(category.type)}
+                            className='!w-auto k-color-brand-green inline-flex ml-2 first:ml-0'
+                            rounded>
+                            {category.type}
+                        </Button>
+                    ))
+                )}
             </section>
             {/* Search */}
             <div className=' transition-all md:fixed md:w-64 md:right-32 md:top-2 sticky top-1 k-color-brand-primary w-full px-8 -py-4 -mx-2'>

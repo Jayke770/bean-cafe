@@ -22,6 +22,7 @@ const UserOrderItem = z.object({
   item_name: z.string(),
   price: z.number(),
   created: z.number(),
+  addon: AddOnSchema
 });
 const PaymentMethod = z.union([
   z.literal("gcash"),

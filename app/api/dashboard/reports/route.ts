@@ -69,6 +69,41 @@ export async function GET(req: NextRequest) {
                     },
                     { $sort: { date: 1 } }
                 ])
+            } else if (reportType === "revenue") {
+                data = await Orders.aggregate([
+                    {
+                        $match: {
+                            status: "completed"
+                        }
+                    },
+                    {
+                        $addFields: {
+                            total_payment: { $toDouble: "$total_payment" }
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: {
+                                date: {
+                                    $dateToString: {
+                                        format: date_format,
+                                        date: "$createdAt"
+                                    }
+                                }
+                            },
+                            users: { $sum: 1 },
+                            total_payment: { $sum: "$total_payment" }
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 0,
+                            date: "$_id.date",
+                            revenue: "$total_payment"
+                        }
+                    },
+                    { $sort: { date: 1 } }
+                ])
             }
             return NextResponse.json(data)
         } else {

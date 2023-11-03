@@ -11,7 +11,7 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { Button, Card, List, ListItem, Popover, Radio } from 'konsta/react';
-import { OrdersReport, UsersReport } from '@lib/Admin/reports'
+import { OrdersReport, UsersReport, RevenueReport } from '@lib/Admin/reports'
 import { FaSort } from 'react-icons/fa';
 import { useLocalstorageState } from 'rooks';
 import type { ReportData } from '@/types'
@@ -35,18 +35,21 @@ ChartJS.register(
 interface ReportDataType {
     users: ReportData,
     orders: ReportData
+    revenue: ReportData
 }
 const pdfDoc = new jsPDF();
 const chartImage = new chartJsImage()
 export default function Charts() {
-    const [open, setOpen] = useState<"users" | "orders">()
-    const [reportType, setReportType] = useLocalstorageState<ReportDataType>("report-type", { orders: "daily", users: "daily" })
+    const [open, setOpen] = useState<"users" | "orders" | "revenue">()
+    const [reportType, setReportType] = useLocalstorageState<ReportDataType>("report-type", { orders: "daily", users: "daily", revenue: "daily" })
     const { ordersReport } = OrdersReport(reportType?.orders)
     const { usersReport } = UsersReport(reportType?.users)
+    const { revenueReport } = RevenueReport(reportType?.revenue)
     const onTogglePopOver = (data?: any) => setOpen(e => data)
     const onSetReportType = (data: ReportData) => {
         if (open === "orders") setReportType(e => ({ ...e, orders: data }))
         if (open === "users") setReportType(e => ({ ...e, users: data }))
+        if (open === "revenue") setReportType(e => ({ ...e, revenue: data }))
         onTogglePopOver()
     }
     const onDownloadOrdersReport = async () => {
@@ -129,6 +132,46 @@ export default function Charts() {
         pdfDoc.autoPrint({ variant: "non-conform" })
         pdfDoc.save("users.pdf")
     }
+    const onDownloadRevenueReport = async () => {
+        pdfDoc.setFontSize(20)
+        pdfDoc.text(`Bean Cafe ${changeCase.sentenceCase(reportType.revenue)} Revenue Reports`, 15, 10)
+        autoTable(pdfDoc, {
+            margin: {
+                top: 15
+            },
+            theme: "grid",
+            head: [["Date", "Revenue"]],
+            body: revenueReport.map(report => ([report.date, report.revenue]))
+        })
+        // chartImage.setConfig({
+        //     type: "bar",
+        //     data: {
+        //         labels: ordersReport?.map(x => {
+        //             let date = x.date
+        //             if (reportType?.orders === "daily") date = moment(x.date).format('MMM DD')
+        //             if (reportType?.orders === "monthly") date = moment(x.date).format('MMM')
+        //             if (reportType?.orders === "yearly") date = moment(x.date).format('YYYY')
+        //             return date
+        //         }),
+        //         datasets: [
+        //             {
+        //                 label: 'Orders',
+        //                 data: ordersReport?.map(x => (x.orders)),
+        //                 backgroundColor: "#cc9c68"
+        //             }
+        //         ]
+        //     }
+        // })
+        // const image = new Image()
+        // image.src = await chartImage.toDataUrl()
+        // image.crossOrigin = "";
+        // image.onload = function () {
+        //     pdfDoc.addImage(this as any, "JPEG", 20, 100, pdfDoc.internal.pageSize.width - 40, 100)
+        //     pdfDoc.save("test.pdf")
+        // }
+        pdfDoc.autoPrint({ variant: "non-conform" })
+        pdfDoc.save("revenue.pdf")
+    }
     return (
         <>
             <div className='flex flex-col px-4 gap-2'>
@@ -177,12 +220,7 @@ export default function Charts() {
                                         ]
                                     }} />
                             </div>
-                            <div className='grid grid-cols-2 gap-2 px-3 mt-2'>
-                                <Button
-                                    raised
-                                    tonal
-                                    radioGroup=''
-                                    small>View Full Reports</Button>
+                            <div className='flex gap-2 px-3 mt-2'>
                                 <Button
                                     onClick={onDownloadOrdersReport}
                                     small
@@ -235,13 +273,63 @@ export default function Charts() {
                                         ]
                                     }} />
                             </div>
-                            <div className='grid grid-cols-2 gap-2 px-3 mt-2'>
-                                <Button
-                                    tonal
-                                    raised
-                                    small>View Full Reports</Button>
+                            <div className='flex gap-2 px-3 mt-2'>
                                 <Button
                                     onClick={onDownloadUsersReport}
+                                    small
+                                    raised
+                                    tonal
+                                    className=' k-color-brand-green '>Download</Button>
+                            </div>
+                        </div>
+                    </Card>
+                    <Card
+                        margin='m-0'
+                        className=' k-color-brand-primary'>
+                        <div className='flex flex-col gap-2.5'>
+                            <div className='flex justify-between items-baseline'>
+                                <div className='text-lg font-medium'>Revenue</div>
+                                <Button
+                                    onClick={() => onTogglePopOver("revenue")}
+                                    small
+                                    clear
+                                    tonal
+                                    id='revenue-report'
+                                    className="!w-auto flex items-center gap-2">
+                                    {changeCase.sentenceCase(reportType?.revenue ?? "")}
+                                    <FaSort />
+                                </Button>
+                            </div>
+                            <div className='w-full h-full min-h-[12rem]'>
+                                <Bar
+                                    options={{
+                                        responsive: true,
+                                        plugins: {
+                                            legend: {
+                                                display: false
+                                            }
+                                        },
+                                    }}
+                                    data={{
+                                        labels: revenueReport?.map(x => {
+                                            let date = x.date
+                                            if (reportType?.revenue === "daily") date = moment(x.date).format('MMM DD')
+                                            if (reportType?.revenue === "monthly") date = moment(x.date).format('MMM')
+                                            if (reportType?.revenue === "yearly") date = moment(x.date).format('YYYY')
+                                            return date
+                                        }),
+                                        datasets: [
+                                            {
+                                                label: 'Revenue',
+                                                data: revenueReport?.map(x => (x.revenue)),
+                                                backgroundColor: "#cc9c68"
+                                            }
+                                        ]
+                                    }} />
+                            </div>
+                            <div className='flex gap-2 px-3 mt-2'>
+                                <Button
+                                    onClick={onDownloadRevenueReport}
                                     small
                                     raised
                                     tonal
@@ -277,6 +365,17 @@ export default function Charts() {
                                 title={changeCase.sentenceCase(type)}
                                 chevron={false}
                                 media={<Radio readOnly checked={reportType.users === type} className=' pointer-events-none' />} />
+                        ))
+                    )}
+                    {open === "revenue" && (
+                        REPORT_TYPES.map(type => (
+                            <ListItem
+                                key={`revenue-${type}`}
+                                onClick={() => onSetReportType(type as any)}
+                                link
+                                title={changeCase.sentenceCase(type)}
+                                chevron={false}
+                                media={<Radio readOnly checked={reportType.revenue === type} className=' pointer-events-none' />} />
                         ))
                     )}
                 </List>

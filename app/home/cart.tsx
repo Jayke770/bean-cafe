@@ -116,7 +116,6 @@ export default function Cart({
     const onToggleDeliveryInfo = () => setTab(e => ({ ...e, isShowDeliveryInfo: !e?.isShowDeliveryInfo }))
     const onTogglePaymentMethod = () => setTab(e => ({ ...e, isShowPaymentMethod: !e?.isShowPaymentMethod }))
     const onSetDelivery = (type: any) => setselectedItemIncart(e => ({ ...e, delivery_service: type === e.delivery_service ? undefined : type }))
-    console.log(selectedItemIncart)
     return (
         <Actions
             opened={opened}
