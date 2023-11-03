@@ -381,7 +381,7 @@ export default function Cart({
                                                 <BsPaypal className=' h-5 w-5' />
                                             </div>
                                         } />
-                                    <ListItem
+                                    {/* <ListItem
                                         link
                                         chevron={false}
                                         title="GCash"
@@ -397,7 +397,7 @@ export default function Cart({
                                                     alt="Gcash"
                                                     className='h-5 w-5 object-contain rounded' />
                                             </div>
-                                        } />
+                                        } /> */}
                                     <ListItem
                                         link
                                         className=' col-span-full'
