@@ -41,7 +41,7 @@ const pdfDoc = new jsPDF();
 const chartImage = new chartJsImage()
 export default function Charts() {
     const [open, setOpen] = useState<"users" | "orders" | "revenue">()
-    const [reportType, setReportType] = useLocalstorageState<ReportDataType>("report-type", { orders: "daily", users: "daily", revenue: "daily" })
+    const [reportType, setReportType] = useState<ReportDataType>({ orders: "daily", users: "daily", revenue: "daily" })
     const { ordersReport } = OrdersReport(reportType?.orders)
     const { usersReport } = UsersReport(reportType?.users)
     const { revenueReport } = RevenueReport(reportType?.revenue)
