@@ -1,5 +1,5 @@
 "use client"
-import Users from "@/lib/Admin/users"
+import { Users } from "@/lib/Admin/users"
 import moment from "moment-timezone"
 import { type Session } from "next-auth";
 import UserInfo from '@admin_components/Users/info'
