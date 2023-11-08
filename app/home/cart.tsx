@@ -59,7 +59,7 @@ export default function Cart({
     const router = useRouter()
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
     const [tab, setTab] = useState<Tab>()
-    const [selectedItemIncart, setselectedItemIncart] = useLocalstorageState<selectItemInCart>("check-out", { items: [] })
+    const [selectedItemIncart, setselectedItemIncart] = useState<selectItemInCart>({ items: [] })
     const [editCart, setEditCart] = useState<UserCart>()
     const onSelectItemInCart = (item: UserCart) => {
         const index = selectedItemIncart.items.findIndex(x => x.cart_id === item.cart_id)
