@@ -193,7 +193,7 @@ export default function Cart({
                                                             {item?.addon && <span>{`Addon: ${item.addon.name} - ₱ ${item.addon.price}`}</span>}
                                                         </div>
                                                     }
-                                                    footer={`Total: ₱${(item.price * item.quantity)}`}
+                                                    footer={`Total: ₱${(item.price * item.quantity) + (item?.addon?.price ?? 0)}`}
                                                     media={
                                                         <div className='flex items-center gap-4 pl-3'>
                                                             <Checkbox
