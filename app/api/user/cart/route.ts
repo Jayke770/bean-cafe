@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
                 });
             }
         } else {
-            return NextResponse.json({}, { status: 401 });
+            return NextResponse.json({ ...res, message: "Please Account First" });
         }
     } catch (e: any) {
         return NextResponse.json({}, { status: 500 });
