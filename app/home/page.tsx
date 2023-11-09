@@ -48,6 +48,7 @@ interface ViewItem {
     data?: Item,
     selected_size?: Item['sizes'][0],
     addon?: string,
+    addonPrice?: number,
     quantity: number,
     opened?: boolean,
     adding_to_cart?: boolean,
@@ -136,7 +137,7 @@ export default function Home() {
             })
         }
     }
-    const onSelectAddon = (id?: string) => setViewItem(e => ({ ...e, addon: e.addon === id ? undefined : id }))
+    const onSelectAddon = (id?: string, price?: number) => setViewItem(e => ({ ...e, addon: e.addon === id ? undefined : id, addonPrice: price ?? 0 }))
     const onSearchItem = useDebounce((e: React.ChangeEvent<HTMLInputElement>) => setSearchItem(() => e.target.value), 500)
     return (
         <motion.div
@@ -216,7 +217,7 @@ export default function Home() {
                 )}
             </section>
             {/* Search */}
-            <div className=' transition-all md:fixed md:w-64 md:right-32 md:top-2 sticky top-1 k-color-brand-primary w-full px-8 -py-4 -mx-2'>
+            <div className=' transition-all md:absolute md:w-64 md:right-32 md:top-2 sticky top-1 k-color-brand-primary w-full px-8 -py-4 -mx-2'>
                 <Searchbar
                     disableButton={true}
                     onChange={onSearchItem} />
@@ -287,7 +288,7 @@ export default function Home() {
                                 <span className='text-sm'>{viewItem?.data?.description}</span>
                             </div>
                             <div className='flex'>
-                                <span>₱{(viewItem?.data?.sizes.length ?? 0) > 0 ? (viewItem?.selected_size?.price ?? 0) * (viewItem?.quantity ?? 0) : (viewItem?.data?.price ?? 0) * viewItem?.quantity}</span>
+                                <span>₱{(viewItem?.data?.sizes.length ?? 0) > 0 ? ((viewItem?.selected_size?.price ?? 0) * (viewItem?.quantity ?? 0)) + (viewItem?.addonPrice ?? 0) : (viewItem?.data?.price ?? 0) * viewItem?.quantity}</span>
                             </div>
                         </div>
                         {(viewItem?.data?.sizes?.length ?? 0) > 0 && (
@@ -317,7 +318,7 @@ export default function Home() {
                                         {viewItem?.data?.addons?.map(addon => (
                                             <ListItem
                                                 key={addon.id}
-                                                onClick={() => onSelectAddon(addon.id)}
+                                                onClick={() => onSelectAddon(addon.id, addon?.price)}
                                                 title={changeCase.sentenceCase(addon.name)}
                                                 subtitle={`₱${addon?.price}`}
                                                 link

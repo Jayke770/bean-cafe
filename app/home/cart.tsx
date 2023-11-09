@@ -243,7 +243,9 @@ export default function Cart({
                                                 )}
                                                 <ListItem
                                                     link
-                                                    onClick={() => onSetDelivery("deliver")}
+                                                    touchRipple={(selectedItemIncart?.items?.length ?? 0) >= 3}
+                                                    className={(selectedItemIncart?.items?.length ?? 0) >= 3 ? '' : 'opacity-20 '}
+                                                    onClick={() => (selectedItemIncart?.items?.length ?? 0) >= 3 && onSetDelivery("deliver")}
                                                     chevron={false}
                                                     title="Deliver"
                                                     media={
@@ -252,6 +254,17 @@ export default function Cart({
                                                             readOnly
                                                             className=' pointer-events-none' />
                                                     } />
+                                            </div>
+                                            <div className='px-3.5 mt-2'>
+                                                {(selectedItemIncart?.items?.length ?? 0) < 3 ? (
+                                                    <div className='border text-center border-amber-600 text-amber-500 rounded p-3'>
+                                                        Cash on Delivery is only available for orders with three or more items.
+                                                    </div>
+                                                ) : (
+                                                    <div className='border text-center border-amber-600 text-amber-500 rounded p-3'>
+                                                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam numquam voluptate eaque cupiditate. Recusandae inventore praesentium aspernatur nam ipsam pariatur, alias error, at ex ab suscipit, tenetur nesciunt consequatur provident.
+                                                    </div>
+                                                )}
                                             </div>
                                         </ListGroup>
                                         <ListGroup className='mt-2'>
@@ -268,6 +281,7 @@ export default function Cart({
                                                         {selectedItemIncart?.payment_method && <Badge className=' k-color-brand-green '>{changeCase.sentenceCase(selectedItemIncart?.payment_method)}</Badge>}
                                                     </div>
                                                 } />
+
                                             <div className='grid grid-cols-2 gap-2'>
                                                 {selectedItemIncart?.delivery_service === "deliver" && (
                                                     <ListItem
@@ -400,7 +414,8 @@ export default function Cart({
                                         } /> */}
                                     <ListItem
                                         link
-                                        className=' col-span-full'
+                                        touchRipple={(selectedItemIncart?.items?.length ?? 0) >= 3}
+                                        className={` col-span-full ${(selectedItemIncart?.items?.length ?? 0) >= 3 ? '' : 'opacity-20 '}`}
                                         chevron={false}
                                         title="Cash on Delivery"
                                         onClick={() => onSelectPaymentMethod("cash_on_delivery")}

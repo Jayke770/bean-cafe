@@ -16,6 +16,7 @@ import { useState } from "react";
 import { RiLoader5Fill } from "react-icons/ri";
 import { FiExternalLink } from 'react-icons/fi'
 import NextLink from 'next/link'
+import Swal from "@lib/swal"
 interface props {
     show?: boolean,
     order?: Orders,
@@ -25,37 +26,63 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
     const [updateOrder, setUpdateOrder] = useState<string>()
     const onDisApproveOrder = () => {
-        toast.promise(((): Promise<ApiResponse> => {
-            setIsProcessing(true)
-            return new Promise(async (resolve, reject) => {
-                try {
-                    const req = await fetch("/api/dashboard/orders", {
-                        method: 'post',
-                        headers: {
-                            "content-type": "application/json"
-                        },
-                        body: JSON.stringify({ orderId: order?.orderId, type: "disapprove" })
-                    })
-                    if (req.ok) {
-                        const res: ApiResponse = await req.json()
-                        setIsProcessing(false)
-                        onToggleOrderInfo()
-                        res?.status ? resolve(res) : reject(res.message)
-                    } else {
-                        throw new Error(`${req.status} ${req.statusText}`)
+        Swal.fire({
+            icon: 'question',
+            titleText: "Disapprove Message",
+            input: "textarea",
+            inputPlaceholder: "Write message...",
+            confirmButtonText: "Disapprove",
+            showCancelButton: true
+        }).then(a => {
+            if (a.isConfirmed) {
+                setIsProcessing(true)
+                Swal.fire({
+                    icon: "info",
+                    toast: true,
+                    titleText: "Checking order...",
+                    showConfirmButton: false,
+                    willOpen: async () => {
+                        Swal.showLoading()
+                        try {
+                            const req = await fetch("/api/dashboard/orders", {
+                                method: 'post',
+                                headers: {
+                                    "content-type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                    orderId: order?.orderId,
+                                    type: "disapprove",
+                                    message: a?.value
+                                })
+                            })
+                            if (req?.ok) {
+                                const res: ApiResponse = await req.json()
+                                setIsProcessing(false)
+                                onToggleOrderInfo()
+                                Swal.fire({
+                                    icon: res?.status ? "success" : "info",
+                                    titleText: res?.message,
+                                    toast: true,
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                })
+                            } else {
+                                throw new Error(`${req?.status} ${req?.statusText}`)
+                            }
+                        } catch (e: any) {
+                            setIsProcessing(false)
+                            onToggleOrderInfo()
+                            Swal.fire({
+                                icon: "error",
+                                toast: true,
+                                titleText: e.message,
+                                showConfirmButton: false,
+                                timer: 3000
+                            })
+                        }
                     }
-                } catch (e: any) {
-                    setIsProcessing(false)
-                    reject(e.message)
-                }
-            })
-        })(), {
-            loading: 'Checking order...',
-            success: (data: ApiResponse) => {
-                setIsProcessing(false)
-                return `${data.message}`
-            },
-            error: e => e,
+                })
+            }
         })
     }
     const onApproveOrder = () => {
