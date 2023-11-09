@@ -2,7 +2,7 @@ import * as changeCase from 'change-case'
 import moment from 'moment-timezone';
 import Orders from '@/models/orders';
 import Cart from '@/models/cart'
-export const orderNotification = async (orderId: string): Promise<{ email: string, sms: string }> => {
+export const orderNotification = async (orderId: string, message?: string): Promise<{ email: string, sms: string }> => {
     let sms_message = "", email_message = ""
     const data = await Orders.findOne({ orderId: { $eq: orderId } }).populate({ path: "items", model: Cart })
     if (data) {
@@ -20,7 +20,9 @@ export const orderNotification = async (orderId: string): Promise<{ email: strin
         sms_message += `Total Payment: ₱${total_payment.toFixed(2)}\n`
         sms_message += `Date: ${moment(data.created).format('MMMM Do YYYY, h:mm:ss a')}\n\n`
         sms_message += `Check Order Here ${process.env.HOST}/order?id=${data.orderId}`
-
+        if (message) {
+            email_message += `Reason: ${message}`
+        }
 
         email_message += "<b>Order Summary</b></br>"
         data.items.map((item, i) => {
@@ -33,8 +35,9 @@ export const orderNotification = async (orderId: string): Promise<{ email: strin
         email_message += `<b>Delivery Fee :</b> ₱${parseFloat(data.total_payment).toFixed(2)}</br>`
         email_message += `<b>Total Payment:</b> ₱${total_payment.toFixed(2)}</br>`
         email_message += `<b>Date:</b> ${moment(data.created).format('MMMM Do YYYY, h:mm:ss a')}</br></br>`
-        email_message += `<a href='${process.env.HOST}/order?id=${data.orderId}'>Check Order</a>`
-
+        if (message) {
+            email_message += `Reason: ${message}`
+        }
     }
     return { email: email_message, sms: sms_message }
 }

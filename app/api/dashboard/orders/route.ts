@@ -83,6 +83,7 @@ const formData = z.object({
         z.literal("delivered"),
         z.literal("out_for_delivery")
     ]),
+    message: z.string().nullish(),
     orderId: z.string()
 })
 export async function POST(req: NextRequest) {
