@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
                             fee: DELIVERY_FEE,
                             deliveryType: parse_form.data.delivery_service
                         })
-                        userData.orders.push(new_orderData.id)
+                        userData.orders.push(new_orderData._id as any)
                         await userData.save()
                         //remove item in user cart 
                         await Users.updateOne({
