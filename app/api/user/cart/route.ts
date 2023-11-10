@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
                             size: { $eq: data.selected_size },
                             status: { $ne: "ordered" }
                         })
-                        console.log(itemInCart)
+                        console.log("item", itemInCart)
                         if (itemInCart) {
                             itemInCart.quantity += data.quantity
                             await itemInCart.save()
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
                                 price: price,
                                 status: "not-ordered"
                             })
-                            userData.cart.push(newCartItem.id)
+                            userData.cart.push(newCartItem._id as any)
                             await userData.save()
                             if (validatedData.data?.addon) {
                                 const addonData = await addons.findOne({ id: { $eq: data.addon } })
