@@ -1,6 +1,6 @@
 //@ts-nocheck
 import mongoose, { ConnectOptions } from "mongoose";
-const { MONGODB_URI, NODE_ENV, MONGODB_DB_NAME } = process.env;
+const { MONGODB_URI, NODE_ENV } = process.env;
 if (!MONGODB_URI) {
   throw new Error(
     "Please define the MONGODB_URI environment variable inside .env.local"
@@ -12,8 +12,7 @@ if (!cached) {
 }
 async function dbConnect() {
   const opts: ConnectOptions = {
-    bufferCommands: false,
-    dbName: MONGODB_DB_NAME
+    bufferCommands: false
   };
   if (NODE_ENV !== "production") {
     if (cached.conn) {
