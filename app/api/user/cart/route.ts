@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
                     if (itemData) {
                         //check if the item is already added to cart 
                         const itemInCart = await Cart.findOne({
+                            user_id: { $eq: session.user.id },
                             item_id: { $eq: data.item_id },
                             size: { $eq: data.selected_size },
                             status: { $ne: "ordered" }
