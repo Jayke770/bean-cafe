@@ -83,7 +83,7 @@ const formData = z.object({
         z.literal("delivered"),
         z.literal("out_for_delivery")
     ]),
-    message: z.string().nullish(),
+    message: z.string().optional(),
     orderId: z.string()
 })
 export async function POST(req: NextRequest) {
@@ -139,7 +139,7 @@ export async function POST(req: NextRequest) {
                                 orderData.orderStatus.push("refunded")
                             }
                             await orderData.save()
-                            const notification = await orderNotification(orderData.orderId)
+                            const notification = await orderNotification(orderData.orderId, data.data.message)
                             if (userData.email) {
                                 emailHandler.send({
                                     receiver: userData.email,
