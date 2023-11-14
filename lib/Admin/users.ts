@@ -23,8 +23,8 @@ export function Users(skip?: string | number): { users: User[]; usersLoading: bo
     usersError: error,
   };
 }
-export function UserInfo(id?: string): { userInfo: User; userInfoLoading: boolean; userInfoError: boolean; } {
-  const { data, error, isLoading } = useSWR(
+export function UserInfo(id?: string): { userInfo: User; userInfoLoading: boolean; userInfoError: boolean; mutate: () => void } {
+  const { data, error, isLoading, mutate } = useSWR(
     id ? `/api/dashboard/users?type=user-info&id=${id}` : null,
     fetcher,
     {
@@ -38,6 +38,7 @@ export function UserInfo(id?: string): { userInfo: User; userInfoLoading: boolea
     }
   );
   return {
+    mutate,
     userInfo: data,
     userInfoLoading: isLoading,
     userInfoError: error,

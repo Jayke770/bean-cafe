@@ -18,83 +18,107 @@ const schema = z.object({
     quantity: z.number().gt(0, "Invalid Quantity"),
     selected_size: z.string().optional()
 })
+const UpdateCartItemSchema = z.object({
+    id: z.string(),
+    quantity: z.number()
+})
 export async function POST(req: NextRequest) {
     const session = await getServerSession(AuthOptions)
     let res: ApiResponse = {}
     try {
         if (session) {
-            const item_data = await req.json()
-            const validatedData = schema.safeParse(item_data)
-            if (validatedData.success) {
-                const { data } = validatedData
-                await dbConnect()
-                const userData = await User.findOne({ _id: { $eq: session.user.id } })
-                if (userData) {
-                    const itemData = await Item.findOne({ item_id: { $eq: data.item_id } })
-                    if (itemData) {
-                        //check if the item is already added to cart 
-                        const itemInCart = await Cart.findOne({
-                            user_id: { $eq: session.user.id },
-                            item_id: { $eq: data.item_id },
-                            size: { $eq: data.selected_size },
-                            status: { $ne: "ordered" }
-                        })
-                        console.log("item", itemInCart)
-                        if (itemInCart) {
-                            itemInCart.quantity += data.quantity
-                            await itemInCart.save()
-                        } else {
-                            let price = 0
-                            if (itemData.sizes.length <= 0 && itemData.price) {
-                                price = itemData.price
-                            } else {
-                                const selected_size_data = itemData.sizes.find(x => x.type === data.selected_size)
-                                if (selected_size_data) {
-                                    price = selected_size_data?.price
-                                } else {
-                                    res.message = "Something went wrong!"
-                                    res.status = false
-                                    return NextResponse.json(res)
-                                }
-                            }
-                            const newCartItem = await Cart.create({
-                                user_id: userData._id,
-                                created: parseFloat(moment().format("x")),
-                                cart_id: nanoid().toUpperCase(),
-                                item_id: itemData.item_id,
-                                quantity: data.quantity,
-                                category: itemData.category,
-                                size: data.selected_size,
-                                item_name: itemData.name,
-                                price: price,
-                                status: "not-ordered"
-                            })
-                            userData.cart.push(newCartItem._id as any)
-                            await userData.save()
-                            if (validatedData.data?.addon) {
-                                const addonData = await addons.findOne({ id: { $eq: data.addon } })
-                                if (addonData) {
-                                    newCartItem.addon = addonData?._id as any
-                                    await newCartItem.save()
-                                }
-                            }
-                        }
-                        res.message = "Successfully added to cart!"
-                        res.status = true
-                        return NextResponse.json(res)
+            const data = await req.json()
+            const reqType = req.nextUrl.searchParams.get("type")
+            if (reqType === "update-cart-item") {
+                const validatedData = UpdateCartItemSchema.safeParse(data)
+                if (validatedData.success) {
+                    const cartData = await Cart.findOne({ cart_id: { $eq: validatedData.data.id } })
+                    if (cartData) {
+                        cartData.quantity = validatedData.data.quantity
+                        await cartData.save()
+                        return NextResponse.json({ ...res, status: true, message: "Item Successfully Updated" })
                     } else {
-                        res.message = "Item Not Found"
-                        res.status = false
-                        return NextResponse.json(res)
+                        return NextResponse.json({ ...res, status: false, message: "Item Not Found" })
                     }
                 } else {
-                    return NextResponse.json({}, { status: 401 });
+                    return NextResponse.json({
+                        status: false,
+                        message: fromZodError(validatedData?.error, { prefix: null }).message,
+                    });
                 }
             } else {
-                return NextResponse.json({
-                    status: false,
-                    message: fromZodError(validatedData?.error, { prefix: null }).message,
-                });
+                const validatedData = schema.safeParse(data)
+                if (validatedData.success) {
+                    const { data } = validatedData
+                    await dbConnect()
+                    const userData = await User.findOne({ _id: { $eq: session.user.id } })
+                    if (userData) {
+                        const itemData = await Item.findOne({ item_id: { $eq: data.item_id } })
+                        if (itemData) {
+                            //check if the item is already added to cart 
+                            const itemInCart = await Cart.findOne({
+                                user_id: { $eq: session.user.id },
+                                item_id: { $eq: data.item_id },
+                                size: { $eq: data.selected_size },
+                                status: { $ne: "ordered" }
+                            })
+                            console.log("item", itemInCart)
+                            if (itemInCart) {
+                                itemInCart.quantity += data.quantity
+                                await itemInCart.save()
+                            } else {
+                                let price = 0
+                                if (itemData.sizes.length <= 0 && itemData.price) {
+                                    price = itemData.price
+                                } else {
+                                    const selected_size_data = itemData.sizes.find(x => x.type === data.selected_size)
+                                    if (selected_size_data) {
+                                        price = selected_size_data?.price
+                                    } else {
+                                        res.message = "Something went wrong!"
+                                        res.status = false
+                                        return NextResponse.json(res)
+                                    }
+                                }
+                                const newCartItem = await Cart.create({
+                                    user_id: userData._id,
+                                    created: parseFloat(moment().format("x")),
+                                    cart_id: nanoid().toUpperCase(),
+                                    item_id: itemData.item_id,
+                                    quantity: data.quantity,
+                                    category: itemData.category,
+                                    size: data.selected_size,
+                                    item_name: itemData.name,
+                                    price: price,
+                                    status: "not-ordered"
+                                })
+                                userData.cart.push(newCartItem._id as any)
+                                await userData.save()
+                                if (validatedData.data?.addon) {
+                                    const addonData = await addons.findOne({ id: { $eq: data.addon } })
+                                    if (addonData) {
+                                        newCartItem.addon = addonData?._id as any
+                                        await newCartItem.save()
+                                    }
+                                }
+                            }
+                            res.message = "Successfully added to cart!"
+                            res.status = true
+                            return NextResponse.json(res)
+                        } else {
+                            res.message = "Item Not Found"
+                            res.status = false
+                            return NextResponse.json(res)
+                        }
+                    } else {
+                        return NextResponse.json({}, { status: 401 });
+                    }
+                } else {
+                    return NextResponse.json({
+                        status: false,
+                        message: fromZodError(validatedData?.error, { prefix: null }).message,
+                    });
+                }
             }
         } else {
             return NextResponse.json({ ...res, message: "Please Create Account First" });

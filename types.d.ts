@@ -3,7 +3,7 @@ import { ObjectId } from "mongoose";
 //user
 const UserStatus = z.union([z.literal("new"), z.literal("old")]);
 export type UserStatus = z.infer<typeof UserStatus>
-const UserRole = z.union([z.literal("admin"), z.literal("user"), z.literal("staff")]);
+export const UserRole = z.union([z.literal("admin"), z.literal("user"), z.literal("staff")]);
 const OrderStatusData = z.union([
   z.literal("pending"),
   z.literal("completed"),

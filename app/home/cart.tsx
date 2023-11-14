@@ -42,6 +42,9 @@ interface Tab {
     isShowDeliveryInfo?: boolean,
     isShowPaymentMethod?: boolean
 }
+interface UpdateCartItem {
+    quantity?: number
+}
 export default function Cart({
     opened,
     onToggleCart,
@@ -57,6 +60,7 @@ export default function Cart({
 }) {
     const { handleSubmit, register } = useForm()
     const router = useRouter()
+    const [updateCartItem, setUpdateCartItem] = useState<UpdateCartItem>()
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
     const [tab, setTab] = useState<Tab>()
     const [selectedItemIncart, setselectedItemIncart] = useState<selectItemInCart>({ items: [] })
@@ -121,7 +125,10 @@ export default function Cart({
     const onToggleDeliveryInfo = () => setTab(e => ({ ...e, isShowDeliveryInfo: !e?.isShowDeliveryInfo }))
     const onTogglePaymentMethod = () => setTab(e => ({ ...e, isShowPaymentMethod: !e?.isShowPaymentMethod }))
     const onSetDelivery = (type: any) => setselectedItemIncart(e => ({ ...e, delivery_service: type === e.delivery_service ? undefined : type }))
-    const onToggleOpenEditCart = (data?: UserCart) => setEditCart(e => data)
+    const onToggleOpenEditCart = (data?: UserCart) => {
+        setEditCart(e => data)
+        setUpdateCartItem(e => ({ ...e, quantity: data?.quantity }))
+    }
     const onDeleteCartItem = () => {
         if (!isProcessing) {
             setIsProcessing(true)
@@ -139,6 +146,7 @@ export default function Cart({
                             const res: ApiResponse = await req.json()
                             setIsProcessing(false)
                             updateCartData()
+                            setEditCart(undefined)
                             res?.status ? resolve(res) : reject(res.message)
                         } else {
                             throw new Error(`${req.status} ${req.statusText}`)
@@ -151,6 +159,40 @@ export default function Cart({
                 })
             })(), {
                 loading: 'Deleting Item...',
+                success: (data: ApiResponse) => `${data.message}`,
+                error: e => e,
+            })
+        }
+    }
+    const onUpdateCartItem = () => {
+        if (!isProcessing) {
+            setIsProcessing(true)
+            toast.promise(((): Promise<ApiResponse> => {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        const req = await fetch("/api/user/cart?type=update-cart-item", {
+                            method: 'post',
+                            headers: {
+                                "content-type": "application/json"
+                            },
+                            body: JSON.stringify({ id: editCart?.cart_id, quantity: updateCartItem?.quantity })
+                        })
+                        if (req.ok) {
+                            const res: ApiResponse = await req.json()
+                            setIsProcessing(false)
+                            updateCartData()
+                            res?.status ? resolve(res) : reject(res.message)
+                        } else {
+                            throw new Error(`${req.status} ${req.statusText}`)
+                        }
+                    } catch (e: any) {
+                        updateCartData()
+                        setIsProcessing(false)
+                        reject(e.message)
+                    }
+                })
+            })(), {
+                loading: 'Updating Item...',
                 success: (data: ApiResponse) => `${data.message}`,
                 error: e => e,
             })
@@ -214,7 +256,7 @@ export default function Cart({
                                                             onClick={() => onToggleOpenEditCart(item)}
                                                             component='div'
                                                             role='button'
-                                                            className='editcart !px-2'
+                                                            className={`editcart-${item.cart_id} !px-2`}
                                                             small
                                                             tonal
                                                             rounded>
@@ -445,18 +487,20 @@ export default function Cart({
             </Actions>
             <Popover
                 className=' k-color-brand-primary'
-                target={editCart ? ".editcart" : undefined}
+                target={editCart ? `.editcart-${editCart?.cart_id}` : undefined}
                 opened={!!editCart}
                 onBackdropClick={() => onToggleOpenEditCart(undefined)}>
                 <List margin='my-0'>
                     <ListItem
-                        title={`Quantity ${editCart?.quantity}`}
+                        title={`Quantity ${updateCartItem?.quantity}`}
                         after={
                             <Stepper
                                 small
                                 buttonsOnly
                                 outline
-                                raised />
+                                raised
+                                onPlus={() => setUpdateCartItem(e => ({ ...e, quantity: (e?.quantity ?? 0) + 1 }))}
+                                onMinus={() => setUpdateCartItem(e => ({ ...e, quantity: ((e?.quantity ?? 0) - 1) <= 1 ? 1 : ((e?.quantity ?? 0) - 1) }))} />
                         } />
                     <div className='flex py-4 px-3.5 gap-2'>
                         <Button
@@ -465,6 +509,7 @@ export default function Cart({
                             className=' k-color-brand-red'>Delete</Button>
                         <Button
                             small
+                            onClick={onUpdateCartItem}
                             className=' k-color-brand-primary'>Update</Button>
                     </div>
                 </List>
