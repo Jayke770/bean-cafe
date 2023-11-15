@@ -5,7 +5,7 @@ import Orders from '@/models/orders'
 import { AuthOptions } from '@services/NextAuth/AuthOptions'
 import { getServerSession } from 'next-auth'
 import { orderPaid } from '@lib/notification'
-import Twillio from '@/services/twilio'
+import Twillio from '@/services/sms'
 const twillio = new Twillio()
 const emailHandler = new Email("Bean Cafe")
 import Email from '@/services/email';

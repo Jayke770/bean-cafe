@@ -14,7 +14,7 @@ import * as changeCase from 'change-case'
 import Paypal from '@/services/paypal'
 import Email from '@/services/email'
 import User from '@models/users'
-import Twillio from '@/services/twilio'
+import Twillio from '@/services/sms'
 import { DELIVERY_FEE } from '@/lib/constants'
 import items from '@/models/items'
 const twillio = new Twillio()

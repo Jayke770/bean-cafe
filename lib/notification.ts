@@ -8,20 +8,20 @@ export const orderNotification = async (orderId: string, message?: string): Prom
     if (data) {
         const delivery_fee = parseFloat(data?.fee ?? "0")
         const total_payment = parseFloat(data.total_payment) + delivery_fee
-        sms_message += "Order Summary\n"
+        sms_message += "Order Summary%0a%0a"
         data.items.map((item, i) => {
-            sms_message += `${i + 1}: ${item.item_name} ${item?.size ? `(${changeCase.sentenceCase(item.size)})` : ''} - ₱${item.price} ${item.quantity}x\n`
+            sms_message += `${i + 1}: ${item.item_name} ${item?.size ? `(${changeCase.sentenceCase(item.size)})` : ''} - ₱${item.price} ${item.quantity}x%0a`
         })
-        sms_message += "\n\n"
-        sms_message += `ID: ${data.orderId}\n`
-        sms_message += `Payment Method: ${changeCase.sentenceCase(data.payment_method)}\n`
-        sms_message += `Status: ${changeCase.sentenceCase(data.status)}\n`
-        sms_message += `Delivery Fee: ₱${delivery_fee}\n`
-        sms_message += `Total Payment: ₱${total_payment.toFixed(2)}\n`
-        sms_message += `Date: ${moment(data.created).format('MMMM Do YYYY, h:mm:ss a')}\n\n`
+        sms_message += "%0a%0a"
+        sms_message += `ID: ${data.orderId}%0a`
+        sms_message += `Payment Method: ${changeCase.sentenceCase(data.payment_method)}%0a`
+        sms_message += `Status: ${changeCase.sentenceCase(data.status)}%0a`
+        sms_message += `Delivery Fee: ₱${delivery_fee}%0a`
+        sms_message += `Total Payment: ₱${total_payment.toFixed(2)}%0a`
+        sms_message += `Date: ${moment(data.created).format('MMMM Do YYYY, h:mm:ss a')}%0a%0a`
         sms_message += `Check Order Here ${process.env.HOST}/order?id=${data.orderId}`
         if (message) {
-            email_message += `Reason: ${message}`
+            email_message += `%0aReason: ${message}`
         }
 
         email_message += "<b>Order Summary</b></br>"

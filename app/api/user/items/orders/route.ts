@@ -7,7 +7,7 @@ import { ApiResponse, OrderStatus } from '@/types'
 import { z } from 'zod'
 import { fromZodError } from 'zod-validation-error';
 import addons from '@/models/addons';
-import Twillio from '@/services/twilio'
+import Twillio from '@/services/sms'
 import Paypal from '@/services/paypal'
 import cart from '@/models/cart';
 import { orderNotification } from '@/lib/notification';

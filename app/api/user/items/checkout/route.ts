@@ -15,7 +15,7 @@ import { nanoid } from 'nanoid';
 import { orderNotification } from '@lib/notification'
 import Paypal from "@/services/paypal";
 import { DELIVERY_FEE } from "@lib/constants"
-import Twillio from '@/services/twilio'
+import Twillio from '@/services/sms'
 const twillio = new Twillio()
 const { PAYPAL_SECRET, PAYPAL_CLIENT_ID, NEXTAUTH_URL, PAYPAL_MODE, PAYPAL_CURRENCY_CODE } = process.env
 const paypal = new Paypal({

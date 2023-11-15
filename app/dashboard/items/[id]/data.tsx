@@ -223,10 +223,10 @@ export default function ItemData() {
                                     strong
                                     onClick={() => onSetUpdateTab("sizes")}
                                     active={updateTab === "sizes"}>Sizes</SegmentedButton>
-                                {/* <SegmentedButton
+                                <SegmentedButton
                                     strong
                                     onClick={() => onSetUpdateTab("prizes")}
-                                    active={updateTab === "prizes"}>Prizes</SegmentedButton> */}
+                                    active={updateTab === "prizes"}>Prizes</SegmentedButton>
                                 <SegmentedButton
                                     strong
                                     onClick={() => onSetUpdateTab("others")}
