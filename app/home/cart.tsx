@@ -30,8 +30,6 @@ import type { Session } from 'next-auth';
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form';
 import { DELIVERY_FEE } from '@lib/constants'
-import PhoneInput from 'react-phone-number-input/input'
-import { formatPhoneNumber, formatPhoneNumberIntl } from 'react-phone-number-input'
 interface selectItemInCart {
     items: UserCart[],
     payment_method?: paymentMethod,

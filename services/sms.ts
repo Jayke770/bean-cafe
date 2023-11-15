@@ -10,6 +10,7 @@ export default class Twillio {
                 })
                     .then(response => response.json())
                     .then(result => {
+                        console.log(result)
                         resolve(result)
                     })
                     .catch(error => {
