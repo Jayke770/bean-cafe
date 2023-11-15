@@ -12,7 +12,10 @@ export default class Twillio {
                     .then(result => {
                         resolve(result)
                     })
-                    .catch(error => reject(error));
+                    .catch(error => {
+                        console.log(error)
+                        reject(error)
+                    });
             } catch (e) {
                 reject(e)
             }

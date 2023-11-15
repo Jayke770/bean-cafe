@@ -59,10 +59,9 @@ export default function Index() {
               className='h-full w-full'>
               <SwiperSlide>
                 <div className='flex flex-col gap-4 w-full h-full justify-center items-center'>
-                  <Image
-                    src={IntroImage}
+                  <img
+                    src={"/images/onboarding/intro.png"}
                     alt='intro'
-                    priority
                     className=' w-80 h-56 object-contain ' />
                   <div className='mt-5 flex flex-col gap-8'>
                     <h1 className='text-brand-secondary font-bold text-3xl px-8 text-center'>Coffee so good, your taste buds will love it</h1>
@@ -79,10 +78,9 @@ export default function Index() {
               </SwiperSlide>
               <SwiperSlide>
                 <div className='flex flex-col gap-4 w-full h-full justify-center items-center'>
-                  <Image
-                    src={CupsImage}
+                  <img
+                    src={"/images/onboarding/cups.png"}
                     alt='cups'
-                    priority
                     className=' w-80 h-56 object-contain' />
                   <div className='mt-5 flex flex-col gap-8'>
                     <h1 className='text-brand-secondary font-bold text-3xl px-8 text-center'>Discover our signature espresso</h1>
