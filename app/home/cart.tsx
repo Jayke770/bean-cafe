@@ -304,7 +304,7 @@ export default function Cart({
                                                     </div>
                                                 ) : (
                                                     <div className='border text-center border-amber-600 text-amber-500 rounded p-3'>
-                                                        Our Cash on Delivery is only available within Maranding; outside areas will be cancelled.
+                                                        Our Cash on Delivery is only available within Maranding; outside areas will be cancelled. 
                                                     </div>
                                                 )}
                                             </div>
