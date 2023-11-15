@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
                         await orderData.save()
                         const notification = await orderPaid(orderData.orderId)
                         if (session?.user?.email) emailHandler.send({ receiver: session?.user?.email, subject: `Order ID ${orderData.orderId}`, body: notification.email })
-                        if (session?.user?.phone_number) await twillio.sendMessage({ message: notification.sms, number: session?.user?.phone_number })
+                        if (orderData?.phone_number) await twillio.sendMessage({ message: notification.sms, number: orderData?.phone_number })
                         return NextResponse.redirect(`${NEXTAUTH_URL}/payment/success${params}`)
                     } else if (data?.status === "COMPLETED") {
                         return NextResponse.redirect(`${NEXTAUTH_URL}/payment/success${params}`)

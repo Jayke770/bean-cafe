@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
                             orderStatus: ["order_placed", "waiting_payment"],
                             message: parse_form.data.message,
                             address: parse_form.data.address,
-                            phone_number: parse_form.data.phone_number,
+                            phone_number: parse_form.data.phone_number ?? userData?.phone_number,
                             fee: DELIVERY_FEE,
                             deliveryType: parse_form.data.delivery_service
                         })
@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
                         //send notification
                         const notification = await orderNotification(new_orderData.orderId)
                         if (userData.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${new_orderData?.orderId}`, body: notification.email })
-                        if (userData?.phone_number || new_orderData?.phone_number) await twillio.sendMessage({ message: notification.sms, number: userData.phone_number ?? new_orderData?.phone_number })
+                        if (new_orderData?.phone_number) await twillio.sendMessage({ message: notification.sms, number: new_orderData?.phone_number })
                         res = {
                             status: true,
                             message: "Order Success"
@@ -208,7 +208,7 @@ export async function POST(req: NextRequest) {
                                 orderStatus: ["order_placed", "waiting_payment"],
                                 message: parse_form.data.message,
                                 address: parse_form.data.address,
-                                phone_number: parse_form.data.phone_number,
+                                phone_number: parse_form.data.phone_number ?? userData?.phone_number,
                                 fee: DELIVERY_FEE,
                                 deliveryType: parse_form.data.delivery_service
                             })
@@ -226,7 +226,7 @@ export async function POST(req: NextRequest) {
                             //send notification
                             const notification = await orderNotification(new_orderData.orderId)
                             if (userData?.email) emailHandler.send({ receiver: userData.email, subject: `Order ID ${new_orderData?.orderId}`, body: notification.email })
-                            if (userData?.phone_number || new_orderData?.phone_number) await twillio.sendMessage({ message: notification.sms, number: userData.phone_number ?? new_orderData?.phone_number })
+                            if (new_orderData?.phone_number) await twillio.sendMessage({ message: notification.sms, number: new_orderData?.phone_number })
                             res = {
                                 status: true,
                                 message: "Order Success",
