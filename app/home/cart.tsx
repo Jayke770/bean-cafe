@@ -87,7 +87,6 @@ export default function Cart({
                         formData.append("items", JSON.stringify(selectedItemIncart.items))
                         formData.append("payment_method", selectedItemIncart?.payment_method)
                         formData.append("delivery_service", selectedItemIncart?.delivery_service ?? "")
-                        formData.append("phone_number", selectedItemIncart?.phone_number ?? "")
                         const req = await fetch("/api/user/items/checkout", {
                             method: 'post',
                             body: formData
@@ -304,7 +303,7 @@ export default function Cart({
                                                     </div>
                                                 ) : (
                                                     <div className='border text-center border-amber-600 text-amber-500 rounded p-3'>
-                                                        Our Cash on Delivery is only available within Maranding; outside areas will be cancelled. 
+                                                        Our Cash on Delivery is only available within Maranding; outside areas will be cancelled.
                                                     </div>
                                                 )}
                                             </div>
@@ -385,13 +384,10 @@ export default function Cart({
                                 </div>
                                 <div className='flex flex-col gap-2'>
                                     <label htmlFor="phone_number" className="block text-sm font-medium">Phone Number</label>
-                                    <PhoneInput
-                                        value={formatPhoneNumberIntl(selectedItemIncart?.phone_number as any)}
+                                    <input
+                                        {...register("phone_number")}
                                         className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
-                                        placeholder="Phone Number"
-                                        defaultCountry='PH'
-                                        international={true}
-                                        onChange={data => setselectedItemIncart(e => ({ ...e, phone_number: data?.toString() }))} />
+                                        placeholder="Phone Number" />
                                 </div>
                                 <div className='flex flex-col gap-2'>
                                     <label htmlFor="message" className="block text-sm font-medium">Message <span className='text-xs opacity-50'>(Optional)</span></label>
