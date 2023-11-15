@@ -45,9 +45,9 @@ export const orderPaid = async (orderId: string): Promise<{ email: string, sms: 
     let sms_message = "", email_message = ""
     const data = await Orders.findOne({ orderId: { $eq: orderId } }).populate({ path: "items", model: Cart })
     if (data) {
-        sms_message += "Order Payment\n\n"
-        sms_message += `ID: ${data?.orderId}\n`
-        sms_message += `Payment Method: ${changeCase.sentenceCase(data.payment_method)}\n`
+        sms_message += "Order Payment%0a%0a"
+        sms_message += `ID: ${data?.orderId}%0a`
+        sms_message += `Payment Method: ${changeCase.sentenceCase(data.payment_method)}%0a`
         sms_message += `Total Payment: ₱${data.total_payment}`
 
         email_message += "<b>Order Payment</b></br>"
