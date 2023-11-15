@@ -10,7 +10,7 @@ const paypal = new Paypal({
     mode: "sandbox"
 })
 export async function GET() {
-    const data = await twillio.sendMessage({ message: "tesfsat\nfsfag", number: "+639051697081" })
-    console.log(data)
+    // const data = await twillio.sendMessage({ message: "tesfsat\nfsfag", number: "+639051697081" })
+    // console.log(data)
     return NextResponse.json({})
 }
