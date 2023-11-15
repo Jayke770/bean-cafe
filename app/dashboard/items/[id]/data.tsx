@@ -1,5 +1,5 @@
 "use client"
-import { Badge, Card, Checkbox, List, ListItem, Segmented, SegmentedButton, Icon, Preloader, Button, Popup, Page, Navbar, Link, Searchbar } from "konsta/react";
+import { Badge, Card, Checkbox, List, ListItem, Segmented, SegmentedButton, Icon, Preloader, Button, Popup, Page, Navbar, Link, Searchbar, ListInput } from "konsta/react";
 import { motion } from 'framer-motion'
 import { ItemInfo } from '@lib/Admin/items'
 import { useParams } from 'next/navigation'
@@ -12,7 +12,7 @@ import toast from 'react-hot-toast'
 import type { ApiResponse } from '@/types'
 import { HiMiniXMark } from 'react-icons/hi2'
 import Addons from '@lib/Admin/addons'
-type UpdateItemTab = "addon" | "sizes" | "others"
+type UpdateItemTab = "addon" | "sizes" | "others" | "prizes"
 interface Options {
     isUpdatingBestSeller?: boolean,
     isUpdatingAddon?: boolean,
@@ -223,6 +223,10 @@ export default function ItemData() {
                                     strong
                                     onClick={() => onSetUpdateTab("sizes")}
                                     active={updateTab === "sizes"}>Sizes</SegmentedButton>
+                                {/* <SegmentedButton
+                                    strong
+                                    onClick={() => onSetUpdateTab("prizes")}
+                                    active={updateTab === "prizes"}>Prizes</SegmentedButton> */}
                                 <SegmentedButton
                                     strong
                                     onClick={() => onSetUpdateTab("others")}
@@ -290,23 +294,11 @@ export default function ItemData() {
                                     </>
                                 ) : (
                                     <>
-                                        <div className="px-3.5 font-bold text-lg">Selected Sizes</div>
                                         {item?.sizes?.map(size => (
                                             <ListItem
                                                 key={size.id}
                                                 title={changeCase.sentenceCase(size.type)}
-                                                subtitle={`₱ ${size.price}`}
-                                                after={
-                                                    <div className="flex justify-between">
-                                                        <Button
-                                                            small
-                                                            rounded
-                                                            clear
-                                                            className="k-color-brand-red !px-2">
-                                                            <HiMiniXMark className=" h-6 w-6" />
-                                                        </Button>
-                                                    </div>
-                                                } />
+                                                subtitle={`₱ ${size.price}`} />
                                         ))}
                                     </>
                                 )}
@@ -324,6 +316,27 @@ export default function ItemData() {
                                     }
                                     title="Best Seller"
                                     footer="Add Item to Best Seller Category" />
+                            </List>
+                        )}
+                        {updateTab === "prizes" && (
+                            <List margin="my-0">
+                                {item?.sizes?.length <= 0 ? (
+                                    <ListItem>
+                                    </ListItem>
+                                ) : (
+                                    <>
+                                        {item?.sizes?.map(size => (
+                                            <ListInput
+                                                key={size.id}
+                                                label={changeCase.sentenceCase(size.type)}
+                                                floatingLabel
+                                                outline />
+                                        ))}
+                                    </>
+                                )}
+                                <div className="px-3 mt-2">
+                                    <Button>Update Prices</Button>
+                                </div>
                             </List>
                         )}
                     </Card>

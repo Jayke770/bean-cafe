@@ -9,16 +9,7 @@ const paypal = new Paypal({
     mode: "sandbox"
 })
 export async function GET() {
-    // const data = await twillio.sendMessage({ message: "nodejs", number: "+639051697081" })
+    // const data = await twillio.sendMessage({ message: "Hi by", number: "+639935812298" })
     // console.log(data)
-    // await paypal.authenticate()
-    // const id = '7KL33539AA8766240'
-    // const captured_payment = await paypal.paymentDetails(id)
-    // captured_payment?.purchase_units?.map(unit => {
-    //     unit.payments.captures.map(async cp => {
-    //         const h = await paypal.refund(cp.id)
-    //         console.log(h)
-    //     })
-    // })
-    return NextResponse.json({})
+    // return NextResponse.json({})
 }

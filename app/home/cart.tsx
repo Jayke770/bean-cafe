@@ -304,7 +304,7 @@ export default function Cart({
                                                     </div>
                                                 ) : (
                                                     <div className='border text-center border-amber-600 text-amber-500 rounded p-3'>
-                                                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam numquam voluptate eaque cupiditate. Recusandae inventore praesentium aspernatur nam ipsam pariatur, alias error, at ex ab suscipit, tenetur nesciunt consequatur provident.
+                                                        Our Cash on Delivery is only available within Maranding; outside areas will be cancelled.
                                                     </div>
                                                 )}
                                             </div>
