@@ -296,7 +296,7 @@ export default function Cart({
                                             </div>
                                             <div className='px-3.5 mt-2'>
                                                 <div className='border text-center border-amber-600 text-amber-500 rounded p-3'>
-                                                    Cash on Delivery is only available within Maranding only on orders with a total value of ₱200 or more.
+                                                    Cash on Delivery is only available within Maranding on orders with a total value of ₱200 or more.
                                                 </div>
                                             </div>
                                         </ListGroup>
