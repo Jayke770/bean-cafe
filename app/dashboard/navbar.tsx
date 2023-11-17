@@ -167,7 +167,7 @@ export default function DashboardNavbar() {
                 </Page>
             </Panel>
             <Dialog
-                opened
+                opened={settings?.opened}
                 onBackdropClick={onToggleSettings}
                 title={
                     <div className="flex justify-between">
