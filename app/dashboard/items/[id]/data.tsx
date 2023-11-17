@@ -1,5 +1,5 @@
 "use client"
-import { Badge, Card, Checkbox, List, ListItem, Segmented, SegmentedButton, Icon, Preloader, Button, Popup, Page, Navbar, Link, Searchbar, ListInput } from "konsta/react";
+import { Badge, Card, Checkbox, List, ListItem, Segmented, SegmentedButton, Icon, Preloader, Button, Popup, Page, Navbar, Link, Searchbar, ListInput, Dialog, DialogButton } from "konsta/react";
 import { motion } from 'framer-motion'
 import { ItemInfo } from '@lib/Admin/items'
 import { useParams } from 'next/navigation'
@@ -9,7 +9,7 @@ import Skeleton from 'react-loading-skeleton';
 import { useLocalstorageState, useDebounce } from "rooks";
 import { useState } from "react";
 import toast from 'react-hot-toast'
-import type { ApiResponse } from '@/types'
+import type { ApiResponse, IItemSizes } from '@/types'
 import { HiMiniXMark } from 'react-icons/hi2'
 import Addons from '@lib/Admin/addons'
 type UpdateItemTab = "addon" | "sizes" | "others" | "prizes"
@@ -18,6 +18,8 @@ interface Options {
     isUpdatingAddon?: boolean,
     openAddons?: boolean,
     searchAddon?: string,
+    editPrice?: string,
+    newPrice?: number
 }
 export default function ItemData() {
     const params = useParams()
@@ -65,6 +67,38 @@ export default function ItemData() {
             return new Promise(async (resolve, reject) => {
                 try {
                     const req = await fetch("/api/dashboard/items/update-addon", {
+                        method: 'post',
+                        headers: {
+                            "content-type": "application/json"
+                        },
+                        body: JSON.stringify({ addon_id: id, item_id: item?.item_id })
+                    })
+                    if (req.ok) {
+                        const res: ApiResponse = await req.json()
+                        UpdateItem()
+                        UpdateAddon()
+                        setOptions(e => ({ ...e, isUpdatingAddon: false }))
+                        res?.status ? resolve(res) : reject(res.message)
+                    } else {
+                        throw new Error(`${req.status} ${req.statusText}`)
+                    }
+                } catch (e: any) {
+                    setOptions(e => ({ ...e, isUpdatingAddon: false }))
+                    reject(e.message)
+                }
+            })
+        })(), {
+            loading: 'Updating Addon...',
+            success: (data: ApiResponse) => `${data.message}`,
+            error: e => e,
+        })
+    }
+    const onToggleEditPrice = (size?: string) => setOptions(e => ({ ...e, editPrice: size }))
+    const onUpdateSizePrice = (id: string) => {
+        toast.promise(((): Promise<ApiResponse> => {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const req = await fetch("/api/dashboard/items/update-size", {
                         method: 'post',
                         headers: {
                             "content-type": "application/json"
@@ -223,10 +257,10 @@ export default function ItemData() {
                                     strong
                                     onClick={() => onSetUpdateTab("sizes")}
                                     active={updateTab === "sizes"}>Sizes</SegmentedButton>
-                                <SegmentedButton
+                                {/* <SegmentedButton
                                     strong
                                     onClick={() => onSetUpdateTab("prizes")}
-                                    active={updateTab === "prizes"}>Prizes</SegmentedButton>
+                                    active={updateTab === "prizes"}>Prizes</SegmentedButton> */}
                                 <SegmentedButton
                                     strong
                                     onClick={() => onSetUpdateTab("others")}
@@ -319,24 +353,23 @@ export default function ItemData() {
                             </List>
                         )}
                         {updateTab === "prizes" && (
-                            <List margin="my-0">
+                            <List margin="my-0" className=" mt-2">
                                 {item?.sizes?.length <= 0 ? (
                                     <ListItem>
+
                                     </ListItem>
                                 ) : (
                                     <>
                                         {item?.sizes?.map(size => (
-                                            <ListInput
+                                            <ListItem
+                                                link
                                                 key={size.id}
-                                                label={changeCase.sentenceCase(size.type)}
-                                                floatingLabel
-                                                outline />
+                                                label
+                                                title={`${changeCase.sentenceCase(size.type)} - ₱${size?.price}`}
+                                                onClick={() => onToggleEditPrice(size?.id)} />
                                         ))}
                                     </>
                                 )}
-                                <div className="px-3 mt-2">
-                                    <Button>Update Prices</Button>
-                                </div>
                             </List>
                         )}
                     </Card>
@@ -433,6 +466,29 @@ export default function ItemData() {
                     </List>
                 </Page>
             </Popup>
+            {/* edit price */}
+            <Dialog
+                opened={!!options?.editPrice}
+                className=" k-color-brand-primary"
+                onBackdropClick={() => onToggleEditPrice(undefined)}
+                title="Update Price"
+                content={
+                    <>
+                        <input
+                            type="number"
+                            placeholder="Price"
+                            inputMode="numeric"
+                            className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary" />
+                    </>
+                }
+                buttons={
+                    <>
+                        <DialogButton
+                            onClick={() => onToggleEditPrice(undefined)}
+                            className=" k-color-brand-red">Cancel</DialogButton>
+                        <DialogButton className=" k-color-brand-primary">Update</DialogButton>
+                    </>
+                } />
         </>
     )
 }

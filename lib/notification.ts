@@ -22,7 +22,6 @@ export const orderNotification = async (orderId: string, message?: string): Prom
         sms_message += `Delivery Fee: ₱${delivery_fee}%0a`
         sms_message += `Total Payment: ₱${total_payment.toFixed(2)}%0a`
         sms_message += `Date: ${moment(data.created).format('MMMM Do YYYY, h:mm:ss a')}%0a%0a`
-        sms_message += `Check Order Here ${process.env.HOST}/order?id=${data.orderId}`
         if (message) {
             sms_message += `%0aReason: ${message}`
         }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import Paypal from '@/services/paypal'
 import Twillio from '@/services/sms'
+import { parsePhoneNumber } from 'libphonenumber-js'
 const twillio = new Twillio()
 const { PAYPAL_SECRET, PAYPAL_CLIENT_ID, NEXTAUTH_URL } = process.env
 
@@ -10,6 +11,7 @@ const paypal = new Paypal({
     mode: "sandbox"
 })
 export async function GET() {
+    console.log(parsePhoneNumber("090516970810", "PH").number)
     // const data = await twillio.sendMessage({ message: "tesfsat\nfsfag", number: "09485740296" })
     // console.log(data)   
     return NextResponse.json({})

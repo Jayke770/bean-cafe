@@ -103,6 +103,7 @@ const ItemSizes = z.object({
   price: z.number(),
   type: CoffeesizeSchema,
 });
+export type IItemSizes = z.infer<typeof ItemSizes>
 const ItemsChema = z.object({
   _id: z.any(),
   item_id: z.string(),
