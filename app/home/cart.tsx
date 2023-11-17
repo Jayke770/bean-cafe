@@ -282,9 +282,9 @@ export default function Cart({
                                                 )}
                                                 <ListItem
                                                     link
-                                                    touchRipple={(selectedItemIncart?.items?.length ?? 0) >= 3}
-                                                    className={(selectedItemIncart?.items?.length ?? 0) >= 3 ? '' : 'opacity-20 '}
-                                                    onClick={() => (selectedItemIncart?.items?.length ?? 0) >= 3 && onSetDelivery("deliver")}
+                                                    touchRipple={(selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0)) <= 200}
+                                                    className={(selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0)) <= 200 ? '' : 'opacity-20 '}
+                                                    onClick={() => (selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0)) <= 200 && onSetDelivery("deliver")}
                                                     chevron={false}
                                                     title="Deliver"
                                                     media={
@@ -295,13 +295,9 @@ export default function Cart({
                                                     } />
                                             </div>
                                             <div className='px-3.5 mt-2'>
-                                                {(selectedItemIncart?.items?.length ?? 0) < 3 ? (
+                                                {(selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0)) <= 200 && (
                                                     <div className='border text-center border-amber-600 text-amber-500 rounded p-3'>
-                                                        Cash on Delivery is only available for orders with three or more items.
-                                                    </div>
-                                                ) : (
-                                                    <div className='border text-center border-amber-600 text-amber-500 rounded p-3'>
-                                                        Our Cash on Delivery is only available within Maranding; outside areas will be cancelled.
+                                                        Cash on Delivery is only available on orders with a total value of ₱200 or more.
                                                     </div>
                                                 )}
                                             </div>
@@ -451,8 +447,8 @@ export default function Cart({
                                         } /> */}
                                     <ListItem
                                         link
-                                        touchRipple={(selectedItemIncart?.items?.length ?? 0) >= 3}
-                                        className={` col-span-full ${(selectedItemIncart?.items?.length ?? 0) >= 3 ? '' : 'opacity-20 '}`}
+                                        touchRipple={(selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0)) <= 200}
+                                        className={` col-span-full ${(selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0)) <= 200 ? '' : 'opacity-20 '}`}
                                         chevron={false}
                                         title="Cash on Delivery"
                                         onClick={() => onSelectPaymentMethod("cash_on_delivery")}
