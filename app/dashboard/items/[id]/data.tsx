@@ -94,7 +94,7 @@ export default function ItemData() {
         })
     }
     const onToggleEditPrice = (size?: string) => setOptions(e => ({ ...e, editPrice: size }))
-    const onUpdateSizePrice = (id: string) => {
+    const onUpdatePrice = (id: string) => {
         toast.promise(((): Promise<ApiResponse> => {
             return new Promise(async (resolve, reject) => {
                 try {
@@ -103,7 +103,7 @@ export default function ItemData() {
                         headers: {
                             "content-type": "application/json"
                         },
-                        body: JSON.stringify({ addon_id: id, item_id: item?.item_id })
+                        body: JSON.stringify({ id: item?.item_id, type: options?.editPrice, price: options?.newPrice })
                     })
                     if (req.ok) {
                         const res: ApiResponse = await req.json()
@@ -120,7 +120,7 @@ export default function ItemData() {
                 }
             })
         })(), {
-            loading: 'Updating Addon...',
+            loading: 'Updating Price...',
             success: (data: ApiResponse) => `${data.message}`,
             error: e => e,
         })
@@ -253,14 +253,16 @@ export default function ItemData() {
                                     strong
                                     onClick={() => onSetUpdateTab("addon")}
                                     active={updateTab === "addon"}>Addon</SegmentedButton>
+                                {item?.sizes?.length > 0 && (
+                                    <SegmentedButton
+                                        strong
+                                        onClick={() => onSetUpdateTab("sizes")}
+                                        active={updateTab === "sizes"}>Sizes</SegmentedButton>
+                                )}
                                 <SegmentedButton
                                     strong
-                                    onClick={() => onSetUpdateTab("sizes")}
-                                    active={updateTab === "sizes"}>Sizes</SegmentedButton>
-                                {/* <SegmentedButton
-                                    strong
                                     onClick={() => onSetUpdateTab("prizes")}
-                                    active={updateTab === "prizes"}>Prizes</SegmentedButton> */}
+                                    active={updateTab === "prizes"}>Prizes</SegmentedButton>
                                 <SegmentedButton
                                     strong
                                     onClick={() => onSetUpdateTab("others")}
@@ -355,9 +357,12 @@ export default function ItemData() {
                         {updateTab === "prizes" && (
                             <List margin="my-0" className=" mt-2">
                                 {item?.sizes?.length <= 0 ? (
-                                    <ListItem>
-
-                                    </ListItem>
+                                    <ListItem
+                                        link
+                                        key={"regular-size"}
+                                        label
+                                        title={`Regular - ₱${item?.price}`}
+                                        onClick={() => onToggleEditPrice("regular")} />
                                 ) : (
                                     <>
                                         {item?.sizes?.map(size => (
@@ -366,7 +371,7 @@ export default function ItemData() {
                                                 key={size.id}
                                                 label
                                                 title={`${changeCase.sentenceCase(size.type)} - ₱${size?.price}`}
-                                                onClick={() => onToggleEditPrice(size?.id)} />
+                                                onClick={() => onToggleEditPrice(size?.type)} />
                                         ))}
                                     </>
                                 )}
@@ -478,6 +483,7 @@ export default function ItemData() {
                             type="number"
                             placeholder="Price"
                             inputMode="numeric"
+                            onChange={e => setOptions(data => ({ ...data, newPrice: parseFloat(e.target.value ?? "0") }))}
                             className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary" />
                     </>
                 }
@@ -486,7 +492,10 @@ export default function ItemData() {
                         <DialogButton
                             onClick={() => onToggleEditPrice(undefined)}
                             className=" k-color-brand-red">Cancel</DialogButton>
-                        <DialogButton className=" k-color-brand-primary">Update</DialogButton>
+                        <DialogButton
+                            disabled={!options?.editPrice || !options?.newPrice}
+                            onClick={onUpdatePrice}
+                            className=" k-color-brand-primary">Update</DialogButton>
                     </>
                 } />
         </>
