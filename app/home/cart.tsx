@@ -295,11 +295,9 @@ export default function Cart({
                                                     } />
                                             </div>
                                             <div className='px-3.5 mt-2'>
-                                                {(selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0)) <= 200 && (
-                                                    <div className='border text-center border-amber-600 text-amber-500 rounded p-3'>
-                                                        Cash on Delivery is only available within Maranding only on orders with a total value of ₱200 or more.
-                                                    </div>
-                                                )}
+                                                <div className='border text-center border-amber-600 text-amber-500 rounded p-3'>
+                                                    Cash on Delivery is only available within Maranding only on orders with a total value of ₱200 or more.
+                                                </div>
                                             </div>
                                         </ListGroup>
                                         <ListGroup className='mt-2'>
