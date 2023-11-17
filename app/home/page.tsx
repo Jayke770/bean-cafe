@@ -252,7 +252,7 @@ export default function Home() {
                                     className=' aspect-square h-full w-full object-cover ' />
                             </div>
                             <div className='flex flex-col mt-3'>
-                                <span className='text-base lg:text-lg font-bold'>{item.name}</span>
+                                <span className='text-base lg:text-lg font-bold  whitespace-nowrap w-[95%] overflow-hidden text-ellipsis '>{item.name}</span>
                                 <div className='flex justify-between items-baseline'>
                                     <span className=' text-brand-primary font-bold text-sm lg:text-base'>₱{item.sizes.length > 0 ? item.sizes[0]?.price : item.price}</span>
                                     <Badge className=' k-color-brand-green'>{changeCase.capitalCase(item.category)}</Badge>
