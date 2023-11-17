@@ -115,10 +115,10 @@ export async function POST(req: NextRequest) {
                                     body: notification.email
                                 })
                             }
-                            if (userData?.phone_number) {
+                            if (orderData?.phone_number) {
                                 await twillio.sendMessage({
                                     message: notification.sms,
-                                    number: userData.phone_number
+                                    number: orderData?.phone_number
                                 })
                             }
                             res = {
@@ -147,10 +147,10 @@ export async function POST(req: NextRequest) {
                                     body: notification.email
                                 })
                             }
-                            if (userData?.phone_number || orderData?.phone_number) {
+                            if (orderData?.phone_number) {
                                 await twillio.sendMessage({
                                     message: notification.sms,
-                                    number: userData.phone_number ?? orderData?.phone_number
+                                    number: orderData?.phone_number
                                 })
                             }
                             res = {
@@ -162,7 +162,7 @@ export async function POST(req: NextRequest) {
                             return NextResponse.json({}, { status: 401 })
                         }
                     } else {
-                        if (data.data.type === "cancel") {
+                        if (data.data.type === "cancel" && orderData.status !== "cancelled") {
                             orderData.status = "cancelled"
                             orderData.orderStatus.push("cancelled")
                             if (orderData.payment_method === "paypal") {
@@ -180,10 +180,10 @@ export async function POST(req: NextRequest) {
                                     body: notification.email
                                 })
                             }
-                            if (userData?.phone_number || orderData?.phone_number) {
+                            if (orderData?.phone_number) {
                                 await twillio.sendMessage({
                                     message: notification.sms,
-                                    number: userData.phone_number ?? orderData?.phone_number
+                                    number: orderData?.phone_number
                                 })
                             }
                             res = {
@@ -191,7 +191,7 @@ export async function POST(req: NextRequest) {
                                 message: `Order ${changeCase.sentenceCase(orderData.status)}`
                             }
                             return NextResponse.json(res)
-                        } else if (data.data.type === "out_for_delivery") {
+                        } else if (data.data.type === "out_for_delivery" && orderData.status !== "out for delivery") {
                             orderData.status = "out for delivery"
                             orderData.orderStatus.push("out_for_delivery")
                             await orderData.save()
@@ -203,10 +203,10 @@ export async function POST(req: NextRequest) {
                                     body: notification.email
                                 })
                             }
-                            if (userData?.phone_number || orderData?.phone_number) {
+                            if (orderData?.phone_number) {
                                 await twillio.sendMessage({
                                     message: notification.sms,
-                                    number: userData.phone_number ?? orderData?.phone_number
+                                    number: orderData?.phone_number
                                 })
                             }
                             res = {
@@ -214,7 +214,7 @@ export async function POST(req: NextRequest) {
                                 message: `Order ${changeCase.sentenceCase(orderData.status)}`
                             }
                             return NextResponse.json(res)
-                        } else if (data.data.type === "delivered") {
+                        } else if (data.data.type === "delivered" && orderData.status !== "completed") {
                             orderData.status = "completed"
                             orderData.orderStatus.push("delivered")
                             for (const item of orderData.items) {
@@ -237,10 +237,10 @@ export async function POST(req: NextRequest) {
                                     body: notification.email
                                 })
                             }
-                            if (userData?.phone_number || orderData?.phone_number) {
+                            if (orderData?.phone_number) {
                                 await twillio.sendMessage({
                                     message: notification.sms,
-                                    number: userData.phone_number ?? orderData?.phone_number
+                                    number: orderData?.phone_number
                                 })
                             }
                             res = {
@@ -251,7 +251,7 @@ export async function POST(req: NextRequest) {
                         } else {
                             res = {
                                 status: false,
-                                message: `Order is ${changeCase.sentenceCase(orderData.status)}`
+                                message: `Order is already ${changeCase.sentenceCase(orderData.status)}`
                             }
                             return NextResponse.json(res)
                         }

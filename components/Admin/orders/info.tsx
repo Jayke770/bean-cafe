@@ -262,8 +262,10 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                                     <option value={"delivered"}>Order Delivered</option>
                                 </select>
                                 <Button
-                                    disabled={!updateOrder}
-                                    onClick={onUpdateOrder}>Update Order</Button>
+                                    disabled={!updateOrder || isProcessing}
+                                    onClick={onUpdateOrder}>
+                                    {isProcessing ? <RiLoader5Fill className=' animate-spin w-5 h-5' /> : <span>Update Order</span>}
+                                </Button>
                             </div>
                         </div>
                     )}

@@ -87,10 +87,10 @@ export async function POST(req: NextRequest) {
                             body: notification.email
                         })
                     }
-                    if (userData?.phone_number) {
+                    if (orderData?.phone_number) {
                         await twillio.sendMessage({
                             message: notification.sms,
-                            number: userData.phone_number
+                            number: orderData.phone_number
                         })
                     }
                     res = {
