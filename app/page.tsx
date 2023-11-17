@@ -59,8 +59,8 @@ export default function Index() {
               className='h-full w-full'>
               <SwiperSlide>
                 <div className='flex flex-col gap-4 w-full h-full justify-center items-center'>
-                  <img
-                    src={"/images/onboarding/intro.png"}
+                  <Image
+                    src={IntroImage}
                     alt='intro'
                     className=' w-80 h-56 object-contain ' />
                   <div className='mt-5 flex flex-col gap-8'>
@@ -78,8 +78,8 @@ export default function Index() {
               </SwiperSlide>
               <SwiperSlide>
                 <div className='flex flex-col gap-4 w-full h-full justify-center items-center'>
-                  <img
-                    src={"/images/onboarding/cups.png"}
+                  <Image
+                    src={CupsImage}
                     alt='cups'
                     className=' w-80 h-56 object-contain' />
                   <div className='mt-5 flex flex-col gap-8'>
