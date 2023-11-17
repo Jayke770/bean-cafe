@@ -271,7 +271,6 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                     )}
                 </div>
             }>
-
         </Dialog>
     )
 }

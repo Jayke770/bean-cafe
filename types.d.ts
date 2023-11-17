@@ -458,3 +458,8 @@ interface Refund {
     method: 'GET'
   }[]
 }
+const settingsModel = z.object({
+  codMessage: z.string(),
+  currency: z.string()
+})
+export type settings = z.infer<typeof settingsModel>

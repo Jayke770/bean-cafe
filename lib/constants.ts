@@ -3,6 +3,8 @@ export const CATEGORIES = ["Coffee", "Milk Tea", "Burger", "Cakes"];
 export const REPORT_TYPES = ["daily", "monthly", "yearly"]
 export const DELIVERY_FEE = 50
 export const ITEM_LIMIT_FOR_ORDER = 3
+export const COD_MESSAGE = "Cash on Delivery is only available within Maranding on orders with a total value of ₱200 or more."
+export const CURRENCY = "₱"
 export const ORDER_STATUS: {
     [key: string]: {
         title: string,

@@ -33,6 +33,7 @@ import toast from 'react-hot-toast';
 import { ItemEmpty } from '@components/empty'
 import NextLink from 'next/link'
 import Categories from '@/lib/categories'
+import Settings from '@/lib/settings';
 const mainvariants: Variants = {
     initial: {
         opacity: 0
@@ -55,6 +56,7 @@ interface ViewItem {
     isProcessing?: boolean
 }
 export default function Home() {
+    const { settings } = Settings()
     const { categories, categoriesLoading } = Categories()
     const { cartData, mutate: updateCartData } = CartData()
     const { data: session, status } = useSession()
@@ -255,7 +257,7 @@ export default function Home() {
                             <div className='flex flex-col mt-3'>
                                 <span className='text-base lg:text-lg font-bold  whitespace-nowrap w-[95%] overflow-hidden text-ellipsis '>{item.name}</span>
                                 <div className='flex justify-between items-baseline'>
-                                    <span className=' text-brand-primary font-bold text-sm lg:text-base'>₱{item.sizes.length > 0 ? item.sizes[0]?.price : item.price}</span>
+                                    <span className=' text-brand-primary font-bold text-sm lg:text-base'>{settings?.currency}{item.sizes.length > 0 ? item.sizes[0]?.price : item.price}</span>
                                     <Badge className=' k-color-brand-green'>{changeCase.capitalCase(item.category)}</Badge>
                                 </div>
                             </div>
@@ -271,7 +273,8 @@ export default function Home() {
                 onToggleCart={onToggleCart}
                 cartData={cartData}
                 session={session}
-                updateCartData={updateCartData} />
+                updateCartData={updateCartData}
+                settings={settings} />
 
             {/* View Item */}
             <Actions
@@ -289,7 +292,7 @@ export default function Home() {
                                 <span className='text-sm'>{viewItem?.data?.description}</span>
                             </div>
                             <div className='flex'>
-                                <span>₱{(viewItem?.data?.sizes.length ?? 0) > 0 ? ((viewItem?.selected_size?.price ?? 0) * (viewItem?.quantity ?? 0)) + (viewItem?.addonPrice ?? 0) : (viewItem?.data?.price ?? 0) * viewItem?.quantity}</span>
+                                <span>{settings?.currency}{(viewItem?.data?.sizes.length ?? 0) > 0 ? ((viewItem?.selected_size?.price ?? 0) * (viewItem?.quantity ?? 0)) + (viewItem?.addonPrice ?? 0) : (viewItem?.data?.price ?? 0) * viewItem?.quantity}</span>
                             </div>
                         </div>
                         {(viewItem?.data?.sizes?.length ?? 0) > 0 && (
@@ -302,7 +305,7 @@ export default function Home() {
                                                 key={size?.id}
                                                 onClick={() => onSelectSize(size)}
                                                 title={capitalize(size?.type)}
-                                                subtitle={`₱${size?.price}`}
+                                                subtitle={`{settings?.currency}${size?.price}`}
                                                 link
                                                 chevron={false}
                                                 media={<Radio readOnly className=' pointer-events-none' checked={viewItem?.selected_size?.type === size.type} />} />
@@ -321,7 +324,7 @@ export default function Home() {
                                                 key={addon.id}
                                                 onClick={() => onSelectAddon(addon.id, addon?.price)}
                                                 title={changeCase.sentenceCase(addon.name)}
-                                                subtitle={`₱${addon?.price}`}
+                                                subtitle={`{settings?.currency}${addon?.price}`}
                                                 link
                                                 chevron={false}
                                                 media={<Radio readOnly className=' pointer-events-none' checked={viewItem?.addon === addon.id} />} />

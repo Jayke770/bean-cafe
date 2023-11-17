@@ -15,7 +15,7 @@ import {
     Stepper
 } from 'konsta/react'
 import * as changeCase from 'change-case'
-import type { ApiResponse, UserCart, paymentMethod, deliverType } from "@/types";
+import type { ApiResponse, UserCart, paymentMethod, deliverType, settings } from "@/types";
 import { useLocalstorageState } from 'rooks'
 import Image from 'next/image';
 import { BsArrowLeft, BsPaypal, BsThreeDots } from 'react-icons/bs'
@@ -48,13 +48,15 @@ export default function Cart({
     onToggleCart,
     cartData,
     session,
-    updateCartData
+    updateCartData,
+    settings
 }: {
     opened?: boolean,
     onToggleCart: () => void,
     cartData?: UserCart[],
     session: Session | null,
-    updateCartData: () => void
+    updateCartData: () => void,
+    settings?: settings
 }) {
     const { handleSubmit, register } = useForm()
     const router = useRouter()
@@ -229,10 +231,10 @@ export default function Cart({
                                                         <div className='flex flex-col text-xs'>
                                                             {item?.size && <span>Size: {changeCase.sentenceCase(item.size)}</span>}
                                                             <span>{`Quantity: ${item.quantity}`}</span>
-                                                            {item?.addon && <span>{`Addon: ${item.addon.name} - ₱ ${item.addon.price}`}</span>}
+                                                            {item?.addon && <span>{`Addon: ${item.addon.name} - ${settings?.currency} ${item.addon.price}`}</span>}
                                                         </div>
                                                     }
-                                                    footer={`Total: ₱${(item.price * item.quantity) + (item?.addon?.price ?? 0)}`}
+                                                    footer={`Total: ${settings?.currency}${(item.price * item.quantity) + (item?.addon?.price ?? 0)}`}
                                                     media={
                                                         <div className='flex items-center gap-4 pl-3'>
                                                             <Checkbox
@@ -295,9 +297,7 @@ export default function Cart({
                                                     } />
                                             </div>
                                             <div className='px-3.5 mt-2'>
-                                                <div className='border text-center border-amber-600 text-amber-500 rounded p-3'>
-                                                    Cash on Delivery is only available within Maranding on orders with a total value of ₱200 or more.
-                                                </div>
+                                                <div className='border text-center border-amber-600 text-amber-500 rounded p-3'>{settings?.codMessage}</div>
                                             </div>
                                         </ListGroup>
                                         <ListGroup className='mt-2'>
@@ -319,11 +319,11 @@ export default function Cart({
                                                 {selectedItemIncart?.delivery_service === "deliver" && (
                                                     <ListItem
                                                         title='Delivery Fee'
-                                                        after={<span>₱{DELIVERY_FEE}</span>} />
+                                                        after={<span>${settings?.currency}{DELIVERY_FEE}</span>} />
                                                 )}
                                                 <ListItem
                                                     title="Total"
-                                                    after={<span>₱{selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0) + (selectedItemIncart?.delivery_service === "deliver" ? DELIVERY_FEE : 0)}</span>} />
+                                                    after={<span>${settings?.currency}{selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0) + (selectedItemIncart?.delivery_service === "deliver" ? DELIVERY_FEE : 0)}</span>} />
                                             </div>
                                         </ListGroup>
                                     </List>
