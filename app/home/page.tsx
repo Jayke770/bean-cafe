@@ -305,7 +305,7 @@ export default function Home() {
                                                 key={size?.id}
                                                 onClick={() => onSelectSize(size)}
                                                 title={capitalize(size?.type)}
-                                                subtitle={`{settings?.currency}${size?.price}`}
+                                                subtitle={`${settings?.currency}${size?.price}`}
                                                 link
                                                 chevron={false}
                                                 media={<Radio readOnly className=' pointer-events-none' checked={viewItem?.selected_size?.type === size.type} />} />
@@ -324,7 +324,7 @@ export default function Home() {
                                                 key={addon.id}
                                                 onClick={() => onSelectAddon(addon.id, addon?.price)}
                                                 title={changeCase.sentenceCase(addon.name)}
-                                                subtitle={`{settings?.currency}${addon?.price}`}
+                                                subtitle={`${settings?.currency}${addon?.price}`}
                                                 link
                                                 chevron={false}
                                                 media={<Radio readOnly className=' pointer-events-none' checked={viewItem?.addon === addon.id} />} />
