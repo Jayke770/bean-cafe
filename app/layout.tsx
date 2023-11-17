@@ -16,6 +16,7 @@ export const metadata: Metadata = {
   title: "Bean Cafe",
   manifest: "/manifest.json",
   themeColor: "#cc9c68",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
   icons: [
     {
       rel: 'apple-touch-icon',
