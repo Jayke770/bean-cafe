@@ -219,6 +219,7 @@ export default function Home() {
             {/* Search */}
             <div className=' transition-all md:absolute md:w-64 md:right-32 md:top-2 sticky top-1 k-color-brand-primary w-full px-8 -py-4 -mx-2'>
                 <Searchbar
+                    onDisable={() => setSearchItem(undefined)}
                     disableButton={true}
                     onChange={onSearchItem} />
             </div>
