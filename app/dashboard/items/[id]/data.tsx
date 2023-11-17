@@ -12,7 +12,7 @@ import toast from 'react-hot-toast'
 import type { ApiResponse, IItemSizes } from '@/types'
 import { HiMiniXMark } from 'react-icons/hi2'
 import Addons from '@lib/Admin/addons'
-type UpdateItemTab = "addon" | "sizes" | "others" | "prizes"
+type UpdateItemTab = "addon" | "sizes" | "others" | "prices"
 interface Options {
     isUpdatingBestSeller?: boolean,
     isUpdatingAddon?: boolean,
@@ -261,8 +261,8 @@ export default function ItemData() {
                                 )}
                                 <SegmentedButton
                                     strong
-                                    onClick={() => onSetUpdateTab("prizes")}
-                                    active={updateTab === "prizes"}>Prizes</SegmentedButton>
+                                    onClick={() => onSetUpdateTab("prices")}
+                                    active={updateTab === "prices"}>Prices</SegmentedButton>
                                 <SegmentedButton
                                     strong
                                     onClick={() => onSetUpdateTab("others")}
@@ -354,7 +354,7 @@ export default function ItemData() {
                                     footer="Add Item to Best Seller Category" />
                             </List>
                         )}
-                        {updateTab === "prizes" && (
+                        {updateTab === "prices" && (
                             <List margin="my-0" className=" mt-2">
                                 {item?.sizes?.length <= 0 ? (
                                     <ListItem
