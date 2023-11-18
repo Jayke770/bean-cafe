@@ -115,7 +115,7 @@ export default function AdminAuth() {
                                         placeholder="********"
                                         aria-describedby="password" />
                                 </div>
-                                <Button className="mt-1">Sign in</Button>
+                                <Button className="mt-1 roun ">Sign in</Button>
                             </form>
                         </div>
                     </Card>

@@ -194,7 +194,7 @@ export default function DashboardNavbar() {
                         <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
                             <div className='flex flex-col gap-2'>
                                 <label htmlFor="email" className="block text-sm font-medium">COD Message</label>
-                                <input
+                                <textarea
                                     id="cod-message"
                                     {...register("cod_message")}
                                     className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
