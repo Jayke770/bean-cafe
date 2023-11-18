@@ -4,13 +4,13 @@ const fetcher = (url: any) => fetch(url).then((res) => res.json());
 interface Item extends IItems {
   _id: string;
 }
-export function Items(skip?: string | number): {
+export function Items({ skip, category }: { skip?: string | number, category?: string }): {
   items: Item[];
   itemsLoading: boolean;
   itemsError: boolean;
 } {
   const { data, error, isLoading } = useSWR(
-    `/api/dashboard/items?skip=${skip ?? 0}`,
+    `/api/dashboard/items?skip=${skip ?? 0}&category=${category ?? "all"}`,
     fetcher,
     {
       shouldRetryOnError: true,

@@ -9,7 +9,9 @@ import * as changeCase from 'change-case'
 import OrderStatus from '@/components/orderStatus'
 import moment from 'moment-timezone'
 import { useLocalstorageState } from 'rooks'
+import Settings from '@/lib/settings'
 export default function OrdersData() {
+  const { settings } = Settings()
   const [orderStatus, setOrderStatus] = useLocalstorageState<Ord['status'] | "all">("order-status", "pending")
   const { orders } = Orders(orderStatus)
   const [openAction, setOpenAction] = useState<{ open?: boolean, target?: string }>()
@@ -81,7 +83,7 @@ export default function OrdersData() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                           <CountUp
                             decimals={2}
-                            prefix='₱ '
+                            prefix={settings?.currency ?? ""}
                             end={parseFloat(order.total_payment)} />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">

@@ -9,16 +9,20 @@ import Addons from "@/lib/Admin/addons"
 import Image from 'next/image';
 import { type Session } from "next-auth";
 import * as changeCase from 'change-case'
-import { useRouter } from 'next/navigation'
 import Skeleton from 'react-loading-skeleton';
 import Link from 'next/link';
+import Settings from '@/lib/settings';
+import Categories from '@/lib/categories';
+import { useDebounce } from 'rooks';
 export default function Orders({ session }: { session?: Session }) {
-    const router = useRouter()
+    const { settings } = Settings()
+    const { categories } = Categories()
     const { addons } = Addons()
-    const { items, itemsLoading } = Items()
+    const [category, setCategory] = useState<string>("all")
+    const { items, itemsLoading } = Items({ category })
     const [openNewItem, setOpenNewItem] = useState<boolean>()
     const onToggleNewItem = useCallback(() => setOpenNewItem(e => !e), [setOpenNewItem])
-    const onViewItem = (id: string) => router.push(`/dashboard/items/${id}`)
+    const onSetCategory = useDebounce((data: string) => setCategory(e => data), 200)
     return (
         <>
             <Fab
@@ -71,10 +75,10 @@ export default function Orders({ session }: { session?: Session }) {
                                     </div>
                                 </div>
                                 <select
+                                    onChange={e => onSetCategory(e.target.value)}
                                     className="py-3 px-4 w-full lg:w-auto dark:bg-transparent dark:focus:bg-black dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
-                                    <option>All</option>
-                                    <option>Coffee</option>
-                                    <option>Burgers</option>
+                                    <option value={'all'}>All</option>
+                                    {categories?.map(category => <option key={category._id} value={category.type.toLowerCase()}>{category.type}</option>)}
                                 </select>
                             </div>
                         </div>
@@ -139,12 +143,7 @@ export default function Orders({ session }: { session?: Session }) {
                                         </TableRow>
                                     ))}
                                     {items?.map(item => (
-                                        <TableRow
-                                            key={item.item_id}
-                                            style={{
-                                                cursor: "pointer"
-                                            }}
-                                            onClick={() => onViewItem(item.item_id)}>
+                                        <TableRow key={item.item_id}>
                                             <TableCell className='w-20'>
                                                 <Image
                                                     src={item?.image}
@@ -153,10 +152,28 @@ export default function Orders({ session }: { session?: Session }) {
                                                     alt={item?.name}
                                                     className='w-20 rounded-lg object-cover aspect-square' />
                                             </TableCell>
-                                            <TableCell>{item.item_id}</TableCell>
+                                            <TableCell>
+                                                <Link
+                                                    href={`/dashboard/items/${item.item_id}`}
+                                                    className=' underline'>
+                                                    {item.item_id}
+                                                </Link>
+                                            </TableCell>
                                             <TableCell className=' whitespace-nowrap'>{item.name}</TableCell>
                                             <TableCell className=' whitespace-nowrap'>{changeCase.sentenceCase(item.category ?? "")}</TableCell>
-                                            <TableCell>₱{item.price?.toLocaleString()}</TableCell>
+                                            <TableCell className=' whitespace-nowrap'>
+                                                {item?.sizes?.length <= 0 ? (
+                                                    <>
+                                                        {settings?.currency}
+                                                        {item?.price?.toLocaleString()}
+                                                    </>
+                                                ) : (
+                                                    <div className='flex gap-2'>
+                                                        <span>{settings?.currency}{item.sizes[0].price}</span>
+                                                        {item.sizes.length > 1 && <span> - {settings?.currency}{item.sizes[item.sizes.length - 1].price}</span>}
+                                                    </div>
+                                                )}
+                                            </TableCell>
                                             <TableCell>{item.sold}</TableCell>
                                         </TableRow>
                                     ))}
@@ -164,8 +181,8 @@ export default function Orders({ session }: { session?: Session }) {
                             </Table>
                         </div>
                     </div>
-                </Card>
-            </div>
+                </Card >
+            </div >
         </>
     )
 }

@@ -9,7 +9,7 @@ import { fromZodError } from "zod-validation-error";
 import { ApiResponse } from "@/types";
 export async function GET(req: NextRequest) {
     try {
-        const settingsData = await settings.findOne({}, { codMessage: 1, currency: 1 })
+        const settingsData = await settings.findOne()
         if (settingsData) {
             return NextResponse.json(settingsData)
         } else {

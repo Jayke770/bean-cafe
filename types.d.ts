@@ -98,7 +98,7 @@ export const CoffeesizeSchema = z.union([
   z.literal("extra large"),
 ]).or(z.optional());
 const ItemSizes = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   stocks: z.number(),
   price: z.number(),
   type: CoffeesizeSchema,
@@ -460,6 +460,7 @@ interface Refund {
 }
 const settingsModel = z.object({
   codMessage: z.string(),
-  currency: z.string()
+  currency: z.string(),
+  sizes: z.array(z.string())
 })
 export type settings = z.infer<typeof settingsModel>

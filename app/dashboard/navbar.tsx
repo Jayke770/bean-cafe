@@ -14,6 +14,7 @@ import { ApiResponse, settings } from "@/types"
 import { AiFillEdit } from "react-icons/ai";
 import { useForm } from 'react-hook-form'
 import toast from "react-hot-toast"
+import { IoLogOut } from "react-icons/io5";
 interface Settings {
     opened?: boolean,
     edit?: boolean
@@ -163,6 +164,11 @@ export default function DashboardNavbar() {
                             media={<FaCog className=" h-6 w-6 text-blue-500" />}
                             link
                             title="Settings" />
+                        <ListItem
+                            onClick={() => onNavigate("/api/auth/signout")}
+                            media={<IoLogOut className=" h-6 w-6 text-red-500" />}
+                            link
+                            title="Logout" />
                     </List>
                 </Page>
             </Panel>
@@ -211,13 +217,10 @@ export default function DashboardNavbar() {
                         <List margin="my-0">
                             <ListItem
                                 title="COD Message"
-                                footer={settingsData?.codMessage}
-                                link
-                            />
+                                footer={settingsData?.codMessage} />
                             <ListItem
                                 title="Currency"
                                 footer={settingsData?.currency}
-                                link
                                 chevron />
                         </List>
                     )

@@ -1,5 +1,5 @@
 "use client"
-import { Badge, Card, Checkbox, List, ListItem, Segmented, SegmentedButton, Icon, Preloader, Button, Popup, Page, Navbar, Link, Searchbar, ListInput, Dialog, DialogButton } from "konsta/react";
+import { Badge, Card, Checkbox, List, ListItem, Segmented, SegmentedButton, Icon, Preloader, Button, Popup, Page, Navbar, Link, Searchbar, ListInput, Dialog, DialogButton, Chip } from "konsta/react";
 import { motion } from 'framer-motion'
 import { ItemInfo } from '@lib/Admin/items'
 import { useParams } from 'next/navigation'
@@ -12,17 +12,33 @@ import toast from 'react-hot-toast'
 import type { ApiResponse, IItemSizes } from '@/types'
 import { HiMiniXMark } from 'react-icons/hi2'
 import Addons from '@lib/Admin/addons'
+import Swal from "@/lib/swal";
+import { RiDeleteBin5Fill } from "react-icons/ri";
+import { useRouter } from "next/navigation";
+import Settings from "@/lib/settings";
+import Sizes from "@admin_components/Items/Sizes"
+import { HiOutlineXMark } from "react-icons/hi2";
 type UpdateItemTab = "addon" | "sizes" | "others" | "prices"
+
+interface SizeData {
+    type: string,
+    price?: number,
+    stocks?: number
+}
 interface Options {
     isUpdatingBestSeller?: boolean,
     isUpdatingAddon?: boolean,
     openAddons?: boolean,
+    openSizes?: boolean,
     searchAddon?: string,
     editPrice?: string,
-    newPrice?: number
+    newPrice?: number,
+    newSizes?: SizeData[]
 }
 export default function ItemData() {
+    const { settings } = Settings()
     const params = useParams()
+    const router = useRouter()
     const [options, setOptions] = useState<Options>()
     const [updateTab, setUpdateTab] = useLocalstorageState<UpdateItemTab>("update-item-tab", "addon")
     const { item, itemLoading, mutate: UpdateItem } = ItemInfo(params.id as string)
@@ -125,6 +141,171 @@ export default function ItemData() {
             error: e => e,
         })
     }
+    const onDeleteItem = () => {
+        Swal.fire({
+            icon: "warning",
+            titleText: "Delete Item",
+            text: 'Are you sure want to delete this item? This action cannot be undone!',
+            confirmButtonText: "Delete",
+            showCancelButton: true
+        }).then(a => {
+            if (a.isConfirmed) {
+                Swal.fire({
+                    icon: "info",
+                    toast: true,
+                    showConfirmButton: false,
+                    titleText: "Deleting Item...",
+                    willOpen: async () => {
+                        Swal.showLoading()
+                        try {
+                            const req = await fetch("/api/dashboard/items", {
+                                method: 'delete',
+                                headers: {
+                                    "content-type": "application/json"
+                                },
+                                body: JSON.stringify({ id: item?.item_id })
+                            })
+                            if (req.ok) {
+                                const data: ApiResponse = await req.json()
+                                Swal.fire({
+                                    icon: data?.status ? "success" : "info",
+                                    toast: true,
+                                    timer: 2000,
+                                    titleText: data?.message,
+                                    showConfirmButton: false
+                                }).then(() => router.replace("/dashboard/items"))
+                            } else {
+                                throw new Error(`${req.status} ${req.statusText}`)
+                            }
+                        } catch (e: any) {
+                            Swal.fire({
+                                icon: "error",
+                                toast: true,
+                                timer: 3000,
+                                titleText: e.message,
+                            })
+                        }
+                    }
+                })
+            }
+        })
+    }
+    const onToggleSizes = () => setOptions(e => ({ ...e, openSizes: !e?.openSizes }))
+    const onAddSize = (data: SizeData) => {
+        const itemData = options?.newSizes?.find(x => x.type === data.type)
+        const alreadyAdded = item.sizes.find(x => x.type === data.type)
+        if (!itemData && !alreadyAdded) setOptions(e => ({ ...e, newSizes: [...e?.newSizes ?? [], data] }))
+    }
+    const onRemoveSize = (index: number) => {
+        let oldSizes = options?.newSizes
+        if ((oldSizes?.length ?? 0) > 0) {
+            oldSizes?.splice(index, 1)
+            setOptions(e => ({ ...e, newSizes: oldSizes }))
+        }
+    }
+    const onUpdateSize = () => {
+        Swal.fire({
+            icon: "warning",
+            titleText: "Update Item Size",
+            text: 'Are you sure want update sizes?',
+            showCancelButton: true
+        }).then(a => {
+            if (a.isConfirmed) {
+                Swal.fire({
+                    icon: "info",
+                    titleText: "Updating Size...",
+                    toast: true,
+                    showConfirmButton: false,
+                    willOpen: async () => {
+                        Swal.showLoading()
+                        try {
+                            const req = await fetch("/api/dashboard/items/update-size?type=new", {
+                                method: "post",
+                                headers: {
+                                    'content-type': "application/json"
+                                },
+                                body: JSON.stringify({
+                                    id: item?.item_id,
+                                    sizes: options?.newSizes
+                                })
+                            })
+                            if (req.ok) {
+                                const res: ApiResponse = await req.json()
+                                UpdateItem()
+                                Swal.fire({
+                                    icon: res?.status ? "success" : "info",
+                                    titleText: res?.message,
+                                    toast: true,
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                })
+                            } else {
+                                throw new Error(`${req?.status} ${req?.statusText}`)
+                            }
+                        } catch (e: any) {
+                            Swal.fire({
+                                icon: "error",
+                                titleText: e.message,
+                                toast: true,
+                                showConfirmButton: false,
+                                timer: 2000
+                            })
+                        }
+                    }
+                })
+            }
+        })
+    }
+    const onDeleteSize = (size: string) => {
+        Swal.fire({
+            icon: "warning",
+            titleText: "Delete Size",
+            text: 'Are you sure want to delete this item size? This action cannot be undone!',
+            confirmButtonText: "Delete",
+            showCancelButton: true
+        }).then(a => {
+            if (a.isConfirmed) {
+                Swal.fire({
+                    icon: "info",
+                    toast: true,
+                    showConfirmButton: false,
+                    titleText: "Deleting Item...",
+                    willOpen: async () => {
+                        Swal.showLoading()
+                        try {
+                            const req = await fetch("/api/dashboard/items/update-size", {
+                                method: 'delete',
+                                headers: {
+                                    "content-type": "application/json"
+                                },
+                                body: JSON.stringify({ id: item?.item_id, size })
+                            })
+                            if (req.ok) {
+                                const data: ApiResponse = await req.json()
+                                UpdateItem()
+                                Swal.fire({
+                                    icon: data?.status ? "success" : "info",
+                                    toast: true,
+                                    timer: 2000,
+                                    titleText: data?.message,
+                                    showConfirmButton: false
+                                })
+                            } else {
+                                throw new Error(`${req.status} ${req.statusText}`)
+                            }
+                        } catch (e: any) {
+                            Swal.fire({
+                                icon: "error",
+                                toast: true,
+                                timer: 3000,
+                                titleText: e.message,
+                            })
+                        }
+                    }
+                })
+            }
+        })
+    }
     return (
         <>
             <div className="flex flex-col lg:flex-row transition-all gap-2 p-4 lg:h-[calc(100vh-64px)]">
@@ -198,13 +379,13 @@ export default function ItemData() {
                                             {item?.price ? (
                                                 <div className="flex justify-between">
                                                     <span>Regular</span>
-                                                    <span className=" font-light">₱{item?.price?.toLocaleString()}</span>
+                                                    <span className=" font-light">{settings?.currency}{item?.price?.toLocaleString()}</span>
                                                 </div>
                                             ) : (
                                                 item?.sizes?.map(size => (
                                                     <div key={size.id} className="flex justify-between">
                                                         <span>{changeCase.sentenceCase(size?.type ?? "")}</span>
-                                                        <span className=" font-light">₱{size?.price?.toLocaleString()}</span>
+                                                        <span className=" font-light">{settings?.currency}{size?.price?.toLocaleString()}</span>
                                                     </div>
                                                 ))
                                             )}
@@ -228,7 +409,7 @@ export default function ItemData() {
                                             {item?.addons?.map(addon => (
                                                 <div key={addon.id} className="flex justify-between">
                                                     <span>{addon?.name}</span>
-                                                    <span className=" font-light">₱{addon?.price}</span>
+                                                    <span className=" font-light">{settings?.currency}{addon?.price}</span>
                                                 </div>
                                             ))}
                                         </>
@@ -253,12 +434,10 @@ export default function ItemData() {
                                     strong
                                     onClick={() => onSetUpdateTab("addon")}
                                     active={updateTab === "addon"}>Addon</SegmentedButton>
-                                {item?.sizes?.length > 0 && (
-                                    <SegmentedButton
-                                        strong
-                                        onClick={() => onSetUpdateTab("sizes")}
-                                        active={updateTab === "sizes"}>Sizes</SegmentedButton>
-                                )}
+                                <SegmentedButton
+                                    strong
+                                    onClick={() => onSetUpdateTab("sizes")}
+                                    active={updateTab === "sizes"}>Sizes</SegmentedButton>
                                 <SegmentedButton
                                     strong
                                     onClick={() => onSetUpdateTab("prices")}
@@ -298,7 +477,7 @@ export default function ItemData() {
                                                         className=" rounded-xl h-10 w-10" />
                                                 }
                                                 title={addon?.name}
-                                                subtitle={`₱ ${addon?.price}`}
+                                                subtitle={`${settings?.currency} ${addon?.price}`}
                                                 after={`Stock: ${addon?.stocks}`} />
                                         ))}
                                         <div className="px-3.5  justify-center w-full  mt-2 flex">
@@ -330,14 +509,42 @@ export default function ItemData() {
                                     </>
                                 ) : (
                                     <>
-                                        {item?.sizes?.map(size => (
+                                        {item?.sizes?.length <= 0 ? (
                                             <ListItem
-                                                key={size.id}
-                                                title={changeCase.sentenceCase(size.type)}
-                                                subtitle={`₱ ${size.price}`} />
-                                        ))}
+                                                key={"regular"}
+                                                title={"Regular"}
+                                                subtitle={`${settings?.currency} ${item.price}`} />
+                                        ) : (
+                                            item?.sizes?.map(size => (
+                                                <ListItem
+                                                    key={size.id}
+                                                    title={changeCase.sentenceCase(size.type)}
+                                                    subtitle={`${settings?.currency} ${size.price}`}
+                                                    after={
+                                                        <Button
+                                                            small
+                                                            rounded
+                                                            clear
+                                                            onClick={() => onDeleteSize(size.type)}
+                                                            className=" k-color-brand-red !px-2.5">
+                                                            <HiOutlineXMark className=" h-5 w-5 text-red-500" />
+                                                        </Button>
+                                                    } />
+                                            ))
+                                        )}
                                     </>
                                 )}
+                                <div className="px-3.5  justify-center w-full  mt-2 flex">
+                                    <div className="flex gap-2 lg:w-80 w-full">
+                                        <Button
+                                            onClick={onToggleSizes}
+                                            small
+                                            tonal
+                                            className=" k-color-brand-green">
+                                            Manage Sizes
+                                        </Button>
+                                    </div>
+                                </div>
                             </List>
                         )}
                         {updateTab === "others" && (
@@ -352,6 +559,13 @@ export default function ItemData() {
                                     }
                                     title="Best Seller"
                                     footer="Add Item to Best Seller Category" />
+                                <ListItem
+                                    onClick={onDeleteItem}
+                                    title="Delete Item"
+                                    media={
+                                        <RiDeleteBin5Fill className=" h-4 w-4 text-red-500" />
+                                    }
+                                    link />
                             </List>
                         )}
                         {updateTab === "prices" && (
@@ -361,7 +575,7 @@ export default function ItemData() {
                                         link
                                         key={"regular-size"}
                                         label
-                                        title={`Regular - ₱${item?.price}`}
+                                        title={`Regular - ${settings?.currency}${item?.price}`}
                                         onClick={() => onToggleEditPrice("regular")} />
                                 ) : (
                                     <>
@@ -370,7 +584,7 @@ export default function ItemData() {
                                                 link
                                                 key={size.id}
                                                 label
-                                                title={`${changeCase.sentenceCase(size.type)} - ₱${size?.price}`}
+                                                title={`${changeCase.sentenceCase(size.type)} - ${settings?.currency}${size?.price}`}
                                                 onClick={() => onToggleEditPrice(size?.type)} />
                                         ))}
                                     </>
@@ -498,6 +712,37 @@ export default function ItemData() {
                             className=" k-color-brand-primary">Update</DialogButton>
                     </>
                 } />
+            {/* edit sizes */}
+            <Dialog
+                opened={options?.openSizes}
+                onBackdropClick={onToggleSizes}
+                title="Available Sizes"
+                className=" k-color-brand-primary w-full lg:w-160 "
+                content={
+                    <div className="flex flex-col gap-2">
+                        {settings && (
+                            <Sizes
+                                sizes={settings?.sizes.filter(x => !item?.sizes.find(y => y.type === x.toLowerCase()))}
+                                onAdd={onAddSize} />
+                        )}
+                        <div className="flex mt-2 flex-wrap">
+                            {options?.newSizes?.map((size, i) => (
+                                <Chip
+                                    key={i}
+                                    className="m-0.5 uppercase"
+                                    onClick={() => onRemoveSize(i)}
+                                    deleteButton>
+                                    {size.type} - ₱{size.price}
+                                </Chip>
+                            ))}
+                        </div>
+                        <Button
+                            disabled={(options?.newSizes?.length ?? 0) <= 0}
+                            onClick={onUpdateSize}
+                            className=" mt-2">Update Size</Button>
+                    </div>
+                }
+            />
         </>
     )
 }

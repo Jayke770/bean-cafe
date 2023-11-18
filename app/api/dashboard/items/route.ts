@@ -9,6 +9,7 @@ import moment from "moment";
 import { getServerSession } from "next-auth";
 import { AuthOptions } from "@services/NextAuth/AuthOptions";
 import { ImgbbUpload } from "@/services/imgbb";
+import { ApiResponse } from "@/types";
 const ItemForm = z.object({
   image: z.any(),
   sizes: z.string(),
@@ -23,7 +24,7 @@ export const revalidate = 60;
 export async function POST(req: NextRequest) {
   const session = await getServerSession(AuthOptions);
   try {
-    if (session) {
+    if (session?.user?.role === "admin" || session?.user?.role === "staff") {
       const form = await req.formData();
       const data: z.infer<typeof ItemForm> = {
         image: form.get("image") as any,
@@ -70,7 +71,6 @@ export async function POST(req: NextRequest) {
           });
         }
       } else {
-        const error = fromZodError(parse_form.error, { prefix: null }).message;
         return NextResponse.json({
           status: false,
           message: fromZodError(parse_form.error).message,
@@ -86,12 +86,47 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   const session = await getServerSession(AuthOptions);
   try {
-    if (session) {
+    if (session?.user?.role === "admin" || session?.user?.role === "staff") {
       await dbConnect();
       const skip = parseInt(req.nextUrl.searchParams.get("skip") ?? "0");
       const id = req.nextUrl.searchParams.get("id")
-      const data = id ? await items.findOne({ item_id: { $eq: id } }, { __v: 0 }).populate({ path: "addons", model: addons }).skip(skip) : await items.find({}, { __v: 0 }).populate({ path: "addons", model: addons }).skip(skip)
+      const category = req.nextUrl.searchParams.get("category")
+      let data: any
+      if (id) {
+        data = await items.findOne({ item_id: { $eq: id } }, { __v: 0 }).populate({ path: "addons", model: addons }).skip(skip)
+      } else if (category !== "all") {
+        data = await items.find({ category: { $eq: category?.toLowerCase() } }, { __v: 0 }).populate({ path: "addons", model: addons }).skip(skip)
+      } else {
+        data = await items.find({}, { __v: 0 }).populate({ path: "addons", model: addons }).skip(skip)
+      }
       return NextResponse.json(data);
+    } else {
+      return NextResponse.json({}, { status: 401 });
+    }
+  } catch (e) {
+    return NextResponse.json({}, { status: 500 });
+  }
+}
+const DeleteItemSchema = z.object({
+  id: z.string()
+})
+export async function DELETE(req: NextRequest) {
+  const session = await getServerSession(AuthOptions);
+  let res: ApiResponse = { status: false }
+  try {
+    if (session?.user?.role === "admin" || session?.user?.role === "staff") {
+      const validated_data = DeleteItemSchema.safeParse(await req.json())
+      if (validated_data.success) {
+        const itemData = await items.findOne({ item_id: { $eq: validated_data.data.id } })
+        if (itemData) {
+          await itemData.deleteOne()
+          return NextResponse.json({ ...res, status: true, message: "Item Deleted" });
+        } else {
+          return NextResponse.json({ ...res, message: "Item Not Found" });
+        }
+      } else {
+        return NextResponse.json({ ...res, message: fromZodError(validated_data.error).message });
+      }
     } else {
       return NextResponse.json({}, { status: 401 });
     }

@@ -9,7 +9,6 @@ import { DialogProvider } from '@components/dialog'
 import { ThemeProvider } from '@components/themeProvider'
 import { Metadata } from "next"
 import { Toaster } from 'react-hot-toast'
-import { Analytics } from '@vercel/analytics/react'
 import { getServerSession } from 'next-auth'
 import { AuthOptions } from '@services/NextAuth/AuthOptions'
 export const metadata: Metadata = {
@@ -47,7 +46,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </DialogProvider>
           </NoticationProvider>
         </LayoutMain>
-        <Analytics />
       </body>
     </html>
   )

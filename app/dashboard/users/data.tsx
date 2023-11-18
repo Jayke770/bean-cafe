@@ -7,9 +7,7 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 export default function UsersPage({ session }: { session?: Session }) {
-    const router = useRouter()
     const { users, usersLoading } = Users()
-    const onViewUser = (id: string) => router.push(`/dashboard/users/${id}`)
     return (
         <>
             <div className="p-4">
@@ -52,9 +50,12 @@ export default function UsersPage({ session }: { session?: Session }) {
                                         {users?.map(user => (
                                             <tr
                                                 key={user._id}
-                                                onClick={() => onViewUser(user._id)}
                                                 className=" cursor-pointer">
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{user.name}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                                                    <Link href={`/dashboard/users/${user._id}`}>
+                                                        {user.name}
+                                                    </Link>
+                                                </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{user.email}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{moment(user.created).fromNow()}</td>
                                             </tr>
