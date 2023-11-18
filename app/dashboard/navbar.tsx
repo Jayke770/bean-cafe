@@ -191,7 +191,7 @@ export default function DashboardNavbar() {
                 className=" k-color-brand-primary lg:w-96"
                 content={
                     settings?.edit ? (
-                        <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+                        <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
                             <div className='flex flex-col gap-2'>
                                 <label htmlFor="email" className="block text-sm font-medium">COD Message</label>
                                 <textarea
