@@ -249,10 +249,10 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                             <span className=' text-sm'>Paid:</span>
                             {emoji(order?.isPaid ? "✅" : "❌")}
                         </div>
-                    </div>
-                    <div className='flex justify-between'>
-                        <span className=' text-sm'>Message:</span>
-                        <span className=' text-sm font-bold'>{order?.message}</span>
+                        <div className='flex justify-between'>
+                            <span className=' text-sm'>Message:</span>
+                            <span className=' text-sm font-bold'>{order?.message}</span>
+                        </div>
                     </div>
                     {order?.isApproved && order.isPaid && (
                         <div className="flex flex-col gap-2 px-3.5 mt-4">
