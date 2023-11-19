@@ -319,11 +319,11 @@ export default function Cart({
                                                 {selectedItemIncart?.delivery_service === "deliver" && (
                                                     <ListItem
                                                         title='Delivery Fee'
-                                                        after={<span>${settings?.currency}{DELIVERY_FEE}</span>} />
+                                                        after={<span>{settings?.currency}{DELIVERY_FEE}</span>} />
                                                 )}
                                                 <ListItem
                                                     title="Total"
-                                                    after={<span>${settings?.currency}{selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0) + (selectedItemIncart?.delivery_service === "deliver" ? DELIVERY_FEE : 0)}</span>} />
+                                                    after={<span>{settings?.currency}{selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0) + (selectedItemIncart?.delivery_service === "deliver" ? DELIVERY_FEE : 0)}</span>} />
                                             </div>
                                         </ListGroup>
                                     </List>
