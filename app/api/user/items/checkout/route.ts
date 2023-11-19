@@ -44,9 +44,10 @@ const PaymentMethod = z.union([
 const CheckOutSchema = z.object({
     items: z.array(UserCartData),
     payment_method: PaymentMethod,
-    phone_number: z.string(),
-    address: z.string().optional(),
-    name: z.string().optional(),
+    phone_number: z.string().nonempty("Invalid Phone Number"),
+    address: z.string().nonempty("Invalid Address"),
+    landmark: z.string().nonempty("Invalid Landmark"),
+    name: z.string(),
     message: z.string().optional(),
     gcash_image: z.any().optional(),
     delivery_service: DeliveryService
@@ -66,7 +67,8 @@ export async function POST(req: NextRequest) {
                 name: form_data.get("name"),
                 message: form_data.get("message"),
                 phone_number: form_data.get("phone_number"),
-                delivery_service: form_data.get("delivery_service")
+                delivery_service: form_data.get("delivery_service"),
+                landmark: form_data.get("landmark")
             })
             if (parse_form.success) {
                 await dbConnect()
@@ -94,7 +96,8 @@ export async function POST(req: NextRequest) {
                             address: parse_form.data.address,
                             phone_number: parse_form.data.phone_number ?? userData?.phone_number,
                             fee: DELIVERY_FEE,
-                            deliveryType: parse_form.data.delivery_service
+                            deliveryType: parse_form.data.delivery_service,
+                            landmark: parse_form.data.landmark
                         })
                         userData.orders.push(new_orderData._id as any)
                         await userData.save()
@@ -210,7 +213,8 @@ export async function POST(req: NextRequest) {
                                 address: parse_form.data.address,
                                 phone_number: parse_form.data.phone_number ?? userData?.phone_number,
                                 fee: DELIVERY_FEE,
-                                deliveryType: parse_form.data.delivery_service
+                                deliveryType: parse_form.data.delivery_service,
+                                landmark: parse_form.data.landmark
                             })
                             userData.orders.push(new_orderData.id)
                             await userData.save()
@@ -255,9 +259,10 @@ export async function POST(req: NextRequest) {
                     return NextResponse.json(res);
                 }
             } else {
+                console.log(fromZodError(parse_form.error, { prefix: null }).message)
                 res = {
                     status: false,
-                    message: fromZodError(parse_form.error, { prefix: null }).message
+                    message: "Invalid Order Information"
                 }
                 return NextResponse.json(res);
             }

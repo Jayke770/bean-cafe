@@ -58,7 +58,7 @@ export default function Cart({
     updateCartData: () => void,
     settings?: settings
 }) {
-    const { handleSubmit, register } = useForm()
+    const { handleSubmit, register, getValues } = useForm()
     const router = useRouter()
     const [updateCartItem, setUpdateCartItem] = useState<UpdateCartItem>()
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
@@ -373,6 +373,13 @@ export default function Cart({
                                         defaultValue={session?.user?.address as string}
                                         className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
                                         placeholder="Address" />
+                                </div>
+                                <div className='flex flex-col gap-2'>
+                                    <label htmlFor="landmark" className="block text-sm font-medium">Landmark</label>
+                                    <input
+                                        {...register("landmark")}
+                                        className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                        placeholder="Landmark" />
                                 </div>
                                 <div className='flex flex-col gap-2'>
                                     <label htmlFor="phone_number" className="block text-sm font-medium">Phone Number</label>
