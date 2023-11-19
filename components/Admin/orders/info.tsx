@@ -297,82 +297,81 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                                 )}
                             </div>
                         </div>
-                        <div className="hidden">
-                            <div
-                                ref={receiptRef}
-                                className="flex flex-col border w-[50%] ">
-                                <div className='flex flex-col gap-1 mt-4 px-3.5'>
-                                    <div className='flex justify-between'>
-                                        <span className=' text-sm'>Order ID:</span>
-                                        <span className=' font-bold'>{order?.orderId}</span>
-                                    </div>
-                                    <div className='flex justify-between'>
-                                        <span className=' text-sm'>Name:</span>
-                                        <span className=' font-bold'>{order?.name ?? "N/A"}</span>
-                                    </div>
-                                    <div className='flex justify-between'>
-                                        <span className=' text-sm'>Address:</span>
-                                        <span className=' font-bold'>{order?.address ?? "N/A"}</span>
-                                    </div>
-                                    <div className='flex justify-between'>
-                                        <span className=' text-sm'>Landmark:</span>
-                                        <span className=' font-bold'>{order?.landmark ?? "N/A"}</span>
-                                    </div>
-                                    <div className='flex justify-between'>
-                                        <span className=' text-sm'>Phone Number:</span>
-                                        <span className=' font-bold'>{order?.phone_number}</span>
-                                    </div>
-                                    <div className='flex justify-between'>
-                                        <span className=' text-sm'>Order Status:</span>
-                                        <OrderStatus status={order?.status} />
-                                    </div>
-                                    <div className='flex justify-between'>
-                                        <span className=' text-sm'>Payment Method:</span>
-                                        <span className=' text-sm font-bold'>{changeCase.sentenceCase(order?.payment_method ?? "")}</span>
-                                    </div>
-                                    <div className='flex justify-between'>
-                                        <span className=' text-sm'>Total Payment:</span>
-                                        <CountUp
-                                            className=' text-sm font-bold'
-                                            prefix='₱ '
-                                            end={parseFloat(order?.total_payment ?? "0")} />
-                                    </div>
-                                    <div className='flex justify-between'>
-                                        <span className=' text-sm'>Message:</span>
-                                        <span className=' text-sm font-bold'>{order?.message}</span>
-                                    </div>
-                                </div>
-                                <List
-                                    margin='my-0'
-                                    nested
-                                    className="overflow-auto mt-2">
-                                    {order?.items.map(item => (
-                                        <ListItem
-                                            key={item.id}
-                                            media={
-                                                <Image
-                                                    src={`/api/files?type=item&id=${item.item_id}`}
-                                                    width={300}
-                                                    height={300}
-                                                    alt={item.item_id}
-                                                    className=' mx-3 rounded-lg w-10 object-cover aspect-square' />
-                                            }
-                                            chevron={false}
-                                            title={item.item_name}
-                                            footer={
-                                                <div className="flex flex-col">
-                                                    {item.size && <span>Size: {changeCase.sentenceCase(item.size ?? "")}</span>}
-                                                    <span>Quantity: {item.quantity}</span>
-                                                    <span>Total: ₱ {item.price * item.quantity}</span>
-                                                </div>
-                                            } />
-                                    ))}
-                                </List>
-                            </div>
-                        </div>
                     </>
                 }>
             </Dialog>
+            <div style={{ display: 'hidden' }}>
+                <div ref={receiptRef}
+                    className="flex flex-col border w-[50%] ">
+                    <div className='flex flex-col gap-1 mt-4 px-3.5'>
+                        <div className='flex justify-between'>
+                            <span className=' text-sm'>Order ID:</span>
+                            <span className=' font-bold'>{order?.orderId}</span>
+                        </div>
+                        <div className='flex justify-between'>
+                            <span className=' text-sm'>Name:</span>
+                            <span className=' font-bold'>{order?.name ?? "N/A"}</span>
+                        </div>
+                        <div className='flex justify-between'>
+                            <span className=' text-sm'>Address:</span>
+                            <span className=' font-bold'>{order?.address ?? "N/A"}</span>
+                        </div>
+                        <div className='flex justify-between'>
+                            <span className=' text-sm'>Landmark:</span>
+                            <span className=' font-bold'>{order?.landmark ?? "N/A"}</span>
+                        </div>
+                        <div className='flex justify-between'>
+                            <span className=' text-sm'>Phone Number:</span>
+                            <span className=' font-bold'>{order?.phone_number}</span>
+                        </div>
+                        <div className='flex justify-between'>
+                            <span className=' text-sm'>Order Status:</span>
+                            <OrderStatus status={order?.status} />
+                        </div>
+                        <div className='flex justify-between'>
+                            <span className=' text-sm'>Payment Method:</span>
+                            <span className=' text-sm font-bold'>{changeCase.sentenceCase(order?.payment_method ?? "")}</span>
+                        </div>
+                        <div className='flex justify-between'>
+                            <span className=' text-sm'>Total Payment:</span>
+                            <CountUp
+                                className=' text-sm font-bold'
+                                prefix='₱ '
+                                end={parseFloat(order?.total_payment ?? "0")} />
+                        </div>
+                        <div className='flex justify-between'>
+                            <span className=' text-sm'>Message:</span>
+                            <span className=' text-sm font-bold'>{order?.message}</span>
+                        </div>
+                    </div>
+                    <List
+                        margin='my-0'
+                        nested
+                        className="overflow-auto mt-2">
+                        {order?.items.map(item => (
+                            <ListItem
+                                key={item.id}
+                                media={
+                                    <Image
+                                        src={`/api/files?type=item&id=${item.item_id}`}
+                                        width={300}
+                                        height={300}
+                                        alt={item.item_id}
+                                        className=' mx-3 rounded-lg w-10 object-cover aspect-square' />
+                                }
+                                chevron={false}
+                                title={item.item_name}
+                                footer={
+                                    <div className="flex flex-col">
+                                        {item.size && <span>Size: {changeCase.sentenceCase(item.size ?? "")}</span>}
+                                        <span>Quantity: {item.quantity}</span>
+                                        <span>Total: ₱ {item.price * item.quantity}</span>
+                                    </div>
+                                } />
+                        ))}
+                    </List>
+                </div>
+            </div>
         </>
     )
 }
