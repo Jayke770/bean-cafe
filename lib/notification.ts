@@ -21,7 +21,7 @@ export const orderNotification = async (orderId: string, message?: string): Prom
         sms_message += `Status: ${changeCase.sentenceCase(data.status)}%0a`
         sms_message += `Delivery Fee: ₱${delivery_fee}%0a`
         sms_message += `Total Payment: ₱${total_payment.toFixed(2)}%0a`
-        sms_message += `Date: ${moment(data.created).format('MMMM Do YYYY, h:mm:ss a')}%0a%0a`
+        sms_message += `Date: ${moment(data.created).tz("Asia/Manila").format('MMMM Do YYYY, h:mm:ss a')}%0a%0a`
         if (message) {
             sms_message += `%0aReason: ${message}`
         }
@@ -35,7 +35,7 @@ export const orderNotification = async (orderId: string, message?: string): Prom
         email_message += `<b>Status:</b> ${changeCase.sentenceCase(data.status)}</br>`
         email_message += `<b>Delivery Fee :</b> ₱${parseFloat(data.total_payment).toFixed(2)}</br>`
         email_message += `<b>Total Payment:</b> ₱${total_payment.toFixed(2)}</br>`
-        email_message += `<b>Date:</b> ${moment(data.created).format('MMMM Do YYYY, h:mm:ss a')}</br></br>`
+        email_message += `<b>Date:</b> ${moment(data.created).tz("Asia/Manila").format('MMMM Do YYYY, h:mm:ss a')}</br></br>`
         if (message) {
             email_message += `Reason: ${message}`
         }
