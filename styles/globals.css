@@ -7,6 +7,10 @@
   body {
     margin: 0.5cm; 
   }
+  .items {
+    overflow: visible;
+    height: fit-content;
+  }
 }
 
 ::-webkit-scrollbar {

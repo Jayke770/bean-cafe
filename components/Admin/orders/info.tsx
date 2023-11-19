@@ -18,12 +18,14 @@ import { FiExternalLink } from 'react-icons/fi'
 import NextLink from 'next/link'
 import Swal from "@lib/swal"
 import { useReactToPrint } from 'react-to-print';
+import Settings from "@/lib/settings";
 interface props {
     show?: boolean,
     order?: Orders,
     onToggleOrderInfo: () => void
 }
 export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: props) {
+    const { settings } = Settings()
     const receiptRef = useRef(null)
     const [viewReceipt, setViewReciept] = useState<boolean>()
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
@@ -300,7 +302,7 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                     </>
                 }>
             </Dialog>
-            <div style={{ display: 'hidden' }}>
+            <div style={{ display: 'non' }}>
                 <div ref={receiptRef}
                     className="flex flex-col border w-[50%] ">
                     <div className='flex flex-col gap-1 mt-4 px-3.5'>
@@ -314,7 +316,7 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                         </div>
                         <div className='flex justify-between'>
                             <span className=' text-sm'>Address:</span>
-                            <span className=' font-bold'>{order?.address ?? "N/A"}</span>
+                            <span className=' font-bold text-right '>{order?.address ?? "N/A"}</span>
                         </div>
                         <div className='flex justify-between'>
                             <span className=' text-sm'>Landmark:</span>
@@ -347,7 +349,7 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                     <List
                         margin='my-0'
                         nested
-                        className="overflow-auto mt-2">
+                        className="overflow-auto mt-2 items">
                         {order?.items.map(item => (
                             <ListItem
                                 key={item.id}
@@ -360,18 +362,22 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                                         className=' mx-3 rounded-lg w-10 object-cover aspect-square' />
                                 }
                                 chevron={false}
-                                title={item.item_name}
-                                footer={
-                                    <div className="flex flex-col">
-                                        {item.size && <span>Size: {changeCase.sentenceCase(item.size ?? "")}</span>}
-                                        <span>Quantity: {item.quantity}</span>
-                                        <span>Total: ₱ {item.price * item.quantity}</span>
+                                title={
+                                    <div className="flex flex-col text-sm gap-2" >
+                                        <div className="flex gap-2">
+                                            <span>{item.item_name}</span>
+                                            <span>
+                                                {item.size && `Size:  ${changeCase.sentenceCase(item.size ?? "")}`}
+                                                {item.quantity}x
+                                            </span>
+                                        </div>
+                                        <span>{settings?.currency}{item.price * item.quantity}</span>
                                     </div>
                                 } />
                         ))}
                     </List>
-                </div>
-            </div>
+                </div >
+            </div >
         </>
     )
 }
