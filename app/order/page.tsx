@@ -11,6 +11,7 @@ import * as changeCase from 'change-case'
 import Link from 'next/link'
 import { FaCircleXmark } from 'react-icons/fa6'
 import { ORDER_STATUS } from '@lib/constants'
+import { FaInfoCircle } from "react-icons/fa";
 export default function OrderInforamtion() {
     const searchParams = useSearchParams()
     const { orderData } = OrderInfo(searchParams.get("id"))
@@ -68,7 +69,7 @@ export default function OrderInforamtion() {
                         items={orderData?.orderStatus.map(status => ({
                             icon: (
                                 <>
-                                    {ORDER_STATUS[status]?.showLoader && <RiLoader5Fill className=" animate-spin h-4 w-4 text-amber-500 rounded-full" />}
+                                    {ORDER_STATUS[status]?.showLoader && <FaInfoCircle className=" h-4 w-4 text-amber-500 rounded-full" />}
                                     {ORDER_STATUS[status]?.showCheckMark && <BsFillCheckCircleFill className=" h-4 w-4 text-teal-500 rounded-full" />}
                                     {ORDER_STATUS[status]?.showXMark && <FaCircleXmark className=" h-4 w-4 text-red-500 rounded-full" />}
                                 </>
