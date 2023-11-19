@@ -269,6 +269,10 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                             </div>
                         </div>
                     )}
+                    <div className='flex justify-between'>
+                        <span className=' text-sm'>Message:</span>
+                        <span className=' text-sm font-bold'>{order?.message}</span>
+                    </div>
                 </div>
             }>
         </Dialog>
