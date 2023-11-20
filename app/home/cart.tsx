@@ -59,7 +59,7 @@ export default function Cart({
     updateCartData: () => void,
     settings?: settings
 }) {
-    const { handleSubmit, register, watch, getFieldState, getValues } = useForm()
+    const { handleSubmit, register, watch } = useForm()
     const [infoname, infoaddress, infolandmark, infophone_number] = watch(["name", "address", "landmark", "phone_number"])
     const router = useRouter()
     const [updateCartItem, setUpdateCartItem] = useState<UpdateCartItem>()

@@ -151,7 +151,8 @@ const OrdersSchema = z.object({
   deliveryType: DeliveryType,
   fee: z.string(),
   landmark: z.string(),
-  phone_number: z.string()
+  phone_number: z.string(),
+  admin_message: z.string()
 })
 export type deliverType = z.infer<typeof DeliveryType>
 export type Orders = z.infer<typeof OrdersSchema>

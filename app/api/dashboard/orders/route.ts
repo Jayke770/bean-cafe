@@ -129,6 +129,7 @@ export async function POST(req: NextRequest) {
                         } else if (data.data.type === "disapprove") {
                             orderData.status = "denied"
                             orderData.isApproved = false
+                            orderData.admin_message = data.data.message ?? ""
                             orderData.orderStatus.pop()
                             orderData.payment_method === "cash_on_delivery" ? orderData.orderStatus.push("disapprove") : orderData.orderStatus.push("disapprove", "waiting_for_refund")
                             //if paypal send refund 

@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth";
 import { AuthOptions } from "@services/NextAuth/AuthOptions";
 import { fromZodError } from "zod-validation-error";
 import { ApiResponse } from "@/types";
+export const revalidate = 60;
 export async function GET(req: NextRequest) {
     try {
         const settingsData = await settings.findOne()

@@ -10,6 +10,7 @@ enum ReportDataValue {
     monthly = "%Y-%m",
     yearly = "%Y"
 }
+export const revalidate = 60;
 export async function GET(req: NextRequest) {
     const session = await getServerSession(AuthOptions)
     try {
@@ -78,7 +79,8 @@ export async function GET(req: NextRequest) {
                     },
                     {
                         $addFields: {
-                            total_payment: { $toDouble: "$total_payment" }
+                            total_payment: { $toDouble: "$total_payment" },
+                            delivery_fee: { $toDouble: "$fee" }
                         }
                     },
                     {
@@ -92,6 +94,9 @@ export async function GET(req: NextRequest) {
                                 }
                             },
                             users: { $sum: 1 },
+                            delivery_fee: {
+                                $sum: { $toDouble: "$fee" }
+                            },
                             total_payment: { $sum: "$total_payment" }
                         }
                     },
@@ -99,7 +104,7 @@ export async function GET(req: NextRequest) {
                         $project: {
                             _id: 0,
                             date: "$_id.date",
-                            revenue: "$total_payment"
+                            revenue: { $sum: ["$total_payment", "$delivery_fee"] }
                         }
                     },
                     { $sort: { date: 1 } }

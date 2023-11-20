@@ -5,7 +5,6 @@ import type { Session } from 'next-auth'
 import { useState } from 'react'
 import { AiFillEdit } from 'react-icons/ai'
 import { useForm } from 'react-hook-form'
-import PhoneInput from 'react-phone-number-input/input'
 import toast from "react-hot-toast";
 import { ApiResponse } from '@/types'
 import { RiLoader5Fill } from 'react-icons/ri'
@@ -15,8 +14,8 @@ interface Props {
     onToggleAccountInfo: () => void
 }
 export default function AcountInformation(props: Props) {
-    const { handleSubmit, register } = useForm()
-    const [phoneNumber, setPhoneNumber] = useState<string>(props?.userInfo?.phone_number ?? "")
+    const { handleSubmit, register, watch } = useForm()
+    const [editName, editEmail, editAddress, editPhoneNumber] = watch(["name", "email", "address", "phone_number"])
     const [editAccount, setEditAcccount] = useState<boolean>()
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
     const onEditAccount = () => setEditAcccount(e => !e)
@@ -26,13 +25,12 @@ export default function AcountInformation(props: Props) {
             toast.promise(((): Promise<any> => {
                 return new Promise(async (resolve, reject) => {
                     try {
-                        const formData = { ...data, phone_number: phoneNumber }
                         const req = await fetch("/api/user/info", {
                             method: "post",
                             headers: {
                                 "content-type": "application/json"
                             },
-                            body: JSON.stringify(formData)
+                            body: JSON.stringify(data)
                         })
                         if (req.ok) {
                             const res: ApiResponse = await req.json()
@@ -87,47 +85,50 @@ export default function AcountInformation(props: Props) {
                         <div className='flex flex-col gap-2'>
                             <label htmlFor="name" className="block text-sm font-medium">Name</label>
                             <input
+                                required
                                 type="text"
                                 id="name"
-                                {...register("name")}
+                                {...register("name", { required: true, value: props?.userInfo?.name })}
                                 className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
                                 placeholder="Jhon Doe"
-                                defaultValue={props?.userInfo?.name ?? ""}
                                 aria-describedby="name" />
                         </div>
                         <div className='flex flex-col gap-2'>
                             <label htmlFor="email" className="block text-sm font-medium">Email</label>
                             <input
+                                required
                                 type="email"
                                 id="email"
-                                {...register("email")}
+                                {...register("email", { required: true, value: props?.userInfo?.email })}
                                 className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
                                 placeholder="Email"
-                                defaultValue={props?.userInfo?.email ?? ""}
                                 aria-describedby="email" />
                         </div>
                         <div className='flex flex-col gap-2'>
                             <label htmlFor="address" className="block text-sm font-medium">Address</label>
                             <input
+                                required
                                 type="text"
                                 id="address"
-                                {...register("address")}
+                                {...register("address", { required: true, value: props?.userInfo?.address })}
                                 className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
                                 placeholder="Address"
-                                defaultValue={props?.userInfo?.address ?? ""}
                                 aria-describedby="address" />
                         </div>
                         <div className='flex flex-col gap-2'>
                             <label htmlFor="input-label-with-helper-text" className="block text-sm font-medium">Phone Number</label>
-                            <PhoneInput
-                                onChange={e => setPhoneNumber(e?.toString() ?? "")}
+                            <input
+                                required
+                                {...register("phone_number", { required: true, value: props?.userInfo?.phone_number })}
                                 className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
-                                placeholder="Phone Number"
-                                value={props?.userInfo?.phone_number ?? ""}
-                                defaultCountry='PH' />
+                                placeholder="Phone Number" />
                         </div>
                         <Button
-                            disabled={isProcessing}>
+                            disabled={isProcessing ||
+                                (editName === props?.userInfo?.name &&
+                                    editEmail === props?.userInfo?.email &&
+                                    editAddress === props?.userInfo?.address &&
+                                    editPhoneNumber === props?.userInfo?.phone_number)}>
                             {isProcessing ? <RiLoader5Fill className=" text-brand-primary h-6 w-6 animate-spin " /> : <span>Update</span>}
                         </Button>
                     </form>

@@ -37,7 +37,6 @@ interface ReportDataType {
     orders: ReportData
     revenue: ReportData
 }
-const pdfDoc = new jsPDF();
 const chartImage = new chartJsImage()
 export default function Charts() {
     const [open, setOpen] = useState<"users" | "orders" | "revenue">()
@@ -53,6 +52,7 @@ export default function Charts() {
         onTogglePopOver()
     }
     const onDownloadOrdersReport = async () => {
+        const pdfDoc = new jsPDF();
         pdfDoc.setFontSize(20)
         pdfDoc.text(`Bean Cafe ${changeCase.sentenceCase(reportType.orders)} Order Reports`, 15, 10)
         autoTable(pdfDoc, {
@@ -63,36 +63,11 @@ export default function Charts() {
             head: [["Date", "Orders"]],
             body: ordersReport.map(report => ([report.date, report.orders]))
         })
-        // chartImage.setConfig({
-        //     type: "bar",
-        //     data: {
-        //         labels: ordersReport?.map(x => {
-        //             let date = x.date
-        //             if (reportType?.orders === "daily") date = moment(x.date).format('MMM DD')
-        //             if (reportType?.orders === "monthly") date = moment(x.date).format('MMM')
-        //             if (reportType?.orders === "yearly") date = moment(x.date).format('YYYY')
-        //             return date
-        //         }),
-        //         datasets: [
-        //             {
-        //                 label: 'Orders',
-        //                 data: ordersReport?.map(x => (x.orders)),
-        //                 backgroundColor: "#cc9c68"
-        //             }
-        //         ]
-        //     }
-        // })
-        // const image = new Image()
-        // image.src = await chartImage.toDataUrl()
-        // image.crossOrigin = "";
-        // image.onload = function () {
-        //     pdfDoc.addImage(this as any, "JPEG", 20, 100, pdfDoc.internal.pageSize.width - 40, 100)
-        //     pdfDoc.save("test.pdf")
-        // }
         pdfDoc.autoPrint({ variant: "non-conform" })
         pdfDoc.save("orders.pdf")
     }
     const onDownloadUsersReport = async () => {
+        const pdfDoc = new jsPDF();
         pdfDoc.setFontSize(20)
         pdfDoc.text(`Bean Cafe ${changeCase.sentenceCase(reportType.orders)} Users Reports`, 15, 10)
         autoTable(pdfDoc, {
@@ -103,36 +78,11 @@ export default function Charts() {
             head: [["Date", "Users"]],
             body: usersReport.map(report => ([report.date, report.users]))
         })
-        // chartImage.setConfig({
-        //     type: "bar",
-        //     data: {
-        //         labels: ordersReport?.map(x => {
-        //             let date = x.date
-        //             if (reportType?.orders === "daily") date = moment(x.date).format('MMM DD')
-        //             if (reportType?.orders === "monthly") date = moment(x.date).format('MMM')
-        //             if (reportType?.orders === "yearly") date = moment(x.date).format('YYYY')
-        //             return date
-        //         }),
-        //         datasets: [
-        //             {
-        //                 label: 'Orders',
-        //                 data: ordersReport?.map(x => (x.orders)),
-        //                 backgroundColor: "#cc9c68"
-        //             }
-        //         ]
-        //     }
-        // })
-        // const image = new Image()
-        // image.src = await chartImage.toDataUrl()
-        // image.crossOrigin = "";
-        // image.onload = function () {
-        //     pdfDoc.addImage(this as any, "JPEG", 20, 100, pdfDoc.internal.pageSize.width - 40, 100)
-        //     pdfDoc.save("test.pdf")
-        // }
         pdfDoc.autoPrint({ variant: "non-conform" })
         pdfDoc.save("users.pdf")
     }
     const onDownloadRevenueReport = async () => {
+        const pdfDoc = new jsPDF();
         pdfDoc.setFontSize(20)
         pdfDoc.text(`Bean Cafe ${changeCase.sentenceCase(reportType.revenue)} Revenue Reports`, 15, 10)
         autoTable(pdfDoc, {
@@ -143,32 +93,6 @@ export default function Charts() {
             head: [["Date", "Revenue"]],
             body: revenueReport.map(report => ([report.date, report.revenue]))
         })
-        // chartImage.setConfig({
-        //     type: "bar",
-        //     data: {
-        //         labels: ordersReport?.map(x => {
-        //             let date = x.date
-        //             if (reportType?.orders === "daily") date = moment(x.date).format('MMM DD')
-        //             if (reportType?.orders === "monthly") date = moment(x.date).format('MMM')
-        //             if (reportType?.orders === "yearly") date = moment(x.date).format('YYYY')
-        //             return date
-        //         }),
-        //         datasets: [
-        //             {
-        //                 label: 'Orders',
-        //                 data: ordersReport?.map(x => (x.orders)),
-        //                 backgroundColor: "#cc9c68"
-        //             }
-        //         ]
-        //     }
-        // })
-        // const image = new Image()
-        // image.src = await chartImage.toDataUrl()
-        // image.crossOrigin = "";
-        // image.onload = function () {
-        //     pdfDoc.addImage(this as any, "JPEG", 20, 100, pdfDoc.internal.pageSize.width - 40, 100)
-        //     pdfDoc.save("test.pdf")
-        // }
         pdfDoc.autoPrint({ variant: "non-conform" })
         pdfDoc.save("revenue.pdf")
     }

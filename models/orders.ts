@@ -19,7 +19,9 @@ const Orders = new Schema<ord>({
     orderStatus: [],
     deliveryType: { type: String },
     fee: { type: String },
-    phone_number: { type: String }
+    phone_number: { type: String },
+    admin_message: { type: String },
+    landmark: { type: String }
 }, { timestamps: true });
 if (models["orders"] != null) {
     deleteModel("orders");

@@ -34,6 +34,9 @@ export default function OrderInforamtion() {
                             <span>Order Info</span>
                         </div>
                     }
+                    footer={
+                        orderData?.admin_message && <div className='border text-center border-amber-600 text-amber-500 rounded p-3'>{orderData?.admin_message}</div>
+                    }
                     className=" k-color-brand-primary !bg-none">
                     <List margin="my-0">
                         {orderData?.items.map(item => (

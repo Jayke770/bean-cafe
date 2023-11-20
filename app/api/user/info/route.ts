@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
             if (parse_data.success) {
                 await dbConnect()
                 const userData = await users.findOne({ _id: { $eq: session.user.id } })
-                if (userData) { 
+                if (userData) {
                     //check if the number is not in used 
                     if (parse_data.data.email || parse_data.data.phone_number) {
                         const email_or_phone_number_found = await users.findOne({
