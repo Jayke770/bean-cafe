@@ -302,7 +302,7 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                     </>
                 }>
             </Dialog>
-            <div style={{ display: 'non' }}>
+            <div style={{ display: 'none' }}>
                 <div ref={receiptRef}
                     className="flex flex-col border w-[50%] ">
                     <div className='flex flex-col gap-1 mt-4 px-3.5'>
