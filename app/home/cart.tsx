@@ -30,6 +30,7 @@ import type { Session } from 'next-auth';
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form';
 import { DELIVERY_FEE } from '@lib/constants'
+import { isValidNumber, isValidPhoneNumber } from 'libphonenumber-js'
 interface selectItemInCart {
     items: UserCart[],
     payment_method?: paymentMethod,
@@ -58,7 +59,8 @@ export default function Cart({
     updateCartData: () => void,
     settings?: settings
 }) {
-    const { handleSubmit, register, getValues } = useForm()
+    const { handleSubmit, register, watch, getFieldState, getValues } = useForm()
+    const [infoname, infoaddress, infolandmark, infophone_number] = watch(["name", "address", "landmark", "phone_number"])
     const router = useRouter()
     const [updateCartItem, setUpdateCartItem] = useState<UpdateCartItem>()
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
@@ -265,6 +267,9 @@ export default function Cart({
                                             ))}
                                         </ListGroup>
                                         <ListGroup>
+                                            <div className='px-3.5 mt-2'>
+                                                <div className='border text-center border-amber-600 text-amber-500 rounded p-3'>{settings?.codMessage}</div>
+                                            </div>
                                             <div className=' px-3.5 mt-2'>
                                                 <span>Delivery Service</span>
                                             </div>
@@ -296,9 +301,6 @@ export default function Cart({
                                                             className=' pointer-events-none' />
                                                     } />
                                             </div>
-                                            <div className='px-3.5 mt-2'>
-                                                <div className='border text-center border-amber-600 text-amber-500 rounded p-3'>{settings?.codMessage}</div>
-                                            </div>
                                         </ListGroup>
                                         <ListGroup className='mt-2'>
                                             <ListItem
@@ -314,7 +316,6 @@ export default function Cart({
                                                         {selectedItemIncart?.payment_method && <Badge className=' k-color-brand-green '>{changeCase.sentenceCase(selectedItemIncart?.payment_method)}</Badge>}
                                                     </div>
                                                 } />
-
                                             <div className='grid grid-cols-2 gap-2'>
                                                 {selectedItemIncart?.delivery_service === "deliver" && (
                                                     <ListItem
@@ -329,7 +330,7 @@ export default function Cart({
                                     </List>
                                     <div className=' absolute z-20 bottom-0 left-0 w-full bg-md-light-surface-1 dark:bg-md-dark-surface-1 translucent py-3 px-7'>
                                         <Button
-                                            disabled={selectedItemIncart?.items.length <= 0 || !selectedItemIncart?.payment_method || isProcessing}>Check Out</Button>
+                                            disabled={selectedItemIncart?.items.length <= 0 || !selectedItemIncart?.payment_method || !selectedItemIncart?.delivery_service || isProcessing}>Check Out</Button>
                                     </div>
                                 </>
                             ) : (
@@ -350,9 +351,10 @@ export default function Cart({
                                 <Button
                                     onClick={onToggleDeliveryInfo}
                                     rounded
+                                    disabled={!infoaddress || !infolandmark || !infoname || !infophone_number}
                                     component='a'
                                     clear
-                                    className=' !w-auto !px-3.5 k-color-brand-primary'>
+                                    className=' !w-auto !px-3.5 disabled:cursor-not-allowed k-color-brand-primary'>
                                     <BsArrowLeft className=' h-6 w-6' />
                                 </Button>
                                 <h2 className='font-bold text-lg text-brand-primary sticky bg-md-light-surface-1 dark:bg-md-dark-surface-1 z-20 top-0'>Additional Information</h2>
@@ -360,34 +362,47 @@ export default function Cart({
                             <div className='flex flex-col gap-2 px-4 py-2'>
                                 <div className='flex flex-col gap-2'>
                                     <label htmlFor="name" className="block text-sm font-medium">Name</label>
-                                    <input
-                                        {...register("name")}
-                                        defaultValue={session?.user?.name as string}
-                                        className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
-                                        placeholder="Name" />
+                                    <div className='flex flex-col gap-0.5'>
+                                        <input
+                                            {...register("name", { required: true, value: session?.user?.name, maxLength: 100 })}
+                                            className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                            placeholder="Name" />
+                                        {!infoname && <span className='text-xs text-red-500'>Name is required</span>}
+                                    </div>
                                 </div>
                                 <div className='flex flex-col gap-2'>
                                     <label htmlFor="address" className="block text-sm font-medium">Address</label>
-                                    <input
-                                        {...register("address")}
-                                        defaultValue={session?.user?.address as string}
-                                        className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
-                                        placeholder="Address" />
+                                    <div className='flex flex-col gap-0.5'>
+                                        <input
+                                            {...register("address", { required: true, value: session?.user?.address })}
+                                            className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                            placeholder="Address" />
+                                        {!infoaddress && <span className='text-xs text-red-500'>Address is required</span>}
+                                    </div>
                                 </div>
                                 <div className='flex flex-col gap-2'>
                                     <label htmlFor="landmark" className="block text-sm font-medium">Landmark</label>
-                                    <input
-                                        {...register("landmark")}
-                                        className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
-                                        placeholder="Landmark" />
+                                    <div className='flex flex-col gap-0.5'>
+                                        <input
+                                            {...register("landmark", { required: true })}
+                                            className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                            placeholder="Landmark" />
+                                        {!infolandmark && <span className='text-xs text-red-500'>Landmark is required</span>}
+                                    </div>
                                 </div>
                                 <div className='flex flex-col gap-2'>
                                     <label htmlFor="phone_number" className="block text-sm font-medium">Phone Number</label>
-                                    <input
-                                        id="gfahsgf"
-                                        {...register("phone_number")}
-                                        className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
-                                        placeholder="Phone Number" />
+                                    <div className='flex flex-col gap-0.5'>
+                                        <input
+                                            type='tel'
+                                            inputMode='tel'
+                                            pattern="\+?[0-9]*"
+                                            {...register("phone_number", { required: true, value: session?.user?.phone_number })}
+                                            className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                            placeholder="Phone Number" />
+                                        {infophone_number && !isValidNumber(infophone_number ?? "", "PH") && <span className='text-xs text-red-500'>Invalid Phone Number</span>}
+                                        {!infophone_number && !isValidNumber(infophone_number ?? "", "PH") && <span className='text-xs text-red-500'>Phone Number is required</span>}
+                                    </div>
                                 </div>
                                 <div className='flex flex-col gap-2'>
                                     <label htmlFor="message" className="block text-sm font-medium">Message <span className='text-xs opacity-50'>(Optional)</span></label>
@@ -418,65 +433,37 @@ export default function Cart({
                                 <h2 className='font-bold text-lg text-brand-primary sticky bg-md-light-surface-1 dark:bg-md-dark-surface-1 z-20 top-0'>Payment Method</h2>
                             </div>
                             <List margin='my-0'>
-                                <div className='grid grid-cols-2 gap-2 mt-2'>
-                                    <ListItem
-                                        link
-                                        onClick={() => onSelectPaymentMethod("paypal")}
-                                        chevron={false}
-                                        title="PayPal"
-                                        media={
-                                            <div className='flex gap-3 items-center'>
-                                                <Radio
-                                                    checked={selectedItemIncart?.payment_method === "paypal"}
-                                                    readOnly
-                                                    className=' pointer-events-none' />
-                                                <BsPaypal className=' h-5 w-5' />
-                                            </div>
-                                        } />
-                                    {/* <ListItem
-                                        link
-                                        chevron={false}
-                                        title="GCash"
-                                        onClick={() => onSelectPaymentMethod("gcash")}
-                                        media={
-                                            <div className='flex gap-3 items-center'>
-                                                <Radio
-                                                    checked={selectedItemIncart?.payment_method === "gcash"}
-                                                    readOnly
-                                                    className=' pointer-events-none' />
-                                                <Image
-                                                    src={GcashLogo}
-                                                    alt="Gcash"
-                                                    className='h-5 w-5 object-contain rounded' />
-                                            </div>
-                                        } /> */}
-                                    <ListItem
-                                        link
-                                        touchRipple={(selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0)) >= 200}
-                                        className={` col-span-full ${(selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0)) >= 200 ? '' : 'opacity-20 '}`}
-                                        chevron={false}
-                                        title="Cash on Delivery"
-                                        onClick={() => onSelectPaymentMethod("cash_on_delivery")}
-                                        media={
-                                            <div className='flex gap-3 items-center'>
-                                                <Radio
-                                                    checked={selectedItemIncart?.payment_method === "cash_on_delivery"}
-                                                    readOnly
-                                                    className=' pointer-events-none' />
-                                                <BiMoney className='h-5 w-5' />
-                                            </div>
-                                        } />
-                                </div>
+                                <ListItem
+                                    link
+                                    onClick={() => onSelectPaymentMethod("paypal")}
+                                    chevron={false}
+                                    title="PayPal"
+                                    media={
+                                        <div className='flex gap-3 items-center'>
+                                            <Radio
+                                                checked={selectedItemIncart?.payment_method === "paypal"}
+                                                readOnly
+                                                className=' pointer-events-none' />
+                                            <BsPaypal className=' h-5 w-5' />
+                                        </div>
+                                    } />
+                                <ListItem
+                                    link
+                                    touchRipple={(selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0)) >= 200}
+                                    className={` col-span-full ${(selectedItemIncart?.items?.reduce((sum, item) => sum + ((item.price * item.quantity) + (item?.addon?.price ?? 0)), 0)) >= 200 ? '' : 'opacity-20 '}`}
+                                    chevron={false}
+                                    title="Cash on Delivery"
+                                    onClick={() => onSelectPaymentMethod("cash_on_delivery")}
+                                    media={
+                                        <div className='flex gap-3 items-center'>
+                                            <Radio
+                                                checked={selectedItemIncart?.payment_method === "cash_on_delivery"}
+                                                readOnly
+                                                className=' pointer-events-none' />
+                                            <BiMoney className='h-5 w-5' />
+                                        </div>
+                                    } />
                             </List>
-                            {selectedItemIncart?.payment_method === "gcash" && (
-                                <div className='mx-3 mt-2 flex flex-col gap-2'>
-                                    <span className='text-base'>Gcash Proof of Transaction</span>
-                                    <ImageInput
-                                        {...register("gcash_image")}
-                                        accept='image/*'
-                                        name='gcash_image' />
-                                </div>
-                            )}
                         </motion.div>
                     </form>
                 </Card>
