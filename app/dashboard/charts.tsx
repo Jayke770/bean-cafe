@@ -13,7 +13,6 @@ import { Bar } from 'react-chartjs-2';
 import { Button, Card, List, ListItem, Popover, Radio } from 'konsta/react';
 import { OrdersReport, UsersReport, RevenueReport } from '@lib/Admin/reports'
 import { FaSort } from 'react-icons/fa';
-import { useLocalstorageState } from 'rooks';
 import type { ReportData } from '@/types'
 import * as changeCase from 'change-case'
 import moment from 'moment-timezone';
@@ -21,7 +20,6 @@ import { useState } from 'react';
 import { REPORT_TYPES } from '@lib/constants'
 import { jsPDF, type CellConfig } from "jspdf"
 import autoTable from 'jspdf-autotable'
-import chartJsImage from 'chartjs-to-image'
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -37,7 +35,6 @@ interface ReportDataType {
     orders: ReportData
     revenue: ReportData
 }
-const chartImage = new chartJsImage()
 export default function Charts() {
     const [open, setOpen] = useState<"users" | "orders" | "revenue">()
     const [reportType, setReportType] = useState<ReportDataType>({ orders: "daily", users: "daily", revenue: "daily" })
