@@ -141,7 +141,6 @@ export default function Home() {
     }
     const onSelectAddon = (id?: string, price?: number) => setViewItem(e => ({ ...e, addon: e.addon === id ? undefined : id, addonPrice: e.addon === id ? 0 : price }))
     const onSearchItem = useDebounce((e: React.ChangeEvent<HTMLInputElement>) => setSearchItem(() => e.target.value), 500)
-    console.log(viewItem)
     return (
         <motion.div
             variants={mainvariants}
