@@ -19,6 +19,7 @@ import NextLink from 'next/link'
 import Swal from "@lib/swal"
 import { useReactToPrint } from 'react-to-print';
 import Settings from "@/lib/settings";
+import { MdPrint } from "react-icons/md";
 interface props {
     show?: boolean,
     order?: Orders,
@@ -170,15 +171,28 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                 title={
                     <div className="flex justify-between w-full">
                         <span>Order Info</span>
-                        <NextLink href={`/dashboard/orders/${order?.orderId}`}>
-                            <Button
-                                className="!px-2"
-                                rounded
-                                small
-                                clear>
-                                <FiExternalLink className=" h-5 w-5" />
-                            </Button>
-                        </NextLink>
+                        <div className="flex gap-1 items-center">
+                            {order?.status === "out for delivery" || order?.status === "completed" && (
+                                <div className="w-full px-3 py-2 sticky bottom-0 translucent bg-md-light-surface-3 dark:bg-md-dark-surface-3  k-color-brand-primary  ">
+                                    <Button
+                                        clear
+                                        rounded
+                                        className="w-auto"
+                                        onClick={onPrintReceipt}>
+                                        <MdPrint className=" h-5 w-5" />
+                                    </Button>
+                                </div>
+                            )}
+                            <NextLink href={`/dashboard/orders/${order?.orderId}`}>
+                                <Button
+                                    className="!px-2"
+                                    rounded
+                                    small
+                                    clear>
+                                    <FiExternalLink className=" h-5 w-5" />
+                                </Button>
+                            </NextLink>
+                        </div>
                     </div>
                 }
                 buttons={order?.status === "pending" && (
@@ -199,15 +213,13 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                 )}
                 content={
                     <>
-                        <div className='flex flex-col'>
+                        <div className='flex flex-col max-h-[70vh] overflow-auto relative'>
                             <List
                                 margin='my-0'
-                                nested
-                                className="overflow-auto max-h-[40vh]">
+                                nested>
                                 {order?.items.map(item => (
                                     <ListItem
                                         key={item.id}
-                                        link
                                         media={
                                             <Image
                                                 src={`/api/files?type=item&id=${item.item_id}`}
@@ -256,6 +268,12 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                                     <span className=' text-sm'>Payment Method:</span>
                                     <span className=' text-sm font-bold'>{changeCase.sentenceCase(order?.payment_method ?? "")}</span>
                                 </div>
+                                {order?.deliveryType === "deliver" && (
+                                    <div className='flex justify-between'>
+                                        <span className=' text-sm'>Delivery Fee:</span>
+                                        <span className=' font-bold'>{settings?.currency}{order?.fee}</span>
+                                    </div>
+                                )}
                                 <div className='flex justify-between'>
                                     <span className=' text-sm'>Total Payment:</span>
                                     <CountUp
@@ -292,10 +310,7 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                                         </div>
                                     </>
                                 )}
-                                {order?.status === "completed" && (
-                                    <Button
-                                        onClick={onPrintReceipt}>Print Receipt</Button>
-                                )}
+
                             </div>
                         </div>
                     </>
@@ -326,18 +341,20 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                             <span className=' font-bold'>{order?.phone_number}</span>
                         </div>
                         <div className='flex justify-between'>
-                            <span className=' text-sm'>Order Status:</span>
-                            <OrderStatus status={order?.status} />
-                        </div>
-                        <div className='flex justify-between'>
                             <span className=' text-sm'>Payment Method:</span>
                             <span className=' text-sm font-bold'>{changeCase.sentenceCase(order?.payment_method ?? "")}</span>
                         </div>
+                        {order?.deliveryType === "deliver" ? (
+                            <div className='flex justify-between'>
+                                <span className=' text-sm'>Delivery Fee:</span>
+                                <span className=' font-bold'>{settings?.currency}{order?.fee}</span>
+                            </div>
+                        ) : null}
                         <div className='flex justify-between'>
                             <span className=' text-sm'>Total Payment:</span>
                             <CountUp
                                 className=' text-sm font-bold'
-                                prefix='₱ '
+                                prefix={settings?.currency}
                                 end={parseFloat(order?.total_payment ?? "0") + parseFloat(order?.fee ?? "0")} />
                         </div>
                         <div className='flex justify-between'>

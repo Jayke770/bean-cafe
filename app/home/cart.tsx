@@ -16,7 +16,7 @@ import {
 } from 'konsta/react'
 import * as changeCase from 'change-case'
 import type { ApiResponse, UserCart, paymentMethod, deliverType, settings } from "@/types";
-import { useLocalstorageState } from 'rooks'
+import { useDebounce, useLocalstorageState } from 'rooks'
 import Image from 'next/image';
 import { BsArrowLeft, BsPaypal, BsThreeDots } from 'react-icons/bs'
 import GcashLogo from '@/public/images/gcash.png'
@@ -60,7 +60,14 @@ export default function Cart({
     settings?: settings
 }) {
     const { handleSubmit, register, watch } = useForm()
-    const [infoname, infoaddress, infolandmark, infophone_number] = watch(["name", "address", "landmark", "phone_number"])
+    const [
+        infoname,
+        infolandmark,
+        infophone_number,
+        info_purok,
+        infobarangay,
+        infomunicipality,
+        infoprovince] = watch(["name", "landmark", "phone_number", "purok", "barangay", "municipality", "province"])
     const router = useRouter()
     const [updateCartItem, setUpdateCartItem] = useState<UpdateCartItem>()
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
@@ -85,8 +92,13 @@ export default function Cart({
                 return new Promise(async (resolve, reject) => {
                     try {
                         let formData = new FormData()
-                        Object.keys(data).map(key => formData.append(key, data[key]))
+                        const ignoreKey = ["purok", "barangay", "municipality", "province"]
+                        Object.keys(data).map(key => {
+                            if (!ignoreKey.includes(key)) formData.append(key, data[key])
+                        })
+                        const address = `${data.purok ?? ''} ${data.barangay ?? ''} ${data.municipality ?? ''} ${data.province ?? ''}`
                         formData.append("items", JSON.stringify(selectedItemIncart.items))
+                        formData.append("address", address)
                         formData.append("payment_method", selectedItemIncart?.payment_method)
                         formData.append("delivery_service", selectedItemIncart?.delivery_service ?? "")
                         const req = await fetch("/api/user/items/checkout", {
@@ -351,7 +363,14 @@ export default function Cart({
                                 <Button
                                     onClick={onToggleDeliveryInfo}
                                     rounded
-                                    disabled={!infoaddress || !infolandmark || !infoname || !infophone_number}
+                                    disabled={
+                                        !infolandmark ||
+                                        !infoname ||
+                                        !infophone_number ||
+                                        !info_purok ||
+                                        !infobarangay ||
+                                        !infomunicipality ||
+                                        !infoprovince}
                                     component='a'
                                     clear
                                     className=' !w-auto !px-3.5 disabled:cursor-not-allowed k-color-brand-primary'>
@@ -375,14 +394,46 @@ export default function Cart({
                                         {!infoname && <span className='text-xs text-red-500'>Name is required</span>}
                                     </div>
                                 </div>
-                                <div className='flex flex-col gap-2'>
-                                    <label htmlFor="address" className="block text-sm font-medium">Address</label>
-                                    <div className='flex flex-col gap-0.5'>
-                                        <input
-                                            {...register("address", { required: true, value: session?.user?.address })}
-                                            className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
-                                            placeholder="Address" />
-                                        {!infoaddress && <span className='text-xs text-red-500'>Address is required</span>}
+                                <div className='grid grid-cols-2 gap-2'>
+                                    <div className='flex flex-col gap-2'>
+                                        <label htmlFor="purok" className="block text-sm font-medium">Purok</label>
+                                        <div className='flex flex-col gap-0.5'>
+                                            <input
+                                                {...register("purok", { required: true })}
+                                                className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                                placeholder="Purok" />
+                                            {!info_purok && <span className='text-xs text-red-500'>Purok is required</span>}
+                                        </div>
+                                    </div>
+                                    <div className='flex flex-col gap-2'>
+                                        <label htmlFor="barangay" className="block text-sm font-medium">Barangay</label>
+                                        <div className='flex flex-col gap-0.5'>
+                                            <input
+                                                {...register("barangay", { required: true })}
+                                                className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                                placeholder="Barangay" />
+                                            {!infobarangay && <span className='text-xs text-red-500'>Barangay is required</span>}
+                                        </div>
+                                    </div>
+                                    <div className='flex flex-col gap-2'>
+                                        <label htmlFor="municipality" className="block text-sm font-medium">Municipality</label>
+                                        <div className='flex flex-col gap-0.5'>
+                                            <input
+                                                {...register("municipality", { required: true })}
+                                                className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                                placeholder="Municipality" />
+                                            {!infomunicipality && <span className='text-xs text-red-500'>Municipality is required</span>}
+                                        </div>
+                                    </div>
+                                    <div className='flex flex-col gap-2'>
+                                        <label htmlFor="province" className="block text-sm font-medium">Province</label>
+                                        <div className='flex flex-col gap-0.5'>
+                                            <input
+                                                {...register("province", { required: true })}
+                                                className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                                placeholder="Province" />
+                                            {!infoprovince && <span className='text-xs text-red-500'>Municipality is required</span>}
+                                        </div>
                                     </div>
                                 </div>
                                 <div className='flex flex-col gap-2'>
