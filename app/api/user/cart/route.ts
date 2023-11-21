@@ -56,13 +56,19 @@ export async function POST(req: NextRequest) {
                         const itemData = await Item.findOne({ item_id: { $eq: data.item_id } })
                         if (itemData) {
                             //check if the item is already added to cart 
-                            const itemInCart = await Cart.findOne({
+                            const addonData = validatedData.data?.addon ? await addons.findOne({ id: { $eq: validatedData.data.addon } }) : undefined
+                            const itemInCart = validatedData.data?.addon ? await Cart.findOne({
                                 user_id: { $eq: session.user.id },
                                 item_id: { $eq: data.item_id },
                                 size: { $eq: data.selected_size },
-                                status: { $ne: "ordered" }
+                                status: { $ne: "ordered" },
+                                addon: { $eq: addonData?._id }
+                            }) : await Cart.findOne({
+                                user_id: { $eq: session.user.id },
+                                item_id: { $eq: data.item_id },
+                                size: { $eq: data.selected_size },
+                                status: { $ne: "ordered" },
                             })
-                            console.log("item", itemInCart)
                             if (itemInCart) {
                                 itemInCart.quantity += data.quantity
                                 await itemInCart.save()

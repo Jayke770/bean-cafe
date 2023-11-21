@@ -67,16 +67,16 @@ export default function Home() {
     const [viewCart, setViewCart] = useState<boolean>(false)
     const [viewItem, setViewItem] = useState<ViewItem>({ quantity: 0 })
     const onToggleCart = useCallback(() => setViewCart(e => !e), [setViewCart])
-    const onToggleItem = useCallback((data?: Item) => {
+    const onToggleItem = (data?: Item) => {
         if (data) {
             setViewItem(e => ({ ...e, data: data, opened: !e.opened }))
         } else {
-            setViewItem(e => ({ ...e, data: data, selected_size: undefined, quantity: 0, opened: !e.opened }))
+            setViewItem(e => ({ quantity: 0, opened: !e.opened }))
         }
-    }, [setViewItem])
+    }
     const onSelectSize = useCallback((data: Item['sizes'][0]) => setViewItem(e => ({ ...e, selected_size: e?.selected_size?.type === data.type ? undefined : data })), [])
     const onPlusQuantity = () => {
-        if ((viewItem?.data?.sizes.length ?? 0) <= 0) {
+        if ((viewItem?.data?.sizes?.length ?? 0) <= 0) {
             const quantity = viewItem.quantity + 1
             if ((viewItem?.data?.stocks ?? 0) >= quantity) {
                 setViewItem(e => ({ ...e, quantity: quantity }))
@@ -90,7 +90,7 @@ export default function Home() {
         }
     }
     const onMinusQuantity = () => {
-        if ((viewItem?.data?.sizes.length ?? 0) <= 0) {
+        if ((viewItem?.data?.sizes?.length ?? 0) <= 0) {
             const quantity = viewItem.quantity - 1
             setViewItem(e => ({ ...e, quantity: quantity > 0 ? quantity : 0 }))
         }
@@ -139,8 +139,9 @@ export default function Home() {
             })
         }
     }
-    const onSelectAddon = (id?: string, price?: number) => setViewItem(e => ({ ...e, addon: e.addon === id ? undefined : id, addonPrice: price ?? 0 }))
+    const onSelectAddon = (id?: string, price?: number) => setViewItem(e => ({ ...e, addon: e.addon === id ? undefined : id, addonPrice: e.addon === id ? 0 : price }))
     const onSearchItem = useDebounce((e: React.ChangeEvent<HTMLInputElement>) => setSearchItem(() => e.target.value), 500)
+    console.log(viewItem)
     return (
         <motion.div
             variants={mainvariants}
@@ -288,11 +289,11 @@ export default function Home() {
                         <div className='flex justify-between items-center'>
                             <div className='flex flex-col'>
                                 <span className='font-bold text-xl'>{viewItem?.data?.name}</span>
-                                <span className='text-xs'>Stock: {viewItem?.selected_size?.stocks ?? (viewItem?.data?.stocks ?? viewItem?.data?.sizes.reduce((sum, size) => sum + size.stocks, 0))}</span>
+                                <span className='text-xs'>Stock: {viewItem?.selected_size?.stocks ?? (viewItem?.data?.stocks ?? viewItem?.data?.sizes?.reduce((sum, size) => sum + size.stocks, 0))}</span>
                                 <span className='text-sm'>{viewItem?.data?.description}</span>
                             </div>
                             <div className='flex'>
-                                <span>{settings?.currency}{(viewItem?.data?.sizes.length ?? 0) > 0 ? ((viewItem?.selected_size?.price ?? 0) * (viewItem?.quantity ?? 0)) + (viewItem?.addonPrice ?? 0) : (viewItem?.data?.price ?? 0) * viewItem?.quantity}</span>
+                                <span>{settings?.currency}{(viewItem?.data?.sizes?.length ?? 0) > 0 ? ((viewItem?.selected_size?.price ?? 0) * (viewItem?.quantity ?? 0)) + (viewItem?.addonPrice ?? 0) : (viewItem?.data?.price ?? 0) * viewItem?.quantity}</span>
                             </div>
                         </div>
                         {(viewItem?.data?.sizes?.length ?? 0) > 0 && (
@@ -314,7 +315,7 @@ export default function Home() {
                                 </ListGroup>
                             </List>
                         )}
-                        {(viewItem?.data?.addons.length ?? 0) > 0 && (
+                        {(viewItem?.data?.addons?.length ?? 0) > 0 && (
                             <List margin='my-0' className='mt-5'>
                                 <ListGroup>
                                     <span className=' px-3'>Addon</span>
@@ -337,7 +338,7 @@ export default function Home() {
                             <div className='w-full flex items-center'>
                                 <div className='flex gap-3 items-center'>
                                     <Button
-                                        disabled={(viewItem?.data?.sizes.length ?? 0) > 0 && !viewItem?.selected_size}
+                                        disabled={(viewItem?.data?.sizes?.length ?? 0) > 0 && !viewItem?.selected_size}
                                         onClick={onMinusQuantity}
                                         rounded
                                         outline
@@ -347,7 +348,7 @@ export default function Home() {
                                     </Button>
                                     <span>{viewItem?.quantity}</span>
                                     <Button
-                                        disabled={(viewItem?.data?.sizes.length ?? 0) > 0 && !viewItem?.selected_size}
+                                        disabled={(viewItem?.data?.sizes?.length ?? 0) > 0 && !viewItem?.selected_size}
                                         onClick={onPlusQuantity}
                                         rounded
                                         outline
