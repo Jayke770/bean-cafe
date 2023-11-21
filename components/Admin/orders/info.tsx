@@ -161,7 +161,6 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
     const onPrintReceipt = useReactToPrint({
         content: () => receiptRef.current
     });
-    const onToggleViewReceipt = () => setViewReciept(e => !e)
     return (
         <>
             <Dialog
@@ -262,7 +261,7 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                                     <CountUp
                                         className=' text-sm font-bold'
                                         prefix='₱ '
-                                        end={parseFloat(order?.total_payment ?? "0")} />
+                                        end={parseFloat(order?.total_payment ?? "0") + parseFloat(order?.fee ?? "0")} />
                                 </div>
                                 <div className='flex justify-between'>
                                     <span className=' text-sm'>Paid:</span>
@@ -339,7 +338,7 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                             <CountUp
                                 className=' text-sm font-bold'
                                 prefix='₱ '
-                                end={parseFloat(order?.total_payment ?? "0")} />
+                                end={parseFloat(order?.total_payment ?? "0") + parseFloat(order?.fee ?? "0")} />
                         </div>
                         <div className='flex justify-between'>
                             <span className=' text-sm'>Message:</span>

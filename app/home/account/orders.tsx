@@ -13,6 +13,7 @@ import Image from 'next/image'
 import OrderStatusBadge from "@/components/orderStatus";
 import NextLink from 'next/link'
 import Swal from "@/lib/swal";
+import Settings from "@/lib/settings";
 interface Props {
     show?: boolean,
     orders?: Orders[],
@@ -26,6 +27,7 @@ interface Options {
 }
 const ORDER_STATUSES = ["pending", "processing", "completed", "cancelled", "denied"]
 export default function AccountOrders(props: Props) {
+    const { settings } = Settings()
     const [options, setOptions] = useState<Options>()
     const { orderData, orderDataLoading, mutate: updateOrderInfo } = OrderInfo(options?.selected_order_id)
     const onToggleSort = () => setOptions(e => ({ ...e, openSort: !e?.openSort }))
@@ -193,7 +195,7 @@ export default function AccountOrders(props: Props) {
                                                             <span className="text-xs"> - {item.quantity}x</span>
                                                         </div>
                                                     ))}
-                                                    <span className="font-bold text-sm">Total: {`₱${order.total_payment}`}</span>
+                                                    <span className="font-bold text-sm">Total: {`${settings?.currency}${parseFloat(order.total_payment ?? "0") + parseFloat(order?.fee ?? "")}`}</span>
                                                 </div>
                                             }
                                             after={

@@ -85,7 +85,7 @@ export default function OrdersData() {
                           <CountUp
                             decimals={2}
                             prefix={settings?.currency ?? ""}
-                            end={parseFloat(order.total_payment)} />
+                            end={parseFloat(order.total_payment) + parseFloat(order?.fee ?? "0")} />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                           <OrderStatus status={order.status} />
