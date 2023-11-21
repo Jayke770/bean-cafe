@@ -432,7 +432,7 @@ export default function Cart({
                                                 {...register("province", { required: true })}
                                                 className="py-3 px-4 block w-full dark:bg-transparent dark:border-brand-primary/50 border-brand-secondary/50 border transition-all rounded-md outline-none text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
                                                 placeholder="Province" />
-                                            {!infoprovince && <span className='text-xs text-red-500'>Municipality is required</span>}
+                                            {!infoprovince && <span className='text-xs text-red-500'>Province is required</span>}
                                         </div>
                                     </div>
                                 </div>
