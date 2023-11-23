@@ -52,6 +52,7 @@ export default function OrdersData() {
                     <option value={"cancelled"}>Cancelled</option>
                     <option value={"processing"}>Processing</option>
                     <option value={"denied"}>Denied</option>
+                    <option value={"out for delivery"}>Out for Delivery</option>
                   </select>
                 </div>
               </div>
