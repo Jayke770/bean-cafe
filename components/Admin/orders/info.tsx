@@ -172,7 +172,7 @@ export default function OrderInfoDialog({ order, show, onToggleOrderInfo }: prop
                     <div className="flex justify-between w-full">
                         <span>Order Info</span>
                         <div className="flex gap-1 items-center">
-                            {(order?.status === "out for delivery" || order?.status === "completed") && (
+                            {(order?.status === "out for delivery" || order?.status === "completed" || order?.status === "processing") && (
                                 <div className="w-full px-3 py-2 sticky bottom-0 translucent bg-md-light-surface-3 dark:bg-md-dark-surface-3  k-color-brand-primary  ">
                                     <Button
                                         clear
