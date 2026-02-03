@@ -23,7 +23,7 @@
     "change-case": "^4.1.2",
     "chart.js": "^4.3.3",
     "chartjs-to-image": "^1.2.1",
-    "eslint": "8.47.0",
+    "eslint": "9.26.0",
     "eslint-config-next": "^13.5.3",
     "formdata-node": "^6.0.3",
     "framer-motion": "^10.15.2",
